@@ -1,11 +1,19 @@
-
+import { useState } from "react";
+import Login from "./pages/Login"
 
 export default function App() {
+
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+
   return (
     <>
-      <h1 className="text-3xl font-bold text-blue-600 underline">
-        ¡RestFood funcionando con Tailwind! 🍔
-      </h1>
+      <Login
+        email={email}
+        setEmail={setEmail}
+        pass={pass}
+        setPass={setPass}
+      />
     </>
   )
 }
