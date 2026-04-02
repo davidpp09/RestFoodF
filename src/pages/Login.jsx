@@ -1,20 +1,19 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 
 export default function Login({ email, setEmail, pass, setPass }) {
 
     const handleSubmit = () => {
-        console.log("Intentando iniciar sesión con:", email, pass);
-        // Aquí es donde luego pondrás la lógica para validar o enviar a una API
+        console.log("Intentando iniciar sesión con:", { email, pass });
     };
-    return (
 
-        <div className="flex min-h-screen  justify-center items-center">
-            <Card className="w-full max-w-md" >
-                <CardHeader >
+    return (
+        <div className="flex min-h-screen justify-center items-center">
+            <Card className="w-full max-w-md">
+                <CardHeader>
                     <CardTitle>INICIAR SESION</CardTitle>
-                    <CardDescription></CardDescription>
+                    <CardDescription>Ingresa tus credenciales</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-4">
@@ -26,7 +25,7 @@ export default function Login({ email, setEmail, pass, setPass }) {
                         />
                         <Input
                             type="password"
-                            placeholder="contrasena"
+                            placeholder="contraseña"
                             value={pass}
                             onChange={(e) => setPass(e.target.value)}
                         />
@@ -37,7 +36,5 @@ export default function Login({ email, setEmail, pass, setPass }) {
                 </CardFooter>
             </Card>
         </div>
-
     )
-
 }
