@@ -10,8 +10,9 @@ export default function Login() {
     const [pass, setPass] = useState("");
     const { loginUser, loading } = useAuth();
 
-    const handleSubmit = async () => {
-        loginUser(email, pass);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await loginUser(email, pass);
     };
 
     return (
@@ -20,31 +21,35 @@ export default function Login() {
                 <CardHeader>
                     <CardTitle>INICIAR SESIÓN</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4">
-                        <Input
-                            type="email"
-                            placeholder="tu@correo.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <Input
-                            type="password"
-                            placeholder="contraseña"
-                            value={pass}
-                            onChange={(e) => setPass(e.target.value)}
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Button
-                        className="w-full"
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
-                        {loading ? "Cargando..." : "Entrar"}
-                    </Button>
-                </CardFooter>
+                <form onSubmit={handleSubmit}>
+                    <CardContent>
+                        <div className="grid gap-4">
+                            <Input
+                                type="email"
+                                placeholder="tu@correo.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                            <Input
+                                type="password"
+                                placeholder="contraseña"
+                                value={pass}
+                                onChange={(e) => setPass(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={loading}
+                        >
+                            {loading ? "Cargando..." : "Entrar"}
+                        </Button>
+                    </CardFooter>
+                </form>
             </Card>
         </div>
     )

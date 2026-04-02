@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'sonner';
+import { ROLES } from '../constants/roles'; 
 
 export const useAuth = () => {
     const navigate = useNavigate();
@@ -16,10 +17,10 @@ export const useAuth = () => {
             const decoded = jwtDecode(token);
             const rol = decoded.role
             const rutasPorRol = {
-                DEV: "/admin-dashboard",
-                MESERO: "/pedidos",
-                COCINA: "/cocina-panel",
-                REPARTIDOR: "/entregas"
+                [ROLES.DEV]: "/admin-dashboard",
+                [ROLES.MESERO]: "/pedidos",
+                [ROLES.COCINA]: "/cocina-panel",
+                [ROLES.REPARTIDOR]: "/entregas"
             };
             const destino = rutasPorRol[rol] || "/login";
             toast.success(`¡Bienvenido! Entrando como ${rol}`);
