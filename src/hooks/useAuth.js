@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'sonner';
-import { ROLES } from '../constants/roles'; 
-
+import {obtenerRutaPorRol} from '../lib/utils'
 export const useAuth = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -16,14 +15,7 @@ export const useAuth = () => {
             localStorage.setItem('token_restfood', token);
             const decoded = jwtDecode(token);
             const rol = decoded.role
-            const rutasPorRol = {
-                [ROLES.DEV]: "/admin-dashboard",
-                [ROLES.MESERO]: "/pedidos",
-                [ROLES.COCINA]: "/cocina-panel",
-                [ROLES.REPARTIDOR]: "/entregas"
-            };
-            const destino = rutasPorRol[rol] || "/login";
-            toast.success(`¡Bienvenido! Entrando como ${rol}`);
+            const destino = obtenerRutaPorRol(rol);
             navigate(destino);
 
         } catch (error) {
@@ -33,8 +25,14 @@ export const useAuth = () => {
             setLoading(false);
         }
     };
+    const logout = () => {
+        localStorage.removeItem('token_restfood');
+        toast.success('Sesión finalizada');
+        navigate('/login');
+    };
     return {
         loginUser,
+        logout,
         loading
     };
 };

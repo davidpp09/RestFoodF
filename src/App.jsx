@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute"
-import {ROLES,SUPER_ROLES } from './constants/roles';
+import { ROLES, SUPER_ROLES } from './constants/roles';
+import AuthRedirect from "./components/AuthRedirect"
 
 
 export default function App() {
@@ -33,7 +34,8 @@ export default function App() {
             <RepartidorPanel />
           </ProtectedRoute>
         } />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/" element={<AuthRedirect />} />
+        <Route path="*" element={<AuthRedirect />} />
       </Routes>
     </BrowserRouter>
   );
