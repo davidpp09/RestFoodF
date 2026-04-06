@@ -7,8 +7,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token_restfood');
-        if (token) {
-            // Aquí es donde inyectamos el encabezado
+        if (token && config.url !== '/login') {            // Aquí es donde inyectamos el encabezado
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'sonner';
-import {obtenerRutaPorRol} from '../lib/utils'
+import { obtenerRutaPorRol } from '../lib/utils'
 export const useAuth = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -30,9 +30,30 @@ export const useAuth = () => {
         toast.success('Sesión finalizada');
         navigate('/login');
     };
+
+    // En tu archivo src/hooks/useAuth.js
+    const verifyLogin = () => {
+        const token = localStorage.getItem('token_restfood');
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                const currentTime = Date.now() / 1000;
+
+                if (currentTime > decoded.exp) {
+                    console.log("Token expirado, cerrando sesión...");
+                    logout(); // Usamos tu función de logout que ya limpia y redirige
+                }
+            } catch (error) {
+                // Si el token está mal formado, mejor limpiarlo
+                localStorage.removeItem('token_restfood');
+                navigate('/login');
+            }
+        }
+    };
     return {
         loginUser,
         logout,
+        verifyLogin,
         loading
     };
 };
