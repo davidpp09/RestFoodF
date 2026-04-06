@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from "./pages/Login"
+import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from "./components/ProtectedRoute"
 import { ROLES, SUPER_ROLES } from './constants/roles';
 import AuthRedirect from "./components/AuthRedirect"
 
 
 export default function App() {
-  const AdminPanel = () => <div className="p-10"><h1>Panel de Administrador (En construcción 🏗️)</h1></div>;
   const MesaPanel = () => <div className="p-10"><h1>Panel de Mesas (En construcción 🏗️)</h1></div>;
   const PedidosPanel = () => <div className="p-10"><h1>Panel de Pedidos (En construcción 🏗️)</h1></div>;
   const RepartidorPanel = () => <div className="p-10"><h1>Panel de Repartidor (En construcción 🏗️)</h1></div>;
@@ -14,7 +14,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/admin-dashboard" element={
+        <Route path="/adminpanel" element={
           <ProtectedRoute roleRequired={SUPER_ROLES}>
             <AdminPanel />
           </ProtectedRoute>
