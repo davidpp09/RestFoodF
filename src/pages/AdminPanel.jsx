@@ -1,50 +1,33 @@
+// src/pages/AdminPanel.jsx
 import { useState } from 'react';
-import MesaAdmin from '../components/MesaAdmin'; // Asegúrate de que la ruta sea correcta
+import MesaAdmin from '../components/MesaAdmin'; //
 
 const AdminPanel = () => {
-    const [mesas, setMesas] = useState(
-        Array.from({ length: 40 }, (_, i) => {
-            const id = i + 1;
-            // Haremos que las mesas 2, 5 y 8 nazcan ocupadas para probar
-            if ([2, 5, 8].includes(id)) {
-                return {
-                    id_mesa: id,
-                    estado: "OCUPADA",
-                    nombre_mesero: "Juan Pérez 🏃‍♂️",
-                    id_orden: 100 + id,
-                    platillos: [
-                        { cantidad: 2, nombre: "Tacos al Pastor 🌮", comentarios: "Sin cebolla" },
-                        { cantidad: 1, nombre: "Coca-Cola 🥤", comentarios: "Con hielo" },
-                        { cantidad: 1, nombre: "Enchiladas 🍽️", comentarios: "Bien picantes" }
-                    ]
-                };
-            }
-            // El resto de las mesas nacen libres
-            return {
-                id_mesa: id,
-                estado: "LIBRE",
-                nombre_mesero: "",
-                id_orden: null,
-                platillos: []
-            };
-        })
-    );
+    // Simulamos las 40 mesas para la cuadrícula
+    const [mesas] = useState(Array.from({ length: 40 }, (_, i) => ({
+        id_mesa: i + 1,
+        estado: i % 5 === 0 ? "OCUPADA" : "LIBRE",
+        nombre_mesero: "Juan",
+        platillos: []
+    })));
 
     return (
-        <div className="h-screen flex flex-col bg-gray-100 p-4">
-            {/* 1. Encabezado fijo */}
-            <header className="mb-4">
-                <h1 className="text-2xl font-bold">Panel de Administración en Vivo 👨‍💼</h1>
+        // 'h-screen' fija el alto total y 'overflow-hidden' evita el scroll de la página
+        <div className="h-screen w-full flex flex-col bg-slate-50 overflow-hidden">
+
+            {/* Encabezado con altura automática */}
+            <header className="p-4 bg-white border-b shadow-sm">
+                <h1 className="text-xl font-bold text-slate-800">Panel de Administración</h1>
             </header>
 
-            {/* 2. El área que crece y se adapta */}
-            <main className="flex-1 overflow-auto">
-                <div className="grid grid-cols-2 md:grid-cols-5 xl:grid-cols-8 gap-4 h-full content-start">
+            {/* Área principal: 'flex-1' toma el resto de la pantalla */}
+            <main className="flex-1 p-3 overflow-hidden">
+                {/* Configuramos 8 columnas y 5 filas fijas (para las 40 mesas).
+          'h-full' obliga a la cuadrícula a estirarse hasta el borde inferior.
+        */}
+                <div className="grid grid-cols-8 grid-rows-5 gap-2 h-full w-full">
                     {mesas.map((mesa) => (
-                        <MesaAdmin
-                            key={mesa.id_mesa}
-                            {...mesa} // Esto pasa id_mesa, estado, nombre_mesero, platillos, etc.
-                        />
+                        <MesaAdmin key={mesa.id_mesa} {...mesa} />
                     ))}
                 </div>
             </main>
