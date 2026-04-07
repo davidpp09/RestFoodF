@@ -12,22 +12,34 @@ class WebSocketService {
             connectHeaders: {
                 'Authorization': `Bearer ${token}`
             },
-            debug: (str) => { console.log("STOMP Debug:", str); },
+            // 🔒 Debug limpio: Solo muestra eventos importantes sin filtrar el token
+            debug: (str) => {
+                if (str.includes('CONNECTED') || str.includes('DISCONNECT')) {
+                    console.log("🌐 WS Status:", str);
+                }
+            },
             reconnectDelay: 5000,
 
             onConnect: () => {
-                console.log('✅ ¡CONEXIÓN EXITOSA!');
+                console.log('✅ ¡SISTEMA EN VIVO CONECTADO!');
 
-                // ✅ Nos suscribimos al topic de mesas
+                // 🔔 Suscripción al canal de mesas
                 this.stompClient.subscribe('/topic/mesas', (message) => {
-                    const mesaActualizada = JSON.parse(message.body);
-                    console.log('📡 Mesa actualizada:', mesaActualizada);
-                    onMesaActualizada(mesaActualizada); // 🔔 Le avisamos al AdminPanel
+                    try {
+                        const mesaActualizada = JSON.parse(message.body);
+                        onMesaActualizada(mesaActualizada);
+                    } catch (error) {
+                        console.error("❌ Error al procesar mensaje de mesa:", error);
+                    }
                 });
             },
 
             onStompError: (frame) => {
                 console.error('❌ Error de Broker:', frame.headers['message']);
+            },
+
+            onWebSocketClose: () => {
+                console.log('🔌 Conexión de WebSocket cerrada');
             }
         });
 
@@ -35,7 +47,10 @@ class WebSocketService {
     }
 
     desconectar() {
-        if (this.stompClient) this.stompClient.deactivate();
+        if (this.stompClient) {
+            this.stompClient.deactivate();
+            console.log('👋 Desconectado del servicio de tiempo real');
+        }
     }
 }
 

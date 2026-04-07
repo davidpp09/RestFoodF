@@ -1,19 +1,20 @@
 // src/components/RestLayout.jsx
-import { LogOut, Utensils, LayoutDashboard, Users, TrendingUp } from 'lucide-react';
+import { LogOut, Utensils } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-
-const RestLayout = () => { // 👈 Ya no recibimos props, es independiente
+import { useAuth } from '@/hooks/useAuth';
+import { SUPER_ROLES } from '@/constants/roles';
+import { CONFIG_MENU } from '@/lib/utils';
+const RestLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { logOut, roleLog } = useAuth();
 
-    const opcionesMenu = [
-        { icono: LayoutDashboard, texto: "Panel de Mesas", ruta: "/admin" },
-        { icono: Users, texto: "Personal", ruta: "/admin/personal" },
-        { icono: TrendingUp, texto: "Reportes", ruta: "/admin/reportes" }
-    ];
+    const rol = roleLog();
+    const menuAMostrar = (SUPER_ROLES.includes(rol))
+        ? CONFIG_MENU.SUPER_ROLES
+        : CONFIG_MENU[rol] || [];
 
-    // 💡 Truco: Buscamos qué opción coincide con la URL actual para sacar el título
-    const tituloActual = opcionesMenu.find(opcion => opcion.ruta === location.pathname)?.texto || "Administración";
+    const tituloActual = menuAMostrar.find(opcion => opcion.ruta === location.pathname)?.texto || "Administración";
 
     return (
         <div className="flex h-screen w-full bg-[#020617] text-slate-100 overflow-hidden font-sans">
@@ -28,7 +29,7 @@ const RestLayout = () => { // 👈 Ya no recibimos props, es independiente
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-3 mb-2">Menú</p>
 
                     {/* 👇 Ahora mapeamos opcionesMenu */}
-                    {opcionesMenu.map((opcion, index) => {
+                    {menuAMostrar.map((opcion, index) => {
                         const Icono = opcion.icono;
                         // 👇 Evaluamos si la ruta del botón es igual a la URL actual
                         const isActive = location.pathname === opcion.ruta;
@@ -49,7 +50,7 @@ const RestLayout = () => { // 👈 Ya no recibimos props, es independiente
                     })}
                 </nav>
                 <div className="pt-6 border-t border-slate-800">
-                    <button className="flex items-center gap-3 p-3 text-slate-400 rounded-xl transition-colors w-full hover:bg-red-500/10 hover:text-red-400">
+                    <button onClick={() => logOut()} className="flex items-center gap-3 p-3 text-slate-400 rounded-xl transition-colors w-full hover:bg-red-500/10 hover:text-red-400">
                         <LogOut size={20} /> <span className="font-medium">Cerrar Sesión</span>
                     </button>
                 </div>
@@ -57,12 +58,10 @@ const RestLayout = () => { // 👈 Ya no recibimos props, es independiente
 
             <main className="flex-1 flex flex-col min-w-0">
                 <header className="h-20 bg-[#0f172a]/50 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-8 shrink-0">
-                    {/* 👇 Inyectamos el título dinámico */}
                     <h2 className="text-xl font-bold text-white">{tituloActual}</h2>
                 </header>
 
                 <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                    {/* 🔌 Aquí React Router inyectará AdminPanel o PersonalPanel */}
                     <Outlet />
                 </div>
             </main>

@@ -25,7 +25,7 @@ export const useAuth = () => {
             setLoading(false);
         }
     };
-    const logout = () => {
+    const logOut = () => {
         localStorage.removeItem('token_restfood');
         toast.success('Sesión finalizada');
         navigate('/login');
@@ -41,7 +41,7 @@ export const useAuth = () => {
 
                 if (currentTime > decoded.exp) {
                     console.log("Token expirado, cerrando sesión...");
-                    logout(); // Usamos tu función de logout que ya limpia y redirige
+                    logOut(); // Usamos tu función de logout que ya limpia y redirige
                 }
             } catch (error) {
                 // Si el token está mal formado, mejor limpiarlo
@@ -50,10 +50,22 @@ export const useAuth = () => {
             }
         }
     };
+    const roleLog = () => {
+        try {
+            const token = localStorage.getItem('token_restfood');
+            const role = jwtDecode(token).role;
+            return role;
+        } catch (error) {
+            const mensajeError = error.response?.data?.mensaje || "Sin Token volver a logearse";
+            toast.error(mensajeError);
+            navigate('/login')
+        }
+    }
     return {
         loginUser,
-        logout,
+        logOut,
         verifyLogin,
+        roleLog,
         loading
     };
 };
