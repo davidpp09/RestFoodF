@@ -6,6 +6,7 @@ import { User, ReceiptText, UtensilsCrossed } from 'lucide-react';
 const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [] }) => {
     const esOcupada = estado === "OCUPADA";
 
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -30,8 +31,8 @@ const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [] })
 
                         {/* Brillo dinámico (se mantiene igual, ayuda visualmente) */}
                         <div className={`w-2.5 h-2.5 rounded-full ${esOcupada
-                                ? "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.8)] animate-pulse"
-                                : "bg-slate-700"}`}
+                            ? "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.8)] animate-pulse"
+                            : "bg-slate-700"}`}
                         />
                     </div>
 

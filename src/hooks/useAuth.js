@@ -19,7 +19,7 @@ export const useAuth = () => {
             navigate(destino);
 
         } catch (error) {
-            const mensajeError = error.response?.data?.message || "Error al iniciar sesión";
+            const mensajeError = error.response?.data?.mensaje || "Error al iniciar sesión";
             toast.error(mensajeError);
         } finally {
             setLoading(false);

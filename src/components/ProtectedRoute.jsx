@@ -12,14 +12,17 @@ const ProtectedRoute = ({ children, roleRequired }) => {
     try {
         const decoded = jwtDecode(token);
         const userRole = decoded.role;
-        if (userRole === roleRequired || SUPER_ROLES.includes(userRole)) {
+        const rolesPermitidos = Array.isArray(roleRequired) ? roleRequired : [roleRequired];
+        const esSuperUsuario = SUPER_ROLES.includes(userRole);
+        const tienePermiso = rolesPermitidos.includes(userRole);
+
+        if (esSuperUsuario || tienePermiso) {
             return children;
         } else {
             return <AccessDenied roleRequired={roleRequired} />;
         }
-
     } catch (error) {
         return <Navigate to="/login" />;
     }
 };
-export default ProtectedRoute;
+export default ProtectedRoute
