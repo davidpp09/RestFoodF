@@ -8,8 +8,8 @@ export function cn(...inputs) {
 
 export const obtenerRutaPorRol = (rol) => {
     const rutasPorRol = {
-        [ROLES.DEV]: "/adminpanel",
-        [ROLES.ADMIN]: "/adminpanel",
+        [ROLES.DEV]: "/admin",
+        [ROLES.ADMIN]: "/admin",
         [ROLES.MESERO]: "/pedidos",
         [ROLES.COCINA]: "/cocina-panel",
         [ROLES.REPARTIDOR]: "/entregas"

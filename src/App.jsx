@@ -6,8 +6,9 @@ import { ROLES, SUPER_ROLES } from './constants/roles';
 import AuthRedirect from "./components/AuthRedirect"
 import { useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
-
-
+import PersonalPanel from './pages/PersonalPanel';
+import ReportesPanel from './pages/ReportesPanel';
+import RestLayout from './components/RestLayout';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -20,11 +21,17 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/adminpanel" element={
+
+      <Route path="/admin" element={
         <ProtectedRoute roleRequired={SUPER_ROLES}>
-          <AdminPanel />
+          <RestLayout/>
         </ProtectedRoute>
-      } />
+      }>
+        <Route index element={<AdminPanel />} />
+        <Route path="personal" element={<PersonalPanel />} />
+        <Route path="reportes" element={<ReportesPanel />} />
+      </Route>
+
       <Route path="/pedidos" element={
         <ProtectedRoute roleRequired={ROLES.MESERO}>
           <MesaPanel />
