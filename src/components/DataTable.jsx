@@ -1,7 +1,6 @@
 import React from "react"
 import { flexRender, getCoreRowModel, useReactTable, getFilteredRowModel } from "@tanstack/react-table"
 import { Input } from "@/components/ui/input"
-import FormularioNuevoEmpleado from "@/pages/personal/FormularioNuevoEmpleado"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
 
 export function DataTable({ columns, data }) {
@@ -20,22 +19,15 @@ export function DataTable({ columns, data }) {
 
     return (
         <div className="rounded-md border border-slate-800">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-4 pl-3 pr-3">
-                {/* El buscador queda a la izquierda */}
-                <div className="w-1/2 md:w-1/2">
-                    <Input
-                        placeholder="Filtrar por nombre..."
-                        value={(table.getColumn("nombre")?.getFilterValue()) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("nombre")?.setFilterValue(event.target.value)
-                        }
-                        className="bg-slate-950 border-slate-800 text-white"
-                    />
-                </div>
-
-                {/* El botón de acción queda a la derecha */}
-                <FormularioNuevoEmpleado />
-
+            <div className="flex items-center py-4 px-4">
+                <Input
+                    placeholder="Filtrar por nombre..."
+                    value={(table.getColumn("nombre")?.getFilterValue()) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("nombre")?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm bg-slate-950 border-slate-800 text-white"
+                />
             </div>
             <Table>
                 <TableHeader className="bg-slate-950">

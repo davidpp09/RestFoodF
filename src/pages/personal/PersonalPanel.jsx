@@ -1,11 +1,11 @@
-// src/pages/personal/PersonalPanel.jsx
 import { usePersonal } from "@/hooks/usePersonal";
 import { columns } from "./columns";
 import { DataTable } from "@/components/DataTable";
 import { Loader2 } from "lucide-react";
+import FormularioNuevoEmpleado from "./FormularioNuevoEmpleado";
 
 const PersonalPanel = () => {
-    const { usuarios, loading } = usePersonal();
+    const { usuarios, loading, recargar } = usePersonal();
 
     if (loading) {
         return (
@@ -23,6 +23,7 @@ const PersonalPanel = () => {
                     <h1 className="text-2xl font-bold text-white">Gestión de Personal 👤</h1>
                     <p className="text-slate-400">Administra los usuarios y roles de tu restaurante</p>
                 </div>
+                <FormularioNuevoEmpleado onEmpleadoCreado={recargar} />
             </div>
 
             <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">

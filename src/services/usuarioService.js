@@ -6,4 +6,8 @@ export const usuarioService = {
         const response = await api.get(`/usuarios`);
         return response.data.content;
     },
+    crearUsuario: async (datosNuevoUsuario) => {
+        const response = await api.post(`/usuarios`, datosNuevoUsuario);
+        return response.data;
+    },
 };
