@@ -3,7 +3,8 @@ import { flexRender, getCoreRowModel, useReactTable, getFilteredRowModel } from 
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
 
-export function DataTable({ columns, data }) {
+// ✅ AGREGAR onEdit y onDelete como props
+export function DataTable({ columns, data, onEdit, onDelete }) {
     const [columnFilters, setColumnFilters] = React.useState([]);
 
     const table = useReactTable({
@@ -15,6 +16,11 @@ export function DataTable({ columns, data }) {
         state: {
             columnFilters,
         },
+        // ✅ AGREGAR meta para pasar los callbacks
+        meta: {
+            onEdit,
+            onDelete
+        }
     })
 
     return (

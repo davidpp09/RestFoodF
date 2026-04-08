@@ -25,7 +25,6 @@ export const useMesasSala = () => {
     useEffect(() => {
         const token = localStorage.getItem('token_restfood'); // 🔑 Aquí pedimos el gafete
         if (!token) {
-            console.error("No hay sesión iniciada.");
             return;
         }
 

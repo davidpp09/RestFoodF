@@ -40,7 +40,6 @@ export const useAuth = () => {
                 const currentTime = Date.now() / 1000;
 
                 if (currentTime > decoded.exp) {
-                    console.log("Token expirado, cerrando sesión...");
                     logOut(); // Usamos tu función de logout que ya limpia y redirige
                 }
             } catch (error) {

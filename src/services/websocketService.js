@@ -15,7 +15,6 @@ class WebSocketService {
             // 🔒 Debug limpio: Solo muestra eventos importantes sin filtrar el token
             debug: (str) => {
                 if (str.includes('CONNECTED') || str.includes('DISCONNECT')) {
-                    console.log("🌐 WS Status:", str);
                 }
             },
             reconnectDelay: 5000,
