@@ -9,11 +9,8 @@ const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [] })
 
     return (
         <Dialog>
-            <DialogTrigger asChild>
-                {/* Contenedor de la Mesa: Limpio de 'hover:' 
-                   - Quitamos hover:scale, hover:shadow, hover:border y opacity-60 estática.
-                   - Mantenemos transition y 'active:scale-95' (feedback táctil de presión).
-                */}
+            <DialogTrigger >
+
                 <div className={`
                     cursor-pointer p-4 rounded-2xl border transition-all duration-300 h-32
                     flex flex-col justify-between active:scale-95

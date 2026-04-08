@@ -6,7 +6,7 @@ import { ROLES, SUPER_ROLES } from './constants/roles';
 import AuthRedirect from "./components/AuthRedirect"
 import { useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
-import PersonalPanel from './pages/PersonalPanel';
+import PersonalPanel from './pages/personal/PersonalPanel';
 import ReportesPanel from './pages/ReportesPanel';
 import RestLayout from './components/RestLayout';
 
