@@ -7,7 +7,7 @@ import AuthRedirect from "./components/AuthRedirect"
 import { useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
 import PersonalPanel from './pages/personal/PersonalPanel';
-import ReportesPanel from './pages/ReportesPanel';
+import ReportesPanel from './pages/reportes/ReportesPanel';
 import RestLayout from './components/RestLayout';
 
 export default function App() {
@@ -24,7 +24,7 @@ export default function App() {
 
       <Route path="/admin" element={
         <ProtectedRoute roleRequired={SUPER_ROLES}>
-          <RestLayout/>
+          <RestLayout />
         </ProtectedRoute>
       }>
         <Route index element={<AdminPanel />} />

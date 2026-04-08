@@ -9,26 +9,64 @@ const AdminPanel = () => {
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
+                {/* Total Mesas */}
+                <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-6 relative overflow-hidden">
                     <div className="flex justify-between items-start relative z-10">
-                        <div><p className="text-slate-500 text-xs font-bold uppercase">Total</p><h3 className="text-3xl font-black text-white">{stats.total}</h3></div>
-                        <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl"><Utensils size={20} /></div>
+                        <div>
+                            <p className="text-blue-500/80 text-xs font-bold uppercase tracking-wider mb-1">
+                                Total
+                            </p>
+                            <h3 className="text-3xl font-black text-white">
+                                {stats.total}
+                            </h3>
+                        </div>
+                        <div className="p-3 bg-blue-500/10 rounded-xl">
+                            <Utensils size={24} className="text-blue-500" />
+                        </div>
                     </div>
-                    <div className="absolute -right-4 -bottom-4 text-blue-500/5 rotate-12"><Utensils size={100} /></div>
+                    <div className="absolute -right-6 -bottom-6 text-blue-500/5 rotate-12">
+                        <Utensils size={120} />
+                    </div>
                 </div>
-                <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
+
+                {/* Mesas Ocupadas */}
+                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 rounded-2xl p-6 relative overflow-hidden">
                     <div className="flex justify-between items-start relative z-10">
-                        <div><p className="text-slate-500 text-xs font-bold uppercase">Ocupadas</p><h3 className="text-3xl font-black text-red-500">{stats.ocupadas}</h3></div>
-                        <div className="p-3 bg-red-500/10 text-red-500 rounded-xl"><Clock size={20} /></div>
+                        <div>
+                            <p className="text-red-500/80 text-xs font-bold uppercase tracking-wider mb-1">
+                                Ocupadas
+                            </p>
+                            <h3 className="text-3xl font-black text-red-500">
+                                {stats.ocupadas}
+                            </h3>
+                        </div>
+                        <div className="p-3 bg-red-500/10 rounded-xl">
+                            <Clock size={24} className="text-red-500" />
+                        </div>
                     </div>
-                    <div className="absolute -right-4 -bottom-4 text-red-500/5 rotate-12"><Clock size={100} /></div>
+                    <div className="absolute -right-6 -bottom-6 text-red-500/5 rotate-12">
+                        <Clock size={120} />
+                    </div>
                 </div>
-                <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
+
+                {/* Mesas Libres */}
+                <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 rounded-2xl p-6 relative overflow-hidden">
                     <div className="flex justify-between items-start relative z-10">
-                        <div><p className="text-slate-500 text-xs font-bold uppercase">Libres</p><h3 className="text-3xl font-black text-emerald-500">{stats.libres}</h3></div>
-                        <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl"><CheckCircle2 size={20} /></div>
+                        <div>
+                            <p className="text-emerald-500/80 text-xs font-bold uppercase tracking-wider mb-1">
+                                Libres
+                            </p>
+                            <h3 className="text-3xl font-black text-emerald-500">
+                                {stats.libres}
+                            </h3>
+                        </div>
+                        <div className="p-3 bg-emerald-500/10 rounded-xl">
+                            <CheckCircle2 size={24} className="text-emerald-500" />
+                        </div>
                     </div>
-                    <div className="absolute -right-4 -bottom-4 text-emerald-500/5 rotate-12"><CheckCircle2 size={100} /></div>
+                    <div className="absolute -right-6 -bottom-6 text-emerald-500/5 rotate-12">
+                        <CheckCircle2 size={120} />
+                    </div>
                 </div>
             </div>
 
