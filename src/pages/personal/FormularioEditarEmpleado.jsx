@@ -2,19 +2,16 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { usuarioService } from "@/services/usuarioService";
 import { toast } from "sonner";
 
-const ROLES = ["ADMIN", "MESERO", "COCINA", "CAJERO", "REPARTIDOR"];
-
 const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado }) => {
+    // 1. Ya solo guardamos en memoria lo que el backend acepta
     const [datos, setDatos] = useState({
         id_usuarios: "",
         nombre: "",
-        email: "",
-        rol: ""
+        email: ""
     });
 
     useEffect(() => {
@@ -22,8 +19,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
             setDatos({
                 id_usuarios: usuario.id_usuarios,
                 nombre: usuario.nombre,
-                email: usuario.email,
-                rol: usuario.rol
+                email: usuario.email
             });
         }
     }, [usuario]);
@@ -40,7 +36,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
             await usuarioService.actualizarUsuario(datos);
             toast.success("¡Empleado actualizado correctamente! ✅", { id: toastId });
             onCerrar();
-            onActualizado?.();
+            onActualizado?.(); // Recarga la tabla de atrás
         } catch (error) {
             toast.error("Error al actualizar el empleado. ❌", { id: toastId });
         }
@@ -52,11 +48,12 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                 <DialogHeader>
                     <DialogTitle>Editar Empleado ✏️</DialogTitle>
                     <DialogDescription className="text-slate-400">
-                        Modifica los datos del empleado.
+                        Modifica los datos personales del empleado.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
+                    {/* Solo dejamos Nombre y Email */}
                     <div className="grid gap-2">
                         <Label htmlFor="edit-nombre">Nombre</Label>
                         <Input
@@ -79,27 +76,13 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                             className="bg-slate-950 border-slate-800"
                         />
                     </div>
-
-                    <div className="grid gap-2">
-                        <Label>Puesto / Rol</Label>
-                        <Select value={datos.rol} onValueChange={(valor) => setDatos(prev => ({ ...prev, rol: valor }))}>
-                            <SelectTrigger className="bg-slate-950 border-slate-800">
-                                <SelectValue placeholder="Selecciona un rol" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-slate-900 border-slate-800 text-white">
-                                {ROLES.map(rol => (
-                                    <SelectItem key={rol} value={rol}>{rol}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
                 </div>
 
                 <div className="flex gap-2">
-                    <Button onClick={onCerrar} variant="outline" className="flex-1 border-slate-700 hover:bg-slate-800">
+                    <Button onClick={onCerrar} className="bg-red-600 text-white hover:bg-red-700 flex-1 border-slate-700 hover:bg-slate-800 text-slate-300">
                         Cancelar
                     </Button>
-                    <Button onClick={manejarGuardado} className="flex-1 bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={manejarGuardado} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
                         Guardar Cambios
                     </Button>
                 </div>
