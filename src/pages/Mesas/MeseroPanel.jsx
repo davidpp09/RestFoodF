@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMesas } from '@/hooks/useMesas';
-import MesaMesero from '@/components/MesaMesero';
+import MesaMesero from '@/components/mesaMesero/MesaMesero';
 const MeseroPanel = () => {
     const { mesas, cargando } = useMesas(1, 10);
     if (cargando) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { mesaService } from "../services/mesaService";
+import { toast } from "sonner";
 
 export const useMesas = (inicio, fin) => {
     const [mesas, setMesas] = useState([]);
@@ -8,8 +9,13 @@ export const useMesas = (inicio, fin) => {
 
     useEffect(() => {
         const cargarMesas = async () => {
-            setMesas(await mesaService.mesasRango(inicio, fin));
-            setCargando(false)
+            try {
+                setMesas(await mesaService.mesasRango(inicio, fin));
+            } catch (error) {
+                toast.error('Error al cargar las mesas');
+            } finally {
+                setCargando(false);
+            }
         };
 
         cargarMesas();
