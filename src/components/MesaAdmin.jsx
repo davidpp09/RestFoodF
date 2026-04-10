@@ -1,6 +1,5 @@
 // src/components/MesaAdmin.jsx
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { User, ReceiptText, UtensilsCrossed } from 'lucide-react';
 
 const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [] }) => {
@@ -95,9 +94,6 @@ const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [] })
                     )}
                 </div>
 
-                <DialogFooter>
-                    {esOcupada && <Button className="w-full bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black py-7 rounded-2xl shadow-lg shadow-red-900/20 transition-all text-base uppercase tracking-tighter">Cerrar Cuenta y Liberar 🧾</Button>}
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

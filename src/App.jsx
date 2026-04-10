@@ -9,7 +9,6 @@ import { useAuth } from './hooks/useAuth';
 import PersonalPanel from './pages/personal/PersonalPanel';
 import ReportesPanel from './pages/reportes/ReportesPanel';
 import RestLayout from './components/RestLayout';
-
 export default function App() {
   const { verifyLogin } = useAuth();
   useEffect(() => {
@@ -19,36 +18,40 @@ export default function App() {
   const PedidosPanel = () => <div className="p-10"><h1>Panel de Pedidos (En construcción 🏗️)</h1></div>;
   const RepartidorPanel = () => <div className="p-10"><h1>Panel de Repartidor (En construcción 🏗️)</h1></div>;
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
+    <>
+      <Routes>
 
-      <Route path="/admin" element={
-        <ProtectedRoute roleRequired={SUPER_ROLES}>
-          <RestLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<AdminPanel />} />
-        <Route path="personal" element={<PersonalPanel />} />
-        <Route path="reportes" element={<ReportesPanel />} />
-      </Route>
+        <Route path="/login" element={<Login />} />
 
-      <Route path="/pedidos" element={
-        <ProtectedRoute roleRequired={ROLES.MESERO}>
-          <MesaPanel />
-        </ProtectedRoute>
-      } />
-      <Route path="/cocina-panel" element={
-        <ProtectedRoute roleRequired={ROLES.COCINA}>
-          <PedidosPanel />
-        </ProtectedRoute>
-      } />
-      <Route path="/entregas" element={
-        <ProtectedRoute roleRequired={ROLES.REPARTIDOR}>
-          <RepartidorPanel />
-        </ProtectedRoute>
-      } />
-      <Route path="/" element={<AuthRedirect />} />
-      <Route path="*" element={<AuthRedirect />} />
-    </Routes>
+        <Route path="/admin" element={
+          <ProtectedRoute roleRequired={SUPER_ROLES}>
+            <RestLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<AdminPanel />} />
+          <Route path="personal" element={<PersonalPanel />} />
+          <Route path="reportes" element={<ReportesPanel />} />
+        </Route>
+
+        <Route path="/pedidos" element={
+          <ProtectedRoute roleRequired={ROLES.MESERO}>
+            <MesaPanel />
+          </ProtectedRoute>
+        } />
+        <Route path="/cocina-panel" element={
+          <ProtectedRoute roleRequired={ROLES.COCINA}>
+            <PedidosPanel />
+          </ProtectedRoute>
+        } />
+        <Route path="/entregas" element={
+          <ProtectedRoute roleRequired={ROLES.REPARTIDOR}>
+            <RepartidorPanel />
+          </ProtectedRoute>
+        } />
+        <Route path="/" element={<AuthRedirect />} />
+        <Route path="*" element={<AuthRedirect />} />
+      </Routes>
+    </>
+
   );
 }

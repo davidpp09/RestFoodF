@@ -1,11 +1,11 @@
 // src/hooks/useMesasSala.js
 import { useState, useEffect, useMemo } from 'react';
 import websocketService from '../services/websocketService';
+import { toast } from 'sonner';
 
 export const useMesasSala = () => {
     const STORAGE_KEY = 'admin_mesas_state';
 
-    // 1. Estado inicial
     const [mesas, setMesas] = useState(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -16,56 +16,55 @@ export const useMesasSala = () => {
         }));
     });
 
-    // 2. Guardado automático
+    // Guardado automático en localStorage
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(mesas));
     }, [mesas]);
 
-    // 3. Conexión WebSocket 📡
+    // Conexión WebSocket
     useEffect(() => {
-        const token = localStorage.getItem('token_restfood'); // 🔑 Aquí pedimos el gafete
-        if (!token) {
-            return;
-        }
+        const token = localStorage.getItem('token_restfood');
+        if (!token) return;
 
-        const onMesaActualizada = (mesaActualizada) => {
-            setMesas((prevMesas) => {
-                let hizoMatch = false;
-                const nuevasMesas = prevMesas.map((mesa) => {
-                    // Lógica de apertura/cierre
-                    if (mesaActualizada.id_mesa && mesa.id_mesa == mesaActualizada.id_mesa) {
-                        if (mesaActualizada.estado === 'OCUPADA' && mesa.estado === 'LIBRE') {
-                            return { ...mesa, ...mesaActualizada, platillos: [] };
-                        }
-                        if (mesaActualizada.estado === 'LIBRE') {
-                            return { ...mesa, estado: 'LIBRE', nombre_mesero: '', id_orden: null, platillos: [] };
-                        }
-                        return { ...mesa, ...mesaActualizada, platillos: mesaActualizada.platillos || mesa.platillos || [] };
+        websocketService.conectar(token);
+
+        // Actualizaciones de mesas en tiempo real
+        websocketService.subscribe('/topic/mesas', (mesaActualizada) => {
+            setMesas((prevMesas) => prevMesas.map((mesa) => {
+                if (mesaActualizada.id_mesa && mesa.id_mesa == mesaActualizada.id_mesa) {
+                    if (mesaActualizada.estado === 'OCUPADA' && mesa.estado === 'LIBRE') {
+                        return { ...mesa, ...mesaActualizada, platillos: [] };
                     }
-                    // Lógica de tickets de cocina
-                    if (!mesaActualizada.id_mesa && mesaActualizada.id_orden) {
-                        if (mesa.id_orden == mesaActualizada.id_orden) {
-                            hizoMatch = true;
-                            return { ...mesa, platillos: [...(mesa.platillos || []), ...(mesaActualizada.platillos || [])] };
-                        }
+                    if (mesaActualizada.estado === 'LIBRE') {
+                        return { ...mesa, estado: 'LIBRE', nombre_mesero: '', id_orden: null, platillos: [] };
                     }
-                    return mesa;
-                });
-                return nuevasMesas;
+                    return { ...mesa, ...mesaActualizada, platillos: mesaActualizada.platillos || mesa.platillos || [] };
+                }
+                // Actualización de platillos por orden (sin id_mesa)
+                if (!mesaActualizada.id_mesa && mesaActualizada.id_orden && mesa.id_orden == mesaActualizada.id_orden) {
+                    return { ...mesa, platillos: [...(mesa.platillos || []), ...(mesaActualizada.platillos || [])] };
+                }
+                return mesa;
+            }));
+        });
+
+        // Notificación no invasiva cuando se cierra una cuenta
+        websocketService.subscribe('/topic/tickets', (ticket) => {
+            const mesa = ticket.numeroMesa ? `Mesa ${ticket.numeroMesa}` : 'Para llevar';
+            toast.success(`Cuenta cerrada — ${mesa}`, {
+                description: `Orden #${ticket.id_orden} · ${ticket.nombre_mesero || 'Mesero'} · Total: $${ticket.total?.toFixed(2)}`,
+                duration: 5000,
             });
-        };
+        });
 
-        websocketService.conectar(token, onMesaActualizada);
         return () => websocketService.desconectar();
     }, []);
 
-    // 4. Estadísticas
     const stats = useMemo(() => ({
         total: mesas.length,
         ocupadas: mesas.filter(m => m.estado === 'OCUPADA').length,
         libres: mesas.filter(m => m.estado === 'LIBRE').length
     }), [mesas]);
 
-    // 5. Entregamos los datos limpios al UI
     return { mesas, stats };
 };
