@@ -9,12 +9,12 @@ import { useAuth } from './hooks/useAuth';
 import PersonalPanel from './pages/personal/PersonalPanel';
 import ReportesPanel from './pages/reportes/ReportesPanel';
 import RestLayout from './components/RestLayout';
+import MeseroPanel from './pages/Mesas/MeseroPanel';
 export default function App() {
   const { verifyLogin } = useAuth();
   useEffect(() => {
     verifyLogin();
   }, []);
-  const MesaPanel = () => <div className="p-10"><h1>Panel de Mesas (En construcción 🏗️)</h1></div>;
   const PedidosPanel = () => <div className="p-10"><h1>Panel de Pedidos (En construcción 🏗️)</h1></div>;
   const RepartidorPanel = () => <div className="p-10"><h1>Panel de Repartidor (En construcción 🏗️)</h1></div>;
   return (
@@ -33,11 +33,14 @@ export default function App() {
           <Route path="reportes" element={<ReportesPanel />} />
         </Route>
 
-        <Route path="/pedidos" element={
-          <ProtectedRoute roleRequired={ROLES.MESERO}>
-            <MesaPanel />
+        <Route path="/mesero" element={
+          <ProtectedRoute roleRequired={[ROLES.MESERO, SUPER_ROLES]}>
+            <RestLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<MeseroPanel />} />
+        </Route>
+
         <Route path="/cocina-panel" element={
           <ProtectedRoute roleRequired={ROLES.COCINA}>
             <PedidosPanel />
