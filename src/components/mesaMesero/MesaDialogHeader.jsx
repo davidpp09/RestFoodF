@@ -1,13 +1,13 @@
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ShoppingCart, Clock } from 'lucide-react';
 
-const MesaDialogHeader = ({ mesa, turno, setTurno }) => (
+const MesaDialogHeader = ({ mesa, turno, setTurno, tema }) => (
     <DialogHeader>
         <DialogTitle className="text-2xl font-black flex items-center justify-between">
 
             {/* Info de la mesa */}
             <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-500">
+                <div className={`p-2 rounded-lg ${tema.bgTenue} ${tema.text}`}>
                     <ShoppingCart size={24} />
                 </div>
                 <div>

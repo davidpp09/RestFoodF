@@ -1,12 +1,12 @@
-import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { Utensils, Plus, Minus, Trash2 } from 'lucide-react';
 
-const MesaOrden = ({ carrito, subtotal, iva, total }) => (
+const MesaOrden = ({ carrito, subtotal, iva, total, tema }) => (
     <div className="space-y-4 flex flex-col">
 
         {/* Encabezado de la orden */}
         <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-                <ShoppingCart size={16} className="text-cyan-500" />
+            <div className={`w-8 h-8 rounded-lg ${tema.bgTenue} flex items-center justify-center`}>
+                <Utensils size={16} className={tema.text} />
             </div>
             <div>
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">ORDEN ACTUAL</p>
@@ -58,13 +58,13 @@ const MesaOrden = ({ carrito, subtotal, iva, total }) => (
             </div>
             <div className="flex justify-between items-center pt-2 border-t border-slate-800">
                 <span className="text-base font-bold text-slate-200">Total</span>
-                <span className="text-xl font-black text-cyan-500">${total.toFixed(2)}</span>
+                <span className={`text-xl font-black ${tema.text}`}>${total.toFixed(2)}</span>
             </div>
         </div>
 
         {/* Botones de acción */}
         <div className="space-y-2">
-            <button className="w-full px-4 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold text-sm transition-colors">
+            <button className={`w-full px-4 py-3 rounded-xl ${tema.bg} ${tema.bgHover} text-slate-950 font-bold text-sm transition-colors`}>
                 Actualizar Orden
             </button>
             <button className="w-full px-4 py-3 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 text-green-500 font-bold text-sm transition-colors">
