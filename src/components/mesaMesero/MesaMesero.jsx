@@ -37,7 +37,7 @@ const MesaMesero = ({ mesa }) => {
                 </div>
             </DialogTrigger>
 
-            <DialogContent className="w-[80vw] max-w-[80vw] sm:max-w-[80vw] h-[80vh] max-h-[80vh] bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 overflow-hidden">
+            <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 overflow-hidden flex flex-col">
                 <MesaDialogContent mesa={mesa} />
             </DialogContent>
         </Dialog>
