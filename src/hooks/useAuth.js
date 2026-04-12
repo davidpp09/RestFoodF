@@ -60,11 +60,21 @@ export const useAuth = () => {
             navigate('/login')
         }
     }
+    const getUsuarioId = () => {
+        try {
+            const token = localStorage.getItem('token_restfood');
+            return jwtDecode(token).id ?? null;
+        } catch {
+            return null;
+        }
+    };
+
     return {
         loginUser,
         logOut,
         verifyLogin,
         roleLog,
+        getUsuarioId,
         loading
     };
 };

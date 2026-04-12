@@ -42,7 +42,7 @@ const ImpresionTickets = () => {
                     {ticket.platillos?.map((p, i) => (
                         <div key={i}>
                             <div className="flex justify-between">
-                                <span>{p.cantidad}x {p.nombreProducto}</span>
+                                <span>{p.cantidad}x {p.nombre_producto}</span>
                                 <span>${p.subtotal.toFixed(2)}</span>
                             </div>
                             {p.comentarios && (

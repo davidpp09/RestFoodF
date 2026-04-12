@@ -22,9 +22,7 @@ export const CONFIG_MENU = {
     SUPER_ROLES: [
         { icono: LayoutDashboard, texto: "Panel de Mesas", ruta: "/admin" },
         { icono: Users, texto: "Personal", ruta: "/admin/personal" },
-        { icono: TrendingUp, texto: "Reportes", ruta: "/admin/reportes" },
-        { icono: Utensils, texto: "Area de mesas", ruta: "/mesero" }
-
+        { icono: TrendingUp, texto: "Reportes", ruta: "/admin/reportes" }
     ],
     MESERO: [
         { icono: Utensils, texto: "Area de mesas", ruta: "/mesero" }

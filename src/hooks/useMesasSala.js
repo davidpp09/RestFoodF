@@ -21,12 +21,12 @@ export const useMesasSala = () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(mesas));
     }, [mesas]);
 
-    // Conexión WebSocket
+    // Suscripciones WebSocket
     useEffect(() => {
         const token = localStorage.getItem('token_restfood');
         if (!token) return;
 
-        websocketService.conectar(token);
+        websocketService.conectar(token); // incrementa contador (no abre nueva conexión si App ya la tiene)
 
         // Actualizaciones de mesas en tiempo real
         websocketService.subscribe('/topic/mesas', (mesaActualizada) => {

@@ -1,17 +1,21 @@
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import Login from "./pages/Login"
 import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from "./components/ProtectedRoute"
 import { ROLES, SUPER_ROLES } from './constants/roles';
 import AuthRedirect from "./components/AuthRedirect"
-import { useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
 import PersonalPanel from './pages/personal/PersonalPanel';
 import ReportesPanel from './pages/reportes/ReportesPanel';
 import RestLayout from './components/RestLayout';
 import MeseroPanel from './pages/Mesas/MeseroPanel';
+import websocketService from './services/websocketService';
+
 export default function App() {
   const { verifyLogin } = useAuth();
+
   useEffect(() => {
     verifyLogin();
   }, []);

@@ -2,18 +2,18 @@ import { Utensils, Plus, Minus, Trash2, MessageSquare } from 'lucide-react';
 
 const MesaOrden = ({
     carrito,
-    subtotal,
-    iva,
     total,
     tema,
+    tieneOrden,
     onCambiarCantidad,
     onEliminar,
     onCambiarComentario,
     onActualizar,
+    onCerrar,
 }) => (
     <div className="flex flex-col h-full min-h-0 gap-4">
 
-        {/* Encabezado de la orden */}
+        {/* Encabezado */}
         <div className="flex items-center gap-2">
             <div className={`w-8 h-8 rounded-lg ${tema.bgTenue} flex items-center justify-center`}>
                 <Utensils size={16} className={tema.text} />
@@ -21,7 +21,7 @@ const MesaOrden = ({
             <div>
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">ORDEN ACTUAL</p>
                 <p className="text-base font-black text-slate-200">
-                    Comanda <span className="text-slate-500">#101</span>
+                    {tieneOrden ? "Orden en curso" : "Nueva orden"}
                 </p>
             </div>
         </div>
@@ -35,7 +35,7 @@ const MesaOrden = ({
                 </div>
             ) : (
                 carrito.map((item) => (
-                    <div key={item.id_producto} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+                    <div key={item.id} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
 
                         {/* Nombre + eliminar */}
                         <div className="flex justify-between items-start mb-2">
@@ -44,7 +44,7 @@ const MesaOrden = ({
                                 <p className="text-xs text-slate-500 font-mono">${item.precio.toFixed(2)}</p>
                             </div>
                             <button
-                                onClick={() => onEliminar(item.id_producto)}
+                                onClick={() => onEliminar(item.id)}
                                 className="w-6 h-6 rounded-lg bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center transition-colors flex-shrink-0"
                             >
                                 <Trash2 size={12} className="text-red-500" />
@@ -55,14 +55,14 @@ const MesaOrden = ({
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-1.5">
                                 <button
-                                    onClick={() => onCambiarCantidad(item.id_producto, -1)}
+                                    onClick={() => onCambiarCantidad(item.id, -1)}
                                     className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors"
                                 >
                                     <Minus size={12} className="text-slate-400" />
                                 </button>
                                 <span className="w-8 text-center font-black text-white">{item.cantidad}</span>
                                 <button
-                                    onClick={() => onCambiarCantidad(item.id_producto, +1)}
+                                    onClick={() => onCambiarCantidad(item.id, +1)}
                                     className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors"
                                 >
                                     <Plus size={12} className="text-slate-400" />
@@ -77,7 +77,7 @@ const MesaOrden = ({
                             <input
                                 type="text"
                                 value={item.comentarios}
-                                onChange={(e) => onCambiarComentario(item.id_producto, e.target.value)}
+                                onChange={(e) => onCambiarComentario(item.id, e.target.value)}
                                 placeholder="Comentarios..."
                                 className="w-full text-xs bg-slate-800/50 border border-slate-700/50 rounded-lg px-2 py-1.5 text-slate-300 placeholder:text-slate-600 outline-none focus:border-slate-500 transition-colors"
                             />
@@ -87,32 +87,27 @@ const MesaOrden = ({
             )}
         </div>
 
-        {/* Totales */}
-        <div className="space-y-2 pt-3 border-t border-slate-800">
-            <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Subtotal</span>
-                <span className="font-mono text-slate-300">${subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-                <span className="text-slate-500">IVA (16%)</span>
-                <span className="font-mono text-slate-300">${iva.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center pt-2 border-t border-slate-800">
+        {/* Total */}
+        <div className="pt-3 border-t border-slate-800">
+            <div className="flex justify-between items-center">
                 <span className="text-base font-bold text-slate-200">Total</span>
                 <span className={`text-xl font-black ${tema.text}`}>${total.toFixed(2)}</span>
             </div>
         </div>
 
-        {/* Botones de acción */}
+        {/* Botones */}
         <div className="space-y-2">
             <button
                 onClick={onActualizar}
                 disabled={carrito.length === 0}
                 className={`w-full px-4 py-3 rounded-xl ${tema.bg} ${tema.bgHover} text-slate-950 font-bold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed`}
             >
-                Actualizar Orden
+                {tieneOrden ? "Modificar Orden" : "Enviar Orden"}
             </button>
-            <button className="w-full px-4 py-3 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 text-green-500 font-bold text-sm transition-colors">
+            <button
+                onClick={onCerrar}
+                className="w-full px-4 py-3 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 text-green-500 font-bold text-sm transition-colors"
+            >
                 Cerrar y Cobrar
             </button>
         </div>

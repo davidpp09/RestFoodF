@@ -73,7 +73,7 @@ export const generarHTMLTicket = (ticket) => `
         <div class="line"></div>
         ${ticket.platillos?.map(p => `
             <div class="row">
-                <span>${p.cantidad}x ${p.nombreProducto}</span>
+                <span>${p.cantidad}x ${p.nombre_producto}</span>
                 <span>$${p.subtotal.toFixed(2)}</span>
             </div>
             ${p.comentarios ? `<div class="nota">(${p.comentarios})</div>` : ''}
