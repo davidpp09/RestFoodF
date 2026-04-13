@@ -1,6 +1,7 @@
 import { useMesasSala } from '../hooks/useMesasSala';
 import MesaAdmin from '../components/MesaAdmin';
 import StatCard from '../components/StatCard';
+import WsIndicador from '../components/WsIndicador';
 import { CheckCircle2, Clock, Utensils } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -8,6 +9,9 @@ const AdminPanel = () => {
 
     return (
         <>
+            <div className="flex justify-end mb-2">
+                <WsIndicador />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                 <StatCard color="blue"    label="Total"    value={stats.total}   icon={Utensils}      />
                 <StatCard color="red"     label="Ocupadas" value={stats.ocupadas} icon={Clock}         />

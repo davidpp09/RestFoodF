@@ -6,11 +6,7 @@ import { toast } from 'sonner';
 
 export const useMesasSala = () => {
     // Eliminamos localStorage por requerimiento de seguridad y para evitar datos stale (viejos)
-    const [mesas, setMesas] = useState(
-        Array.from({ length: 40 }, (_, i) => ({
-            id_mesa: i + 1, estado: "LIBRE", nombre_mesero: "", id_orden: null, platillos: []
-        }))
-    );
+    const [mesas, setMesas] = useState([]);
 
     // Carga inicial desde API
     useEffect(() => {

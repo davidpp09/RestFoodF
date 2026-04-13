@@ -3,6 +3,7 @@ import { cocinaService } from '../../services/cocinaService';
 import websocketService from '../../services/websocketService';
 import { toast } from 'sonner';
 import { UtensilsCrossed, CheckCircle2, Clock, ShoppingBag } from 'lucide-react';
+import WsIndicador from '../../components/WsIndicador';
 
 const PedidosPanel = () => {
     const [ordenes, setOrdenes] = useState([]);
@@ -60,14 +61,17 @@ const PedidosPanel = () => {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="bg-orange-500/20 p-3 rounded-xl border border-orange-500/30">
-                    <UtensilsCrossed className="text-orange-500" size={24} />
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="bg-orange-500/20 p-3 rounded-xl border border-orange-500/30">
+                        <UtensilsCrossed className="text-orange-500" size={24} />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-black text-white tracking-tight">Panel de Cocina</h1>
+                        <p className="text-slate-400 text-sm">Gestiona los pedidos entrantes</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-2xl font-black text-white tracking-tight">Panel de Cocina</h1>
-                    <p className="text-slate-400 text-sm">Gestiona los pedidos entrantes</p>
-                </div>
+                <WsIndicador />
             </div>
 
             {ordenes.length === 0 ? (

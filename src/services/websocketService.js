@@ -7,12 +7,21 @@ class WebSocketService {
         this.isConnected = false;
         this.pendingSubscriptions = [];
         this.connectionCount = 0;
+        this._statusListeners = [];
+    }
+
+    // — Estado de conexión —
+    _notificar(estado) {
+        this._statusListeners.forEach(fn => fn(estado));
+    }
+
+    onStatusChange(fn) {
+        this._statusListeners.push(fn);
+        return () => { this._statusListeners = this._statusListeners.filter(l => l !== fn); };
     }
 
     conectar(token) {
         this.connectionCount++;
-
-        // Si ya está activo, no crear otra conexión
         if (this.stompClient?.active) return;
 
         this.stompClient = new Client({
@@ -25,29 +34,31 @@ class WebSocketService {
             onConnect: () => {
                 console.log('✅ WebSocket conectado');
                 this.isConnected = true;
+                this._notificar('conectado');
                 this.pendingSubscriptions.forEach(({ topic, callback }) => {
                     this.stompClient.subscribe(topic, callback);
                 });
                 this.pendingSubscriptions = [];
             },
-            onStompError: (frame) => console.error('❌ Error STOMP:', frame.headers['message']),
+            onStompError: (frame) => {
+                console.error('❌ Error STOMP:', frame.headers['message']);
+                this._notificar('error');
+            },
             onWebSocketClose: () => {
                 console.log('🔌 WebSocket cerrado');
                 this.isConnected = false;
-            }
+                this._notificar('reconectando');
+            },
         });
 
         this.stompClient.activate();
+        this._notificar('reconectando');
     }
 
-    // Suscribirse a un topic independientemente
     subscribe(topic, callback) {
         const wrapped = (message) => {
-            try {
-                callback(JSON.parse(message.body));
-            } catch (error) {
-                console.error(`❌ Error procesando mensaje de ${topic}:`, error);
-            }
+            try { callback(JSON.parse(message.body)); }
+            catch (error) { console.error(`❌ Error procesando mensaje de ${topic}:`, error); }
         };
 
         if (this.isConnected) {
@@ -63,7 +74,8 @@ class WebSocketService {
             this.stompClient.deactivate();
             this.isConnected = false;
             this.connectionCount = 0;
-            this.pendingSubscriptions = []; // limpiar para evitar suscripciones duplicadas al reconectar
+            this.pendingSubscriptions = [];
+            this._notificar('desconectado');
             console.log('👋 WebSocket desconectado');
         }
     }

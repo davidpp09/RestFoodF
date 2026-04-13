@@ -8,11 +8,19 @@ import MesaAbrirOrden from './MesaAbrirOrden';
 import MesaCard from './MesaCard';
 import { useMesaCart } from '@/hooks/useMesaCart';
 
+const CACHE_TTL = 30_000; // 30 segundos
+
 const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada }) => {
     const { getUsuarioId } = useAuth();
     const [open, setOpen] = React.useState(false);
     const [turno, setTurno] = React.useState("comida");
     const [cargando, setCargando] = React.useState(false);
+
+    // Caché por instancia de mesa — se invalida cuando cambia idOrden
+    const cacheOrden = React.useRef({ timestamp: 0, data: null });
+    React.useEffect(() => {
+        cacheOrden.current = { timestamp: 0, data: null };
+    }, [idOrden]);
 
     const { 
         carrito, 
@@ -27,31 +35,43 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
         guardarCarrito
     } = useMesaCart(idOrden, turno);
 
-    // Cada vez que se abre el dialog → pregunta al back si hay orden
+    const aplicarRespuestaOrden = (resp) => {
+        if (resp?.id_orden) {
+            const initialCarrito = resp.platillos.map(p => ({
+                id_detalle:  p.id_detalle,
+                id:          p.id_producto,
+                id_producto: p.id_producto,
+                nombre:      p.nombre_producto,
+                precio:      p.precio_unitario,
+                cantidad:    p.cantidad,
+                comentarios: p.comentarios || "",
+            }));
+            guardarCarrito(resp.id_orden, initialCarrito);
+            onOrdenCreada(resp.id_orden);
+            setCarrito(initialCarrito);
+        }
+    };
+
+    // Cada vez que se abre el dialog → consulta la orden activa (con caché de 30 s)
     const handleOpenChange = (isOpen) => {
         setOpen(isOpen);
-        if (isOpen) {
-            const mesaId = mesa.id ?? mesa.id_mesa;
-            mesaService.obtenerOrdenActiva(mesaId)
-                .then(resp => {
-                    if (resp?.id_orden) {
-                        const initialCarrito = resp.platillos.map(p => ({
-                            id_detalle: p.id_detalle,
-                            id: p.id_producto,
-                            id_producto: p.id_producto,
-                            nombre: p.nombre_producto,
-                            precio: p.precio_unitario,
-                            cantidad: p.cantidad,
-                            comentarios: p.comentarios || "",
-                        }));
-                        
-                        guardarCarrito(resp.id_orden, initialCarrito);
-                        onOrdenCreada(resp.id_orden);
-                        setCarrito(initialCarrito);
-                    }
-                })
-                .catch(() => {});  // 404 = sin orden activa, no pasa nada
+        if (!isOpen) return;
+
+        const ahora = Date.now();
+        if (ahora - cacheOrden.current.timestamp < CACHE_TTL && cacheOrden.current.data) {
+            aplicarRespuestaOrden(cacheOrden.current.data);
+            return;
         }
+
+        const mesaId = mesa.id ?? mesa.id_mesa;
+        mesaService.obtenerOrdenActiva(mesaId)
+            .then(resp => {
+                cacheOrden.current = { timestamp: Date.now(), data: resp };
+                aplicarRespuestaOrden(resp);
+            })
+            .catch(() => {
+                cacheOrden.current = { timestamp: 0, data: null };
+            });
     };
 
     const cambiarTurno = (nuevoTurno) => {
