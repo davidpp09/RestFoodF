@@ -13,7 +13,7 @@ export const CONFIG_MENU = {
         { icono: Utensils, texto: 'Pedidos Cocina', ruta: '/cocina-panel' },
     ],
     REPARTIDOR: [
-        { icono: Package, texto: 'Entregas Pendientes', ruta: '/entregas'           },
+        { icono: Package, texto: 'Área de Entrega',      ruta: '/entregas'           },
         { icono: History, texto: 'Historial',           ruta: '/entregas/historial' },
     ],
 };

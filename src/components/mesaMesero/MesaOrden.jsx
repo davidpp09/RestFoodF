@@ -10,6 +10,8 @@ const MesaOrden = ({
     onCambiarComentario,
     onActualizar,
     onCerrar,
+    labelEnviar,
+    mostrarCerrar = true,
 }) => (
     <div className="flex flex-col h-full min-h-0 gap-4">
 
@@ -102,14 +104,16 @@ const MesaOrden = ({
                 disabled={carrito.length === 0}
                 className={`w-full px-4 py-3 rounded-xl ${tema.bg} ${tema.bgHover} text-slate-950 font-bold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed`}
             >
-                {tieneOrden ? "Modificar Orden" : "Enviar Orden"}
+                {labelEnviar ?? (tieneOrden ? "Modificar Orden" : "Enviar Orden")}
             </button>
-            <button
-                onClick={onCerrar}
-                className="w-full px-4 py-3 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 text-green-500 font-bold text-sm transition-colors"
-            >
-                Cerrar y Cobrar
-            </button>
+            {mostrarCerrar && (
+                <button
+                    onClick={onCerrar}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 text-green-500 font-bold text-sm transition-colors"
+                >
+                    Cerrar y Cobrar
+                </button>
+            )}
         </div>
     </div>
 );
