@@ -4,7 +4,7 @@ import { AccessDenied } from './AccessDenied';
 import { SUPER_ROLES } from '../constants/roles';
 
 const ProtectedRoute = ({ children, roleRequired }) => {
-    const token = localStorage.getItem('token_restfood');
+    const token = sessionStorage.getItem('token_restfood');
     if (!token) {
         return <Navigate to="/login" />;
     }

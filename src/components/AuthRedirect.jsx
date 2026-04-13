@@ -11,7 +11,7 @@ const AuthRedirect = () => {
     useEffect(() => {
         try {
 
-            const token = localStorage.getItem('token_restfood')
+            const token = sessionStorage.getItem('token_restfood')
             if (token) {
                 const decoded = jwtDecode(token);
                 const rol = decoded.role
@@ -21,7 +21,7 @@ const AuthRedirect = () => {
                 navigate('/login');
             }
         } catch (error) {
-            localStorage.removeItem('token_restfood');
+            sessionStorage.removeItem('token_restfood');
             toast.error('Sesión inválida o expirada');
             navigate('/login');
         }

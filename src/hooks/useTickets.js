@@ -1,26 +1,8 @@
-// src/hooks/useTickets.js
-// Hook de impresión de tickets — para usar en el panel de meseras
-import { useState, useEffect } from 'react';
-import websocketService from '../services/websocketService';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export const useTickets = () => {
     const [ticket, setTicket] = useState(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem('token_restfood');
-        if (!token) return;
-
-        websocketService.conectar(token);
-
-        websocketService.subscribe('/topic/tickets', (ticketRecibido) => {
-            console.log('🎫 Ticket recibido:', ticketRecibido);
-            setTicket(ticketRecibido);
-            toast.info(`Ticket listo — Mesa ${ticketRecibido.numeroMesa || 'Para llevar'}`);
-        });
-
-        return () => websocketService.desconectar();
-    }, []);
 
     const imprimirTicket = (ticketData = ticket) => {
         if (!ticketData) return;
@@ -42,7 +24,11 @@ export const useTickets = () => {
 
     const cerrarTicket = () => setTicket(null);
 
-    return { ticket, imprimirTicket, cerrarTicket };
+    const setTicketManual = (ticketData) => {
+        setTicket(ticketData);
+    };
+
+    return { ticket, imprimirTicket, cerrarTicket, setTicketManual };
 };
 
 // Generación del HTML del ticket (separado para poder reutilizarlo)

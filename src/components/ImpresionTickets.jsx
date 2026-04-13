@@ -1,17 +1,12 @@
 // src/components/ImpresionTickets.jsx
 // Componente de confirmación visual + impresión de tickets
-// Se monta en el panel de meseras cuando esté listo
-import { useTickets } from '../hooks/useTickets';
-
-const ImpresionTickets = () => {
-    const { ticket, imprimirTicket, cerrarTicket } = useTickets();
-
+const ImpresionTickets = ({ ticket, onImprimir, onCerrar }) => {
     if (!ticket) return null;
 
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-            onClick={cerrarTicket}
+            onClick={onCerrar}
         >
             <div
                 className="bg-white text-black rounded-xl shadow-2xl p-6 w-72 max-h-[90vh] overflow-y-auto"
@@ -66,13 +61,13 @@ const ImpresionTickets = () => {
                 <div className="flex gap-2 mt-4">
                     <button
                         className="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2 rounded-lg transition"
-                        onClick={() => imprimirTicket()}
+                        onClick={() => onImprimir()}
                     >
                         Imprimir
                     </button>
                     <button
                         className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 rounded-lg transition"
-                        onClick={cerrarTicket}
+                        onClick={onCerrar}
                     >
                         Cerrar
                     </button>

@@ -80,7 +80,7 @@ const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [] })
                                 <div className="divide-y divide-slate-800 border border-slate-800 rounded-2xl overflow-hidden max-h-[180px] overflow-y-auto custom-scrollbar">
                                     {platillos.map((p, i) => (
                                         <div key={i} className="flex justify-between items-center p-3.5 bg-slate-900/30">
-                                            <div className="flex items-center gap-3"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-orange-600/20 text-orange-500 text-[10px] font-black">{p.cantidad}</span><span className="text-sm font-medium text-slate-200">{p.nombre}</span></div>
+                                            <div className="flex items-center gap-3"><span className="flex items-center justify-center w-6 h-6 rounded-md bg-orange-600/20 text-orange-500 text-[10px] font-black">{p.cantidad}</span><span className="text-sm font-medium text-slate-200">{p.nombre_producto}</span></div>
                                         </div>
                                     ))}
                                 </div>

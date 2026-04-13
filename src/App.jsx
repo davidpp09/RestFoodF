@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import Login from "./pages/Login"
 import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -11,7 +10,9 @@ import PersonalPanel from './pages/personal/PersonalPanel';
 import ReportesPanel from './pages/reportes/ReportesPanel';
 import RestLayout from './components/RestLayout';
 import MeseroPanel from './pages/Mesas/MeseroPanel';
-import websocketService from './services/websocketService';
+import PedidosPanel from './pages/cocina/PedidosPanel';
+
+const RepartidorPanel = () => <div className="p-10"><h1>Panel de Repartidor (En construcción 🏗️)</h1></div>;
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -19,8 +20,7 @@ export default function App() {
   useEffect(() => {
     verifyLogin();
   }, []);
-  const PedidosPanel = () => <div className="p-10"><h1>Panel de Pedidos (En construcción 🏗️)</h1></div>;
-  const RepartidorPanel = () => <div className="p-10"><h1>Panel de Repartidor (En construcción 🏗️)</h1></div>;
+
   return (
     <>
       <Routes>
@@ -38,7 +38,7 @@ export default function App() {
         </Route>
 
         <Route path="/mesero" element={
-          <ProtectedRoute roleRequired={[ROLES.MESERO, SUPER_ROLES]}>
+          <ProtectedRoute roleRequired={[ROLES.MESERO, ...SUPER_ROLES]}>
             <RestLayout />
           </ProtectedRoute>
         }>
@@ -46,15 +46,19 @@ export default function App() {
         </Route>
 
         <Route path="/cocina-panel" element={
-          <ProtectedRoute roleRequired={ROLES.COCINA}>
-            <PedidosPanel />
+          <ProtectedRoute roleRequired={[ROLES.COCINA, ...SUPER_ROLES]}>
+            <RestLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<PedidosPanel />} />
+        </Route>
+
         <Route path="/entregas" element={
-          <ProtectedRoute roleRequired={ROLES.REPARTIDOR}>
+          <ProtectedRoute roleRequired={[ROLES.REPARTIDOR, ...SUPER_ROLES]}>
             <RepartidorPanel />
           </ProtectedRoute>
         } />
+        
         <Route path="/" element={<AuthRedirect />} />
         <Route path="*" element={<AuthRedirect />} />
       </Routes>

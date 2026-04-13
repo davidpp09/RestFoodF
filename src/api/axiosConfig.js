@@ -6,7 +6,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token_restfood');
+        const token = sessionStorage.getItem('token_restfood');
         if (token && config.url !== '/login') {            // Aquí es donde inyectamos el encabezado
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -19,8 +19,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401 && error.config?.url !== '/login') {
-            localStorage.removeItem('token_restfood');
+        if (error.response && (error.response.status === 401 || error.response.status === 403) && error.config?.url !== '/login') {
+            sessionStorage.removeItem('token_restfood');
             window.location.href = '/login';
         }
         return Promise.reject(error);

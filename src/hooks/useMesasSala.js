@@ -1,61 +1,75 @@
 // src/hooks/useMesasSala.js
 import { useState, useEffect, useMemo } from 'react';
 import websocketService from '../services/websocketService';
+import api from '../api/axiosConfig';
 import { toast } from 'sonner';
 
 export const useMesasSala = () => {
-    const STORAGE_KEY = 'admin_mesas_state';
-
-    const [mesas, setMesas] = useState(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try { return JSON.parse(saved); } catch (e) { console.error(e); }
-        }
-        return Array.from({ length: 40 }, (_, i) => ({
+    // Eliminamos localStorage por requerimiento de seguridad y para evitar datos stale (viejos)
+    const [mesas, setMesas] = useState(
+        Array.from({ length: 40 }, (_, i) => ({
             id_mesa: i + 1, estado: "LIBRE", nombre_mesero: "", id_orden: null, platillos: []
-        }));
-    });
+        }))
+    );
 
-    // Guardado automático en localStorage
+    // Carga inicial desde API
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(mesas));
-    }, [mesas]);
+        const cargarData = async () => {
+            try {
+                const response = await api.get('/mesas');
+                if (response.data) {
+                    setMesas(response.data);
+                }
+            } catch (error) {
+                console.error("Error cargando mesas admin:", error);
+            }
+        };
+        cargarData();
+    }, []);
 
     // Suscripciones WebSocket
     useEffect(() => {
-        const token = localStorage.getItem('token_restfood');
-        if (!token) return;
+        const token = sessionStorage.getItem('token_restfood');
+        if (token) {
+            websocketService.conectar(token);
 
-        websocketService.conectar(token); // incrementa contador (no abre nueva conexión si App ya la tiene)
-
-        // Actualizaciones de mesas en tiempo real
-        websocketService.subscribe('/topic/mesas', (mesaActualizada) => {
-            setMesas((prevMesas) => prevMesas.map((mesa) => {
-                if (mesaActualizada.id_mesa && mesa.id_mesa == mesaActualizada.id_mesa) {
-                    if (mesaActualizada.estado === 'OCUPADA' && mesa.estado === 'LIBRE') {
-                        return { ...mesa, ...mesaActualizada, platillos: [] };
+            // Actualizaciones de mesas en tiempo real
+            websocketService.subscribe('/topic/mesas', (aviso) => {
+                console.log("📺 [WS Admin] Recibido aviso:", aviso);
+                
+                setMesas((prevMesas) => prevMesas.map((mesa) => {
+                    const idRecibido = aviso.id_mesa || aviso.idMesa;
+                    
+                    if (idRecibido && mesa.id_mesa == idRecibido) {
+                        if (aviso.estado === 'LIBRE') {
+                            return { 
+                                ...mesa, 
+                                estado: 'LIBRE', 
+                                nombre_mesero: '', 
+                                id_orden: null, 
+                                platillos: [] 
+                            };
+                        }
+                        
+                        return { 
+                            ...mesa, 
+                            ...aviso, 
+                            platillos: aviso.platillos || mesa.platillos || []
+                        };
                     }
-                    if (mesaActualizada.estado === 'LIBRE') {
-                        return { ...mesa, estado: 'LIBRE', nombre_mesero: '', id_orden: null, platillos: [] };
-                    }
-                    return { ...mesa, ...mesaActualizada, platillos: mesaActualizada.platillos || mesa.platillos || [] };
-                }
-                // Actualización de platillos por orden (sin id_mesa)
-                if (!mesaActualizada.id_mesa && mesaActualizada.id_orden && mesa.id_orden == mesaActualizada.id_orden) {
-                    return { ...mesa, platillos: [...(mesa.platillos || []), ...(mesaActualizada.platillos || [])] };
-                }
-                return mesa;
-            }));
-        });
-
-        // Notificación no invasiva cuando se cierra una cuenta
-        websocketService.subscribe('/topic/tickets', (ticket) => {
-            const mesa = ticket.numeroMesa ? `Mesa ${ticket.numeroMesa}` : 'Para llevar';
-            toast.success(`Cuenta cerrada — ${mesa}`, {
-                description: `Orden #${ticket.id_orden} · ${ticket.nombre_mesero || 'Mesero'} · Total: $${ticket.total?.toFixed(2)}`,
-                duration: 5000,
+                    return mesa;
+                }));
             });
-        });
+
+            // Notificación no invasiva cuando se cierra una cuenta
+            websocketService.subscribe('/topic/tickets', (ticket) => {
+                const mesaStr = ticket.numeroMesa ? `Mesa ${ticket.numeroMesa}` : 'Para llevar';
+                toast.success(`Cuenta cerrada — ${mesaStr}`, {
+                    description: `Orden #${ticket.id_orden} · Total: $${ticket.total?.toFixed(2)}`,
+                    duration: 5000,
+                });
+            });
+        }
 
         return () => websocketService.desconectar();
     }, []);

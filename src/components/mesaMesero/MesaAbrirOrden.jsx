@@ -1,14 +1,7 @@
 import React from 'react';
-import { UtensilsCrossed, ShoppingBag, Loader2 } from 'lucide-react';
-
-const TIPOS = [
-    { valor: "LOZA",        label: "Comer aquí",   Icon: UtensilsCrossed },
-    { valor: "PARA_LLEVAR", label: "Para llevar",  Icon: ShoppingBag     },
-];
+import { Loader2 } from 'lucide-react';
 
 const MesaAbrirOrden = ({ mesa, turno, onCambiarTurno, onAbrir, cargando }) => {
-    const [tipo, setTipo] = React.useState("LOZA");
-
     return (
         /* Overlay centrado sobre el fondo difuminado */
         <div className="absolute inset-0 flex items-center justify-center z-10">
@@ -45,29 +38,9 @@ const MesaAbrirOrden = ({ mesa, turno, onCambiarTurno, onAbrir, cargando }) => {
                     </div>
                 </div>
 
-                {/* Selector de tipo */}
-                <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Tipo</p>
-                    <div className="flex gap-2">
-                        {TIPOS.map(({ valor, label, Icon }) => (
-                            <button
-                                key={valor}
-                                onClick={() => setTipo(valor)}
-                                className={`flex-1 flex flex-col items-center gap-2 py-3 px-4 rounded-xl border font-bold text-sm transition-all
-                                    ${tipo === valor
-                                        ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-400"
-                                        : "border-slate-700 bg-slate-800/50 text-slate-500 hover:text-slate-300 hover:border-slate-600"}`}
-                            >
-                                <Icon size={20} />
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
                 {/* Botón abrir */}
                 <button
-                    onClick={() => onAbrir(tipo)}
+                    onClick={() => onAbrir("LOZA")}
                     disabled={cargando}
                     className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >

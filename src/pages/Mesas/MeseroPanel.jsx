@@ -5,10 +5,14 @@ import MesaMesero from '@/components/mesaMesero/MesaMesero';
 import { ordenService } from '@/services/ordenService';
 import { toast } from 'sonner';
 import ImpresionTickets from '@/components/ImpresionTickets';
+import { useTickets } from '@/hooks/useTickets';
 
 const MeseroPanel = () => {
     const { mesas, cargando: cargandoMesas, actualizarMesa } = useMesas(1, 10);
     const { productos, cargando: cargandoProductos }          = useProductos();
+    
+    // Obtenemos el estado y funciones del ticket desde el hook
+    const { ticket, setTicketManual, imprimirTicket, cerrarTicket } = useTickets();
 
     const registrarOrden = (mesaId, idOrden) => {
         actualizarMesa(mesaId, { id_orden: idOrden, estado: 'OCUPADA' });
@@ -25,8 +29,13 @@ const MeseroPanel = () => {
 
         try {
             // Llamar al backend para cerrar la orden y liberar la mesa
-            await ordenService.cerrarOrden(idOrden);
-            // Actualizar estado local (aunque el WebSocket también lo hará)
+            const ticketData = await ordenService.cerrarOrden(idOrden);
+            
+            // ✅ MOSTRAR TICKET MANUALMENTE:
+            // Al no usar websockets en el mesero, activamos el modal con la respuesta directa del servidor
+            setTicketManual(ticketData);
+            
+            // Actualizar estado local
             actualizarMesa(mesaId, { id_orden: null, estado: 'LIBRE' });
             toast.success(`Mesa ${mesa.numero} cerrada correctamente`);
         } catch (error) {
@@ -57,8 +66,13 @@ const MeseroPanel = () => {
                 })}
             </div>
 
-            {/* Este componente escucha el WebSocket y muestra el ticket cuando llega */}
-            <ImpresionTickets />
+            {/* ✅ PASAMOS EL ESTADO DEL TICKET COMO PROPS:
+                Esto permite que el componente reaccione a la respuesta HTTP del cierre de orden */}
+            <ImpresionTickets 
+                ticket={ticket} 
+                onImprimir={imprimirTicket} 
+                onCerrar={cerrarTicket} 
+            />
         </div>
     );
 };

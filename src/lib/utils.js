@@ -27,6 +27,9 @@ export const CONFIG_MENU = {
     MESERO: [
         { icono: Utensils, texto: "Area de mesas", ruta: "/mesero" }
     ],
+    COCINA: [
+        { icono: Utensils, texto: "Pedidos Cocina", ruta: "/cocina-panel" }
+    ],
     REPARTIDOR: [
         { icono: Package, texto: "Entregas Pendientes", ruta: "/entregas" },
         { icono: History, texto: "Historial", ruta: "/entregas/historial" }

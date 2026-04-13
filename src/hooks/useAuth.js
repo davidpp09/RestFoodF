@@ -12,7 +12,7 @@ export const useAuth = () => {
         setLoading(true);
         try {
             const token = await authService.login(email, pass)
-            localStorage.setItem('token_restfood', token);
+            sessionStorage.setItem('token_restfood', token);
             const decoded = jwtDecode(token);
             const rol = decoded.role
             const destino = obtenerRutaPorRol(rol);
@@ -26,14 +26,14 @@ export const useAuth = () => {
         }
     };
     const logOut = () => {
-        localStorage.removeItem('token_restfood');
+        sessionStorage.removeItem('token_restfood');
         toast.success('Sesión finalizada');
         navigate('/login');
     };
 
     // En tu archivo src/hooks/useAuth.js
     const verifyLogin = () => {
-        const token = localStorage.getItem('token_restfood');
+        const token = sessionStorage.getItem('token_restfood');
         if (token) {
             try {
                 const decoded = jwtDecode(token);
@@ -44,14 +44,14 @@ export const useAuth = () => {
                 }
             } catch (error) {
                 // Si el token está mal formado, mejor limpiarlo
-                localStorage.removeItem('token_restfood');
+                sessionStorage.removeItem('token_restfood');
                 navigate('/login');
             }
         }
     };
     const roleLog = () => {
         try {
-            const token = localStorage.getItem('token_restfood');
+            const token = sessionStorage.getItem('token_restfood');
             const role = jwtDecode(token).role;
             return role;
         } catch (error) {
@@ -62,7 +62,7 @@ export const useAuth = () => {
     }
     const getUsuarioId = () => {
         try {
-            const token = localStorage.getItem('token_restfood');
+            const token = sessionStorage.getItem('token_restfood');
             return jwtDecode(token).id ?? null;
         } catch {
             return null;
