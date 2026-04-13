@@ -23,12 +23,17 @@ const PedidosPanel = () => {
         cargarOrdenes();
 
         const token = sessionStorage.getItem('token_restfood');
-        localStorage.removeItem('token_restfood'); 
 
         if (token) {
             websocketService.conectar(token);
             websocketService.subscribe('/topic/cocina', (mensaje) => {
                 console.log("🔥 [WS Cocina] Recibido mensaje:", mensaje);
+                // Mesa cerrada: quitar la orden del panel sin importar si se marcó como lista
+                if (mensaje.accion === 'CERRADA') {
+                    setOrdenes(prev => prev.filter(o => o.id_orden !== mensaje.id_orden));
+                    return;
+                }
+                // Nuevo pedido o modificación: recargar la lista
                 if (mensaje.platillos && mensaje.platillos.length > 0) {
                     cargarOrdenes();
                     toast.info(`Nuevo ticket recibido - Orden #${mensaje.id_orden}`);

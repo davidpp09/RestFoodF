@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
 export const useTickets = () => {
     const [ticket, setTicket] = useState(null);
 
-    const imprimirTicket = (ticketData = ticket) => {
-        if (!ticketData) return;
+    const imprimirTicket = useCallback((ticketData) => {
+        const data = ticketData ?? ticket;
+        if (!data) return;
 
         const ventana = window.open('', '_blank', 'width=320,height=650');
         if (!ventana) {
@@ -13,20 +14,20 @@ export const useTickets = () => {
             return;
         }
 
-        ventana.document.write(generarHTMLTicket(ticketData));
+        ventana.document.write(generarHTMLTicket(data));
         ventana.document.close();
 
         setTimeout(() => {
             ventana.print();
             setTimeout(() => ventana.close(), 1000);
         }, 500);
-    };
+    }, [ticket]);
 
-    const cerrarTicket = () => setTicket(null);
+    const cerrarTicket = useCallback(() => setTicket(null), []);
 
-    const setTicketManual = (ticketData) => {
+    const setTicketManual = useCallback((ticketData) => {
         setTicket(ticketData);
-    };
+    }, []);
 
     return { ticket, imprimirTicket, cerrarTicket, setTicketManual };
 };

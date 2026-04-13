@@ -59,14 +59,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         }
     };
 
-    const handleCerrar = async () => {
-        if (idOrden) {
-            try {
-                await handleActualizar();
-            } catch {
-                return; // Si falla el guardado, no cerramos
-            }
-        }
+    const handleCerrar = () => {
         onOrdenCerrada();
     };
 

@@ -1,11 +1,12 @@
-// src/components/ImpresionTickets.jsx
+import { memo } from 'react';
+
 // Componente de confirmación visual + impresión de tickets
-const ImpresionTickets = ({ ticket, onImprimir, onCerrar }) => {
+const ImpresionTickets = memo(({ ticket, onImprimir, onCerrar }) => {
     if (!ticket) return null;
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md"
             onClick={onCerrar}
         >
             <div
@@ -25,7 +26,7 @@ const ImpresionTickets = ({ ticket, onImprimir, onCerrar }) => {
                     <div><strong>Orden:</strong> #{ticket.id_orden}</div>
                     <div><strong>Mesa:</strong> {ticket.numeroMesa || 'Para Llevar'}</div>
                     <div><strong>Tipo:</strong> {ticket.tipoOrden}</div>
-                    <div><strong>Fecha:</strong> {new Date(ticket.fechaCierre).toLocaleString('es-MX')}</div>
+                    <div><strong>Fecha:</strong> {ticket.fechaCierre ? new Date(ticket.fechaCierre).toLocaleString('es-MX') : 'N/A'}</div>
                 </div>
 
                 <hr className="border-dashed border-black mb-2" />
@@ -38,7 +39,7 @@ const ImpresionTickets = ({ ticket, onImprimir, onCerrar }) => {
                         <div key={i}>
                             <div className="flex justify-between">
                                 <span>{p.cantidad}x {p.nombre_producto}</span>
-                                <span>${p.subtotal.toFixed(2)}</span>
+                                <span>${Number(p.subtotal || 0).toFixed(2)}</span>
                             </div>
                             {p.comentarios && (
                                 <div className="text-gray-500 ml-4">({p.comentarios})</div>
@@ -50,7 +51,7 @@ const ImpresionTickets = ({ ticket, onImprimir, onCerrar }) => {
                 <hr className="border-dashed border-black mb-2" />
                 <div className="flex justify-between font-bold text-base mb-1">
                     <span>TOTAL:</span>
-                    <span>${ticket.total.toFixed(2)}</span>
+                    <span>${Number(ticket.total || 0).toFixed(2)}</span>
                 </div>
                 <hr className="border-dashed border-black mb-3" />
 
@@ -75,6 +76,8 @@ const ImpresionTickets = ({ ticket, onImprimir, onCerrar }) => {
             </div>
         </div>
     );
-};
+});
+
+ImpresionTickets.displayName = 'ImpresionTickets';
 
 export default ImpresionTickets;

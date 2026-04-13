@@ -28,15 +28,16 @@ const MeseroPanel = () => {
         }
 
         try {
-            // Llamar al backend para cerrar la orden y liberar la mesa
+            console.log("💳 Iniciando proceso de cobro...");
             const ticketData = await ordenService.cerrarOrden(idOrden);
+            console.log("✅ Servidor respondió con ticket:", ticketData);
             
-            // ✅ MOSTRAR TICKET MANUALMENTE:
-            // Al no usar websockets en el mesero, activamos el modal con la respuesta directa del servidor
-            setTicketManual(ticketData);
-            
-            // Actualizar estado local
+            // 1. Liberar la mesa en el mapa visual
             actualizarMesa(mesaId, { id_orden: null, estado: 'LIBRE' });
+
+            // 2. Mostrar el ticket para impresión
+            setTicketManual(ticketData);
+
             toast.success(`Mesa ${mesa.numero} cerrada correctamente`);
         } catch (error) {
             const mensaje = error.response?.data?.mensaje || "Error al cerrar la mesa";
@@ -66,9 +67,7 @@ const MeseroPanel = () => {
                 })}
             </div>
 
-            {/* ✅ PASAMOS EL ESTADO DEL TICKET COMO PROPS:
-                Esto permite que el componente reaccione a la respuesta HTTP del cierre de orden */}
-            <ImpresionTickets 
+            <ImpresionTickets
                 ticket={ticket} 
                 onImprimir={imprimirTicket} 
                 onCerrar={cerrarTicket} 
