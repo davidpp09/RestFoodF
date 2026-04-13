@@ -1,12 +1,5 @@
-import { Plus, UtensilsCrossed, Star, Fish, GlassWater, Cookie, Search, X } from 'lucide-react';
-
-const CATEGORIA_ICON = {
-    "Comida":         UtensilsCrossed,
-    "Especialidades": Star,
-    "Mariscos":       Fish,
-    "Bebidas":        GlassWater,
-    "Antojitos":      Cookie,
-};
+import { Plus, UtensilsCrossed, Search, X } from 'lucide-react';
+import { CATEGORIA_ICON } from './constants';
 
 const MesaMenu = ({
     productosFiltrados,

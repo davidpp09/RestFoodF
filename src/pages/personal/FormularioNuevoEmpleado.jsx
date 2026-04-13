@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Eye, EyeOff } from "lucide-react";
-
-const ROLES = ["ADMIN", "MESERO", "COCINA", "CAJERO", "REPARTIDOR"];
+import { ROLES_FORM } from "@/constants/roles";
 
 const Campo = ({ label, id, error, type, ...props }) => {
     const [mostrar, setMostrar] = useState(false);
@@ -77,7 +76,7 @@ const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
                                 <SelectValue placeholder="Selecciona un rol" />
                             </SelectTrigger>
                             <SelectContent className="bg-slate-900 border-slate-800 text-white">
-                                {ROLES.map(rol => (
+                                {ROLES_FORM.map(rol => (
                                     <SelectItem key={rol} value={rol}>{rol}</SelectItem>
                                 ))}
                             </SelectContent>

@@ -1,3 +1,13 @@
+import { UtensilsCrossed, Star, Fish, GlassWater, Cookie } from 'lucide-react';
+
+export const CATEGORIA_ICON = {
+    'Comida':         UtensilsCrossed,
+    'Especialidades': Star,
+    'Mariscos':       Fish,
+    'Bebidas':        GlassWater,
+    'Antojitos':      Cookie,
+};
+
 export const TEMAS_MESA = {
     comida: {
         bg: "bg-cyan-500",

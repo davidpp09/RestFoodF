@@ -1,37 +1,21 @@
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge"
-import { ROLES, SUPER_ROLES } from '../constants/roles';
-import { LayoutDashboard, Users, TrendingUp, History, Package, Utensils } from "lucide-react";
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { ROLES } from '../constants/roles';
 
 export function cn(...inputs) {
     return twMerge(clsx(inputs));
 }
 
 export const obtenerRutaPorRol = (rol) => {
-    const rutasPorRol = {
-        [ROLES.DEV]: "/admin",
-        [ROLES.ADMIN]: "/admin",
-        [ROLES.MESERO]: "/mesero",
-        [ROLES.COCINA]: "/cocina-panel",
-        [ROLES.REPARTIDOR]: "/entregas"
+    const rutas = {
+        [ROLES.DEV]:        '/admin',
+        [ROLES.ADMIN]:      '/admin',
+        [ROLES.MESERO]:     '/mesero',
+        [ROLES.COCINA]:     '/cocina-panel',
+        [ROLES.REPARTIDOR]: '/entregas',
     };
-    return rutasPorRol[rol] || "/login";
+    return rutas[rol] ?? '/login';
 };
 
-export const CONFIG_MENU = {
-    SUPER_ROLES: [
-        { icono: LayoutDashboard, texto: "Panel de Mesas", ruta: "/admin" },
-        { icono: Users, texto: "Personal", ruta: "/admin/personal" },
-        { icono: TrendingUp, texto: "Reportes", ruta: "/admin/reportes" }
-    ],
-    MESERO: [
-        { icono: Utensils, texto: "Area de mesas", ruta: "/mesero" }
-    ],
-    COCINA: [
-        { icono: Utensils, texto: "Pedidos Cocina", ruta: "/cocina-panel" }
-    ],
-    REPARTIDOR: [
-        { icono: Package, texto: "Entregas Pendientes", ruta: "/entregas" },
-        { icono: History, texto: "Historial", ruta: "/entregas/historial" }
-    ]
-}
+export const formatearDinero = (cantidad) =>
+    new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(cantidad);
