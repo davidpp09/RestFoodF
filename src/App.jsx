@@ -11,8 +11,8 @@ import ReportesPanel from './pages/reportes/ReportesPanel';
 import RestLayout from './components/RestLayout';
 import MeseroPanel from './pages/Mesas/MeseroPanel';
 import PedidosPanel from './pages/cocina/PedidosPanel';
-
-const RepartidorPanel = () => <div className="p-10"><h1>Panel de Repartidor (En construcción 🏗️)</h1></div>;
+import EntregasPanel from './pages/entregas/EntregasPanel';
+import HistorialPanel from './pages/entregas/HistorialPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -55,9 +55,12 @@ export default function App() {
 
         <Route path="/entregas" element={
           <ProtectedRoute roleRequired={[ROLES.REPARTIDOR, ...SUPER_ROLES]}>
-            <RepartidorPanel />
+            <RestLayout />
           </ProtectedRoute>
-        } />
+        }>
+          <Route index element={<EntregasPanel />} />
+          <Route path="historial" element={<HistorialPanel />} />
+        </Route>
         
         <Route path="/" element={<AuthRedirect />} />
         <Route path="*" element={<AuthRedirect />} />

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, TrendingUp, Package, Utensils } from 'lucide-react';
+import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History } from 'lucide-react';
 
 export const CONFIG_MENU = {
     SUPER_ROLES: [
@@ -13,7 +13,7 @@ export const CONFIG_MENU = {
         { icono: Utensils, texto: 'Pedidos Cocina', ruta: '/cocina-panel' },
     ],
     REPARTIDOR: [
-        { icono: Package, texto: 'Entregas Pendientes', ruta: '/entregas'          },
-        { icono: Package, texto: 'Historial',           ruta: '/entregas/historial' },
+        { icono: Package, texto: 'Entregas Pendientes', ruta: '/entregas'           },
+        { icono: History, texto: 'Historial',           ruta: '/entregas/historial' },
     ],
 };
