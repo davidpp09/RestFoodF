@@ -39,9 +39,9 @@ const ReportesPanel = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard color="emerald" label="Total General"  value={formatearDinero(datos.totalGeneral)}  icon={DollarSign}     />
-                <StatCard color="amber"   label="Desayuno"       value={formatearDinero(datos.totalDesayuno)} icon={UtensilsCrossed} />
-                <StatCard color="orange"  label="Comida"         value={formatearDinero(datos.totalComida)}   icon={UtensilsCrossed} />
+                <StatCard color="emerald" label="Total General" value={formatearDinero(datos.totalGeneral)} icon={DollarSign} />
+                <StatCard color="amber" label="Desayuno" value={formatearDinero(datos.totalDesayuno)} icon={UtensilsCrossed} />
+                <StatCard color="orange" label="Comida" value={formatearDinero(datos.totalComida)} icon={UtensilsCrossed} />
                 <StatCard
                     color="blue"
                     label="Total Platillos"

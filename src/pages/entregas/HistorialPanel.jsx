@@ -5,6 +5,7 @@ import { ordenService } from '@/services/ordenService';
 
 const ESTATUS_CONFIG = {
     PREPARANDO: { icono: Clock,        color: 'text-amber-400',   bg: 'bg-amber-500/10',   borde: 'border-amber-500/20',   label: 'En Cocina'  },
+    SERVIDO:    { icono: Package,      color: 'text-cyan-400',    bg: 'bg-cyan-500/10',    borde: 'border-cyan-500/20',    label: 'Lista/Para llevar'  },
     PAGADA:     { icono: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', borde: 'border-emerald-500/20', label: 'Entregada'  },
 };
 
@@ -70,8 +71,8 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
                 <span className="text-lg font-black text-white">${Number(entrega.total).toFixed(2)}</span>
             </div>
 
-            {/* Botón entregar — solo visible si aún está en cocina */}
-            {entrega.estatus === 'PREPARANDO' && (
+            {/* Botón entregar — visible si aún no está entregada */}
+            {entrega.estatus !== 'PAGADA' && (
                 <div className="px-4 pb-4 pt-2">
                     <button
                         onClick={handleEntregar}
