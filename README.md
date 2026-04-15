@@ -1,16 +1,39 @@
-# React + Vite
+# 💻 RestFood Frontend - Panel de Control Moderno
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz de usuario moderna, rápida y reactiva para la gestión integral de un restaurante. Diseñada para funcionar en desktops y tablets.
 
-Currently, two official plugins are available:
+## 🎨 Características Principales
+*   **Panel de Mesas:** Gestión visual de ocupación y pedidos en tiempo real.
+*   **Panel de Cocina:** Recepción inmediata de pedidos mediante WebSockets.
+*   **Panel Administrativo:** Control total de productos, categorías y personal.
+*   **Reportes Dinámicos:** Gráficas de ventas y rendimiento de empleados.
+*   **Gestión de Entregas:** Control de platillos del día y estados de entrega.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ⚡ Tecnologías Utilizadas
+*   **React (Vite)**
+*   **Tailwind CSS:** Diseño moderno y responsivo.
+*   **Shadcn UI:** Componentes de interfaz de alta calidad.
+*   **Axios:** Comunicación con la API.
+*   **Lucide React:** Iconografía profesional.
+*   **SockJS & STOMP:** Comunicación bidireccional en tiempo real.
+*   **Sonner:** Notificaciones interactivas.
 
-## React Compiler
+## ⚙️ Configuración
+1.  Crea un archivo `.env` en la raíz del proyecto.
+2.  Define la URL de tu API:
+    ```env
+    VITE_API_BASE_URL=http://localhost:8080
+    ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Instalación y Ejecución
+1.  Instala las dependencias:
+    ```bash
+    npm install
+    ```
+2.  Inicia el servidor de desarrollo:
+    ```bash
+    npm run dev
+    ```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📱 Notas de Despliegue
+El frontend es agnóstico al entorno. Al cambiar la URL en el archivo `.env`, tanto las peticiones HTTP como la conexión de WebSockets se ajustarán automáticamente al nuevo servidor.
