@@ -20,4 +20,8 @@ export const ordenService = {
         const response = await api.get('/ordenes/entregas/hoy');
         return response.data;
     },
+
+    reenviarACocina: async (idOrden) => {
+        await api.post(`/ordenes/${idOrden}/reenviar-cocina`);
+    },
 };

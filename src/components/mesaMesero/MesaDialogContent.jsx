@@ -65,6 +65,15 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         onOrdenCerrada();
     };
 
+    const handleReenviarCocina = async () => {
+        try {
+            await ordenService.reenviarACocina(idOrden);
+            toast.success("Orden reenviada a cocina");
+        } catch {
+            toast.error("Error al reenviar a cocina");
+        }
+    };
+
     return (
         <div className="flex flex-col h-full min-h-0">
             <MesaDialogHeader mesa={mesa} tema={tema} numeroComanda={numeroComanda} />
@@ -91,6 +100,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                     onCambiarComentario={onCambiarComentario}
                     onActualizar={handleActualizar}
                     onCerrar={handleCerrar}
+                    onReenviarCocina={handleReenviarCocina}
                     tiempos={tiempos}
                     onCambiarCantidadTiempo={cambiarCantidadTiempo}
                 />

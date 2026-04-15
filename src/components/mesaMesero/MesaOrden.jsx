@@ -1,4 +1,4 @@
-import { Utensils, Plus, Minus, Trash2, MessageSquare } from 'lucide-react';
+import { Utensils, Plus, Minus, Trash2, MessageSquare, RefreshCw } from 'lucide-react';
 import TiemposSection from './TiemposSection';
 
 const MesaOrden = ({
@@ -11,6 +11,7 @@ const MesaOrden = ({
     onCambiarComentario,
     onActualizar,
     onCerrar,
+    onReenviarCocina,
     labelEnviar,
     mostrarCerrar = true,
     tiempos,
@@ -123,6 +124,15 @@ const MesaOrden = ({
                     className="w-full px-4 py-3 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 text-green-500 font-bold text-sm transition-colors"
                 >
                     Cerrar y Cobrar
+                </button>
+            )}
+            {tieneOrden && onReenviarCocina && (
+                <button
+                    onClick={onReenviarCocina}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-bold text-sm transition-colors flex items-center justify-center gap-2"
+                >
+                    <RefreshCw size={14} />
+                    Reenviar a Cocina
                 </button>
             )}
         </div>
