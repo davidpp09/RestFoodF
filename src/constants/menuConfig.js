@@ -19,7 +19,8 @@ export const CONFIG_MENU = {
         { icono: Utensils, texto: 'Pedidos Cocina', ruta: '/cocina-panel' },
     ],
     REPARTIDOR: [
-        { icono: Package, texto: 'Área de Entrega', ruta: '/entregas'           },
-        { icono: History, texto: 'Historial',       ruta: '/entregas/historial' },
+        { icono: Package, texto: 'Área de Entrega',    ruta: '/entregas'           },
+        { icono: History, texto: 'Historial',           ruta: '/entregas/historial' },
+        { icono: Utensils, texto: 'Platillos del Día', ruta: '/entregas/dia'       },
     ],
 };

@@ -24,8 +24,10 @@ class WebSocketService {
         this.connectionCount++;
         if (this.stompClient?.active) return;
 
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
         this.stompClient = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws-restfood'),
+            webSocketFactory: () => new SockJS(`${baseUrl}/ws-restfood`),
             connectHeaders: { 'Authorization': `Bearer ${token}` },
             debug: (str) => {
                 if (str.includes('CONNECTED') || str.includes('DISCONNECT')) console.log(str);

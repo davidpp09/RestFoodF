@@ -64,9 +64,13 @@ const FormDialog = ({ producto, categorias, onGuardar, onCerrar }) => {
                         <div>
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Precio Comida</label>
                             <input
-                                type="number" min="0" step="0.50"
+                                type="text"
+                                inputMode="decimal"
                                 value={form.precio_comida}
-                                onChange={e => set('precio_comida', e.target.value)}
+                                onChange={e => {
+                                    const val = e.target.value.replace(/[^0-9.]/g, '');
+                                    set('precio_comida', val);
+                                }}
                                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500 transition-colors"
                                 placeholder="0.00"
                             />
@@ -74,9 +78,13 @@ const FormDialog = ({ producto, categorias, onGuardar, onCerrar }) => {
                         <div>
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Precio Desayuno</label>
                             <input
-                                type="number" min="0" step="0.50"
+                                type="text"
+                                inputMode="decimal"
                                 value={form.precio_desayuno}
-                                onChange={e => set('precio_desayuno', e.target.value)}
+                                onChange={e => {
+                                    const val = e.target.value.replace(/[^0-9.]/g, '');
+                                    set('precio_desayuno', val);
+                                }}
                                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500 transition-colors"
                                 placeholder="0.00"
                             />

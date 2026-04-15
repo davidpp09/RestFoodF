@@ -14,6 +14,7 @@ import MeseroPanel from './pages/Mesas/MeseroPanel';
 import PedidosPanel from './pages/cocina/PedidosPanel';
 import EntregasPanel from './pages/entregas/EntregasPanel';
 import HistorialPanel from './pages/entregas/HistorialPanel';
+import PlatillosDiaPanel from './pages/entregas/PlatillosDiaPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -66,6 +67,7 @@ export default function App() {
         }>
           <Route index element={<EntregasPanel />} />
           <Route path="historial" element={<HistorialPanel />} />
+          <Route path="dia" element={<PlatillosDiaPanel />} />
         </Route>
         
         <Route path="/" element={<AuthRedirect />} />
