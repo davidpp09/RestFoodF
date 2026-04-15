@@ -20,7 +20,8 @@ const ESTADO_INICIAL = {
     nombre: "",
     email: "",
     contrasena: "",
-    rol: ""
+    rol: "",
+    seccion: null
 };
 
 export const useFormEmpleado = () => {
@@ -34,8 +35,13 @@ export const useFormEmpleado = () => {
     };
 
     const actualizarRol = (valor) => {
-        setNuevoUsuario(prev => ({ ...prev, rol: valor }));
+        setNuevoUsuario(prev => ({ ...prev, rol: valor, seccion: null }));
         if (errores.rol) setErrores(prev => ({ ...prev, rol: null }));
+    };
+
+    const actualizarSeccion = (valor) => {
+        setNuevoUsuario(prev => ({ ...prev, seccion: valor }));
+        if (errores.seccion) setErrores(prev => ({ ...prev, seccion: null }));
     };
 
     const validar = () => {
@@ -44,6 +50,9 @@ export const useFormEmpleado = () => {
             const error = VALIDACIONES[campo](nuevoUsuario[campo]);
             if (error) nuevosErrores[campo] = error;
         });
+        if (nuevoUsuario.rol === 'MESERO' && !nuevoUsuario.seccion) {
+            nuevosErrores.seccion = "Debes asignar una sección al mesero";
+        }
         return nuevosErrores;
     };
 
@@ -70,5 +79,5 @@ export const useFormEmpleado = () => {
         }
     };
 
-    return { nuevoUsuario, manejarCambio, actualizarRol, guardar, errores };
+    return { nuevoUsuario, manejarCambio, actualizarRol, actualizarSeccion, guardar, errores };
 };

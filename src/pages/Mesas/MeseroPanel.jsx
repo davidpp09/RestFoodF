@@ -1,14 +1,22 @@
 import React from 'react';
 import { useMesas } from '@/hooks/useMesas';
 import { useProductos } from '@/hooks/useProductos';
+import { useAuth } from '@/hooks/useAuth';
 import MesaMesero from '@/components/mesaMesero/MesaMesero';
 import { ordenService } from '@/services/ordenService';
 import { toast } from 'sonner';
 import ImpresionTickets from '@/components/ImpresionTickets';
 import { useTickets } from '@/hooks/useTickets';
 
+const MESAS_POR_SECCION = 10;
+
 const MeseroPanel = () => {
-    const { mesas, cargando: cargandoMesas, actualizarMesa } = useMesas(1, 10);
+    const { getSeccion } = useAuth();
+    const seccion = getSeccion() ?? 1;
+    const mesaInicio = (seccion - 1) * MESAS_POR_SECCION + 1;
+    const mesaFin    = seccion * MESAS_POR_SECCION;
+
+    const { mesas, cargando: cargandoMesas, actualizarMesa } = useMesas(mesaInicio, mesaFin);
     const { productos, cargando: cargandoProductos }          = useProductos();
     
     // Obtenemos el estado y funciones del ticket desde el hook

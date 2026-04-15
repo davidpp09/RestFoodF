@@ -38,7 +38,7 @@ const Campo = ({ label, id, error, type, ...props }) => {
 
 const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
     const [dialogAbierto, setDialogAbierto] = useState(false);
-    const { nuevoUsuario, manejarCambio, actualizarRol, guardar, errores } = useFormEmpleado();
+    const { nuevoUsuario, manejarCambio, actualizarRol, actualizarSeccion, guardar, errores } = useFormEmpleado();
 
     const manejarGuardado = async () => {
         const exito = await guardar();
@@ -83,6 +83,24 @@ const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
                         </Select>
                         {errores.rol && <span className="text-xs text-red-500 font-medium">{errores.rol}</span>}
                     </div>
+
+                    {nuevoUsuario.rol === 'MESERO' && (
+                        <div className="grid gap-2">
+                            <Label className={errores.seccion && "text-red-500"}>Sección de mesas</Label>
+                            <Select value={nuevoUsuario.seccion?.toString() ?? ""} onValueChange={(v) => actualizarSeccion(Number(v))}>
+                                <SelectTrigger className={`bg-slate-950 ${errores.seccion ? "border-red-500 focus:ring-red-500" : "border-slate-800"}`}>
+                                    <SelectValue placeholder="Selecciona la sección" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                                    <SelectItem value="1">Sección 1 — Mesas 1 al 10</SelectItem>
+                                    <SelectItem value="2">Sección 2 — Mesas 11 al 20</SelectItem>
+                                    <SelectItem value="3">Sección 3 — Mesas 21 al 30</SelectItem>
+                                    <SelectItem value="4">Sección 4 — Mesas 31 al 40</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            {errores.seccion && <span className="text-xs text-red-500 font-medium">{errores.seccion}</span>}
+                        </div>
+                    )}
                 </div>
 
                 <Button onClick={manejarGuardado} className="bg-orange-600 hover:bg-orange-700 w-full mt-2">

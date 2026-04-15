@@ -69,12 +69,22 @@ export const useAuth = () => {
         }
     };
 
+    const getSeccion = () => {
+        try {
+            const token = sessionStorage.getItem('token_restfood');
+            return jwtDecode(token).seccion ?? null;
+        } catch {
+            return null;
+        }
+    };
+
     return {
         loginUser,
         logOut,
         verifyLogin,
         roleLog,
         getUsuarioId,
+        getSeccion,
         loading
     };
 };
