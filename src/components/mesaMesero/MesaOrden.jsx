@@ -1,4 +1,5 @@
 import { Utensils, Plus, Minus, Trash2, MessageSquare } from 'lucide-react';
+import TiemposSection from './TiemposSection';
 
 const MesaOrden = ({
     carrito,
@@ -12,6 +13,8 @@ const MesaOrden = ({
     onCerrar,
     labelEnviar,
     mostrarCerrar = true,
+    tiempos,
+    onCambiarCantidadTiempo,
 }) => (
     <div className="flex flex-col h-full min-h-0 gap-4">
 
@@ -29,7 +32,7 @@ const MesaOrden = ({
         </div>
 
         {/* Lista de items */}
-        <div className="space-y-2 flex-1 min-h-0 overflow-y-auto pr-2">
+        <div className="space-y-2 flex-1 min-h-0 overflow-y-auto custom-scrollbar">
             {carrito.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-slate-600 py-8">
                     <Utensils size={28} className="mb-2 opacity-30" />
@@ -88,6 +91,14 @@ const MesaOrden = ({
                 ))
             )}
         </div>
+
+        {/* Tiempos — solo mesero */}
+        {tiempos && (
+            <TiemposSection
+                tiempos={tiempos}
+                onCambiarCantidad={onCambiarCantidadTiempo}
+            />
+        )}
 
         {/* Total */}
         <div className="pt-3 border-t border-slate-800">

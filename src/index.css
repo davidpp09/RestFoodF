@@ -7,7 +7,10 @@
 
 .custom-scrollbar::-webkit-scrollbar {
   display: none;
-  /* 3. Para Brave, Chrome, Safari, Opera y Edge nuevo */
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 @theme inline {

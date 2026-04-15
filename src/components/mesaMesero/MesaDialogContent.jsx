@@ -2,6 +2,7 @@ import React from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { ordenService } from '@/services/ordenService';
+import { useTiempos } from '@/hooks/useTiempos';
 import MesaDialogHeader from './MesaDialogHeader';
 import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
@@ -10,6 +11,7 @@ import { TEMAS_MESA } from './constants';
 const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
     const { getUsuarioId } = useAuth();
     const tema = TEMAS_MESA[turno];
+    const { tiempos, cambiarCantidad: cambiarCantidadTiempo } = useTiempos(idOrden);
 
     const categorias = React.useMemo(
         () => [...new Set(productos.map(p => p.categoria.nombre))],
@@ -89,6 +91,8 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                     onCambiarComentario={onCambiarComentario}
                     onActualizar={handleActualizar}
                     onCerrar={handleCerrar}
+                    tiempos={tiempos}
+                    onCambiarCantidadTiempo={cambiarCantidadTiempo}
                 />
             </div>
         </div>
