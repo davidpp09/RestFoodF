@@ -20,7 +20,7 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
         try {
             await ordenService.cerrarOrden(entrega.id_orden);
             onEntregar(entrega.id_orden);
-            toast.success(`Orden #${entrega.id_orden} marcada como entregada`);
+            toast.success(`Comanda #${entrega.numero_comanda ?? entrega.id_orden} marcada como entregada`);
         } catch {
             toast.error('Error al marcar la orden como entregada');
         } finally {
@@ -33,8 +33,8 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
             {/* Header */}
             <div className="bg-slate-800 px-4 py-3 flex items-center justify-between border-b border-slate-700">
                 <div>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Orden</p>
-                    <p className="text-xl font-black text-white">#{entrega.id_orden}</p>
+                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Comanda</p>
+                    <p className="text-xl font-black text-white">#{entrega.numero_comanda ?? entrega.id_orden}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                     <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.borde}`}>

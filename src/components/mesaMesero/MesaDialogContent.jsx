@@ -7,7 +7,7 @@ import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
 import { TEMAS_MESA } from './constants';
 
-const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, onOrdenCerrada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
+const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
     const { getUsuarioId } = useAuth();
     const tema = TEMAS_MESA[turno];
 
@@ -65,7 +65,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
 
     return (
         <div className="flex flex-col h-full min-h-0">
-            <MesaDialogHeader mesa={mesa} tema={tema} />
+            <MesaDialogHeader mesa={mesa} tema={tema} numeroComanda={numeroComanda} />
 
             <div className="grid grid-cols-[1.5fr_1fr] gap-6 pt-6 flex-1 min-h-0">
                 <MesaMenu

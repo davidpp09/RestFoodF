@@ -60,6 +60,7 @@ const EntregasPanel = () => {
     const [open, setOpen] = useState(false);
     const [turno, setTurno] = useState('comida');
     const [idOrden, setIdOrden] = useState(null);
+    const [numeroComanda, setNumeroComanda] = useState(null);
     const [cargando, setCargando] = useState(false);
     const [categoriaActiva, setCategoriaActiva] = useState('');
     const [busqueda, setBusqueda] = useState('');
@@ -80,11 +81,12 @@ const EntregasPanel = () => {
     const abrirOrden = async () => {
         setCargando(true);
         try {
-            const id = await ordenService.abrirOrdenSinMesa({
+            const { id_orden, numero_comanda } = await ordenService.abrirOrdenSinMesa({
                 id_usuario: getUsuarioId(),
                 servicio: turno === 'comida' ? 'COMIDA' : 'DESAYUNO',
             });
-            setIdOrden(id);
+            setIdOrden(id_orden);
+            setNumeroComanda(numero_comanda);
             toast.success('Orden para llevar iniciada');
         } catch {
             toast.error('Error al abrir la orden');
@@ -106,6 +108,7 @@ const EntregasPanel = () => {
             });
             // Resetear todo y cerrar dialog
             setIdOrden(null);
+            setNumeroComanda(null);
             limpiarCarrito(false);
             setOpen(false);
             toast.success('Orden enviada a cocina');
@@ -150,7 +153,7 @@ const EntregasPanel = () => {
                         <div>
                             <p className="text-xl font-black text-white">Para Llevar</p>
                             <p className="text-xs text-slate-500 mt-0.5">
-                                {idOrden ? `Orden #${idOrden} en curso` : 'Sin orden activa'}
+                                {idOrden ? `Comanda #${numeroComanda} en curso` : 'Sin orden activa'}
                             </p>
                         </div>
                     </div>

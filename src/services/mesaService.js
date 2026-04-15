@@ -13,7 +13,7 @@ export const mesaService = {
 
     obtenerOrdenActiva: async (idMesa) => {
         const response = await api.get(`/ordenes/activa/${idMesa}`);
-        return response.data; // { id_orden, total, platillos: [...] }
+        return response.data; // { id_orden, numero_comanda, total, platillos: [...] }
     },
 };
 

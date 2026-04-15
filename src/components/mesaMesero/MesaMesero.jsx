@@ -15,6 +15,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
     const [open, setOpen] = React.useState(false);
     const [turno, setTurno] = React.useState("comida");
     const [cargando, setCargando] = React.useState(false);
+    const [numeroComanda, setNumeroComanda] = React.useState(null);
 
     // Caché por instancia de mesa — se invalida cuando cambia idOrden
     const cacheOrden = React.useRef({ timestamp: 0, data: null });
@@ -49,6 +50,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
             guardarCarrito(resp.id_orden, initialCarrito);
             onOrdenCreada(resp.id_orden);
             setCarrito(initialCarrito);
+            if (resp.numero_comanda != null) setNumeroComanda(resp.numero_comanda);
         }
     };
 
@@ -83,13 +85,14 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
     const abrirOrden = async (tipo) => {
         setCargando(true);
         try {
-            const idNueva = await mesaService.abrirMesa({
+            const { id_orden, numero_comanda } = await mesaService.abrirMesa({
                 id_mesa:    mesa.id ?? mesa.id_mesa,
                 id_usuario: getUsuarioId(),
                 tipo,
                 servicio:   turno === "comida" ? "COMIDA" : "DESAYUNO",
             });
-            onOrdenCreada(idNueva);
+            onOrdenCreada(id_orden);
+            setNumeroComanda(numero_comanda);
             toast.success("Orden abierta");
         } catch {
             toast.error("Error al abrir la orden");
@@ -113,6 +116,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
                         carrito={carrito}
                         setCarrito={setCarrito}
                         idOrden={idOrden}
+                        numeroComanda={numeroComanda}
                         onOrdenCerrada={() => {
                             setOpen(false);
                             onOrdenCerrada();

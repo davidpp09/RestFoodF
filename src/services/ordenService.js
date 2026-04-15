@@ -3,7 +3,7 @@ import api from '../api/axiosConfig';
 export const ordenService = {
     abrirOrdenSinMesa: async ({ id_usuario, servicio }) => {
         const response = await api.post('/ordenes', { id_usuario, tipo: 'LLEVAR', servicio });
-        return response.data; // retorna el id de la orden
+        return response.data; // { id_orden, numero_comanda }
     },
 
     guardarDetalle: async (payload) => {

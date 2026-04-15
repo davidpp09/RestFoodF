@@ -37,7 +37,7 @@ const PedidosPanel = () => {
                 // Nuevo pedido o modificación: recargar la lista
                 if (mensaje.platillos && mensaje.platillos.length > 0) {
                     cargarOrdenes();
-                    toast.info(`Nuevo ticket recibido - Orden #${mensaje.id_orden}`);
+                    toast.info(`Nuevo ticket recibido - Comanda #${mensaje.numero_comanda ?? mensaje.id_orden}`);
                 }
             });
         }
@@ -87,8 +87,8 @@ const PedidosPanel = () => {
                             {/* Header del Ticket */}
                             <div className="bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Orden</p>
-                                    <p className="text-2xl font-black text-white">#{orden.id_orden}</p>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Comanda</p>
+                                    <p className="text-2xl font-black text-white">#{orden.numero_comanda ?? orden.id_orden}</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         {orden.tipo === 'LOZA' ? (
                                             <div className="flex items-center gap-1.5 text-orange-400">
