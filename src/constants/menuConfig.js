@@ -1,10 +1,16 @@
-import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History } from 'lucide-react';
+import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat } from 'lucide-react';
 
 export const CONFIG_MENU = {
-    SUPER_ROLES: [
-        { icono: LayoutDashboard, texto: 'Panel de Mesas',  ruta: '/admin'           },
-        { icono: Users,           texto: 'Personal',        ruta: '/admin/personal'  },
-        { icono: TrendingUp,      texto: 'Reportes',        ruta: '/admin/reportes'  },
+    ADMIN: [
+        { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'          },
+        { icono: Users,           texto: 'Personal',       ruta: '/admin/personal' },
+        { icono: TrendingUp,      texto: 'Reportes',       ruta: '/admin/reportes' },
+    ],
+    DEV: [
+        { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'           },
+        { icono: Users,           texto: 'Personal',       ruta: '/admin/personal'  },
+        { icono: TrendingUp,      texto: 'Reportes',       ruta: '/admin/reportes'  },
+        { icono: ChefHat,         texto: 'Platillos',      ruta: '/admin/platillos' },
     ],
     MESERO: [
         { icono: Utensils, texto: 'Area de mesas', ruta: '/mesero' },
@@ -13,7 +19,7 @@ export const CONFIG_MENU = {
         { icono: Utensils, texto: 'Pedidos Cocina', ruta: '/cocina-panel' },
     ],
     REPARTIDOR: [
-        { icono: Package, texto: 'Área de Entrega',      ruta: '/entregas'           },
-        { icono: History, texto: 'Historial',           ruta: '/entregas/historial' },
+        { icono: Package, texto: 'Área de Entrega', ruta: '/entregas'           },
+        { icono: History, texto: 'Historial',       ruta: '/entregas/historial' },
     ],
 };

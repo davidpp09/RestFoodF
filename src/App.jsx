@@ -8,6 +8,7 @@ import AuthRedirect from "./components/AuthRedirect"
 import { useAuth } from './hooks/useAuth';
 import PersonalPanel from './pages/personal/PersonalPanel';
 import ReportesPanel from './pages/reportes/ReportesPanel';
+import DevPanel from './pages/dev/DevPanel';
 import RestLayout from './components/RestLayout';
 import MeseroPanel from './pages/Mesas/MeseroPanel';
 import PedidosPanel from './pages/cocina/PedidosPanel';
@@ -35,6 +36,11 @@ export default function App() {
           <Route index element={<AdminPanel />} />
           <Route path="personal" element={<PersonalPanel />} />
           <Route path="reportes" element={<ReportesPanel />} />
+          <Route path="platillos" element={
+            <ProtectedRoute roleRequired={[ROLES.DEV]}>
+              <DevPanel />
+            </ProtectedRoute>
+          } />
         </Route>
 
         <Route path="/mesero" element={

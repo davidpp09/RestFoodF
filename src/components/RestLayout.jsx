@@ -27,7 +27,7 @@ const RestLayout = () => {
     const { logOut, roleLog } = useAuth();
 
     const rol = roleLog();
-    const menu = SUPER_ROLES.includes(rol) ? CONFIG_MENU.SUPER_ROLES : CONFIG_MENU[rol] ?? [];
+    const menu = CONFIG_MENU[rol] ?? CONFIG_MENU.ADMIN;
     const tituloActual = menu.find(o => o.ruta === location.pathname)?.texto ?? 'Administración';
 
     return (
