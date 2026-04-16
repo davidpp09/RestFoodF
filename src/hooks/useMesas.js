@@ -5,6 +5,7 @@ import { toast } from "sonner";
 export const useMesas = (inicio, fin) => {
     const [mesas, setMesas] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         const cargarMesas = async () => {
@@ -13,6 +14,7 @@ export const useMesas = (inicio, fin) => {
                 setMesas(data);
             } catch {
                 toast.error('Error al cargar las mesas');
+                setError(true);
             } finally {
                 setCargando(false);
             }
@@ -30,5 +32,5 @@ export const useMesas = (inicio, fin) => {
         ));
     };
 
-    return { mesas, cargando, actualizarMesa };
+    return { mesas, cargando, error, actualizarMesa };
 };

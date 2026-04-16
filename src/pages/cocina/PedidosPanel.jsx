@@ -8,6 +8,7 @@ import WsIndicador from '../../components/WsIndicador';
 const PedidosPanel = () => {
     const [ordenes, setOrdenes] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const [procesando, setProcesando] = useState(new Set());
 
     const cargarOrdenes = async () => {
         try {
@@ -25,9 +26,10 @@ const PedidosPanel = () => {
 
         const token = sessionStorage.getItem('token_restfood');
 
+        let unsubCocina;
         if (token) {
             websocketService.conectar(token);
-            websocketService.subscribe('/topic/cocina', (mensaje) => {
+            unsubCocina = websocketService.subscribe('/topic/cocina', (mensaje) => {
                 console.log("🔥 [WS Cocina] Recibido mensaje:", mensaje);
                 // Mesa cerrada: quitar la orden del panel sin importar si se marcó como lista
                 if (mensaje.accion === 'CERRADA') {
@@ -42,16 +44,23 @@ const PedidosPanel = () => {
             });
         }
 
-        return () => websocketService.desconectar();
+        return () => {
+            unsubCocina?.();
+            websocketService.desconectar();
+        };
     }, []);
 
     const marcarComoListo = async (idOrden) => {
+        if (procesando.has(idOrden)) return;
+        setProcesando(prev => new Set([...prev, idOrden]));
         try {
             await cocinaService.marcarServido(idOrden);
             toast.success(`Orden #${idOrden} marcada como lista`);
             setOrdenes(prev => prev.filter(o => o.id_orden !== idOrden));
         } catch {
             toast.error("Error al marcar la orden como lista");
+        } finally {
+            setProcesando(prev => { const s = new Set(prev); s.delete(idOrden); return s; });
         }
     };
 
@@ -132,10 +141,11 @@ const PedidosPanel = () => {
                             <div className="p-4 pt-0">
                                 <button
                                     onClick={() => marcarComoListo(orden.id_orden)}
-                                    className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm transition-colors flex items-center justify-center gap-2"
+                                    disabled={procesando.has(orden.id_orden)}
+                                    className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <CheckCircle2 size={18} />
-                                    MARCAR LISTO
+                                    {procesando.has(orden.id_orden) ? 'GUARDANDO...' : 'MARCAR LISTO'}
                                 </button>
                             </div>
                         </div>

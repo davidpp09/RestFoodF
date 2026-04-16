@@ -38,7 +38,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
 
     const aplicarRespuestaOrden = (resp) => {
         if (resp?.id_orden) {
-            const initialCarrito = resp.platillos.map(p => ({
+            const serverCarrito = resp.platillos.map(p => ({
                 id_detalle:  p.id_detalle,
                 id:          p.id_producto,
                 id_producto: p.id_producto,
@@ -47,10 +47,18 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
                 cantidad:    p.cantidad,
                 comentarios: p.comentarios || "",
             }));
-            guardarCarrito(resp.id_orden, initialCarrito);
             onOrdenCreada(resp.id_orden);
-            setCarrito(initialCarrito);
             if (resp.numero_comanda != null) setNumeroComanda(resp.numero_comanda);
+            // Preservar items locales sin enviar (id_detalle: null) que no estén ya en el servidor
+            setCarrito(prev => {
+                const unsentLocal = prev.filter(
+                    item => !item.id_detalle &&
+                            !serverCarrito.find(s => s.id_producto === item.id_producto)
+                );
+                const merged = [...serverCarrito, ...unsentLocal];
+                guardarCarrito(resp.id_orden, merged);
+                return merged;
+            });
         }
     };
 
@@ -78,6 +86,8 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
 
     const cambiarTurno = (nuevoTurno) => {
         if (nuevoTurno === turno) return;
+        const tienePendientes = carrito.some(item => !item.id_detalle);
+        if (tienePendientes && !window.confirm('Cambiar turno eliminará los productos no enviados. ¿Continuar?')) return;
         limpiarCarrito();
         setTurno(nuevoTurno);
     };

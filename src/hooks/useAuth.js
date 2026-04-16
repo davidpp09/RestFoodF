@@ -52,12 +52,11 @@ export const useAuth = () => {
     const roleLog = () => {
         try {
             const token = sessionStorage.getItem('token_restfood');
-            const role = jwtDecode(token).role;
-            return role;
-        } catch (error) {
-            const mensajeError = error.response?.data?.mensaje || "Sin Token volver a logearse";
-            toast.error(mensajeError);
-            navigate('/login')
+            if (!token) throw new Error('Sin token');
+            return jwtDecode(token).role;
+        } catch {
+            toast.error("Sin sesión activa, vuelve a iniciar sesión");
+            navigate('/login');
         }
     }
     const getUsuarioId = () => {

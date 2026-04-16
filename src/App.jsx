@@ -21,6 +21,9 @@ export default function App() {
 
   useEffect(() => {
     verifyLogin();
+    const handleFocus = () => verifyLogin();
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   return (

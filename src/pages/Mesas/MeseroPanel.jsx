@@ -16,7 +16,7 @@ const MeseroPanel = () => {
     const mesaInicio = (seccion - 1) * MESAS_POR_SECCION + 1;
     const mesaFin    = seccion * MESAS_POR_SECCION;
 
-    const { mesas, cargando: cargandoMesas, actualizarMesa } = useMesas(mesaInicio, mesaFin);
+    const { mesas, cargando: cargandoMesas, error: errorMesas, actualizarMesa } = useMesas(mesaInicio, mesaFin);
     const { productos, cargando: cargandoProductos }          = useProductos();
     
     // Obtenemos el estado y funciones del ticket desde el hook
@@ -55,6 +55,10 @@ const MeseroPanel = () => {
 
     if (cargandoMesas || cargandoProductos) {
         return <div className="text-white">Cargando... ⏳</div>;
+    }
+
+    if (errorMesas) {
+        return <div className="text-red-400 p-6">Error al cargar las mesas. Verifica la conexión con el servidor.</div>;
     }
 
     return (

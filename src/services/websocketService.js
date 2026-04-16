@@ -64,9 +64,14 @@ class WebSocketService {
         };
 
         if (this.isConnected) {
-            return this.stompClient.subscribe(topic, wrapped);
+            const sub = this.stompClient.subscribe(topic, wrapped);
+            return () => sub.unsubscribe();
         } else {
-            this.pendingSubscriptions.push({ topic, callback: wrapped });
+            const entry = { topic, callback: wrapped };
+            this.pendingSubscriptions.push(entry);
+            return () => {
+                this.pendingSubscriptions = this.pendingSubscriptions.filter(s => s !== entry);
+            };
         }
     }
 

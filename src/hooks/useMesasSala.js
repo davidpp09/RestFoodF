@@ -26,30 +26,31 @@ export const useMesasSala = () => {
     // Suscripciones WebSocket
     useEffect(() => {
         const token = sessionStorage.getItem('token_restfood');
+        let unsubMesas, unsubTickets;
         if (token) {
             websocketService.conectar(token);
 
             // Actualizaciones de mesas en tiempo real
-            websocketService.subscribe('/topic/mesas', (aviso) => {
+            unsubMesas = websocketService.subscribe('/topic/mesas', (aviso) => {
                 console.log("📺 [WS Admin] Recibido aviso:", aviso);
-                
+
                 setMesas((prevMesas) => prevMesas.map((mesa) => {
                     const idRecibido = aviso.id_mesa || aviso.idMesa;
-                    
+
                     if (idRecibido && mesa.id_mesa == idRecibido) {
                         if (aviso.estado === 'LIBRE') {
-                            return { 
-                                ...mesa, 
-                                estado: 'LIBRE', 
-                                nombre_mesero: '', 
-                                id_orden: null, 
-                                platillos: [] 
+                            return {
+                                ...mesa,
+                                estado: 'LIBRE',
+                                nombre_mesero: '',
+                                id_orden: null,
+                                platillos: []
                             };
                         }
-                        
-                        return { 
-                            ...mesa, 
-                            ...aviso, 
+
+                        return {
+                            ...mesa,
+                            ...aviso,
                             platillos: aviso.platillos || mesa.platillos || []
                         };
                     }
@@ -58,7 +59,7 @@ export const useMesasSala = () => {
             });
 
             // Notificación no invasiva cuando se cierra una cuenta
-            websocketService.subscribe('/topic/tickets', (ticket) => {
+            unsubTickets = websocketService.subscribe('/topic/tickets', (ticket) => {
                 const mesaStr = ticket.numeroMesa ? `Mesa ${ticket.numeroMesa}` : 'Para llevar';
                 toast.success(`Cuenta cerrada — ${mesaStr}`, {
                     description: `Comanda #${ticket.numero_comanda ?? ticket.id_orden} · Total: $${ticket.total?.toFixed(2)}`,
@@ -67,7 +68,11 @@ export const useMesasSala = () => {
             });
         }
 
-        return () => websocketService.desconectar();
+        return () => {
+            unsubMesas?.();
+            unsubTickets?.();
+            websocketService.desconectar();
+        };
     }, []);
 
     const stats = useMemo(() => ({
