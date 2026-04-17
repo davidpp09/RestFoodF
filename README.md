@@ -220,16 +220,33 @@ Formulario simple con email + contraseña. Tema oscuro, acentos naranjas. Toggle
 ### `/mesero` — panel del mesero
 
 ```mermaid
-flowchart LR
-    inicio[Abre panel] --> carga[GET mesas rango]
-    carga --> grid[Grid de tarjetas de mesa]
-    grid --> click{Click en mesa}
-    click -->|LIBRE| abrir[POST ordenes]
-    click -->|OCUPADA| dialog[Dialog menu + carrito]
-    dialog --> guarda[POST ordendetalles]
-    dialog --> cerrar[PUT ordenes cerrar]
-    guarda -.broadcast.-> grid
-    cerrar -.broadcast.-> grid
+sequenceDiagram
+    participant Mesero
+    participant Front as Frontend
+    participant Back as Backend
+    participant Cocina
+    participant Impresora
+
+    Mesero->>Front: Toca mesa LIBRE
+    Front->>Back: POST /ordenes abre cuenta
+    Back->>Back: Guarda orden y registra MESA_ABIERTA
+    Back-->>Front: Mesa OCUPADA broadcast /topic/mesas
+
+    Mesero->>Front: Agrega platillos al carrito
+    Mesero->>Front: Toca Enviar a cocina
+    Front->>Back: POST /ordendetalles sincroniza comanda
+    Back->>Back: Calcula diff NUEVO MODIFICADO CANCELADO
+    Back->>Impresora: Imprime ticket de cocina
+    Back-->>Cocina: WebSocket /topic/cocina
+
+    Cocina->>Cocina: Ve el pedido aparecer en vivo
+    Cocina->>Back: PATCH /cocina/id/servido
+    Back-->>Front: Actualiza estado
+
+    Mesero->>Front: Toca Cerrar cuenta
+    Front->>Back: PUT /ordenes/id/cerrar
+    Back->>Impresora: Imprime ticket del cliente
+    Back-->>Front: Mesa LIBRE broadcast /topic/mesas
 ```
 
 - Cada mesero solo ve su sección (10 mesas). La sección la dicta el JWT al login.
