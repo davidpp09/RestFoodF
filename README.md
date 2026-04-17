@@ -221,13 +221,13 @@ Formulario simple con email + contraseña. Tema oscuro, acentos naranjas. Toggle
 
 ```mermaid
 flowchart LR
-    inicio[Abre panel] --> carga[GET /mesas/rango]
+    inicio[Abre panel] --> carga[GET mesas rango]
     carga --> grid[Grid de tarjetas de mesa]
     grid --> click{Click en mesa}
-    click -->|LIBRE| abrir[POST /ordenes]
+    click -->|LIBRE| abrir[POST ordenes]
     click -->|OCUPADA| dialog[Dialog menu + carrito]
-    dialog --> guarda[POST /ordendetalles]
-    dialog --> cerrar[PUT /ordenes/id/cerrar]
+    dialog --> guarda[POST ordendetalles]
+    dialog --> cerrar[PUT ordenes cerrar]
     guarda -.broadcast.-> grid
     cerrar -.broadcast.-> grid
 ```
