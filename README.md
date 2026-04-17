@@ -1,49 +1,60 @@
 # RestFood — Frontend
 
-Interfaz web para sistema de restaurante construida con **React 19 + Vite**. Incluye panel de meseros, cocina en tiempo real, gestión de entregas, administración de personal y reportes con gráficas.
+Interfaz web del sistema. Corre en tablets para meseros, en una pantalla grande para cocina y en una PC para admin/caja. Construida con React 19 + Vite + Tailwind + shadcn/ui.
+
+Todas las pantallas son reactivas (lo que pasa en una tablet aparece en la pantalla de cocina en el mismo segundo) y están pensadas para ser operadas con los dedos, rápido, con el menor número de toques posible.
 
 ---
 
-## Stack tecnológico
+## Filosofía de la interfaz
 
-| Tecnología | Versión | Uso |
-|---|---|---|
-| React | 19.2.4 | Framework UI |
-| Vite | 8.0.1 | Build tool y dev server |
-| Tailwind CSS | 4.2.2 | Estilos |
-| shadcn/ui + Radix | — | Componentes accesibles |
-| Axios | 1.14.0 | Cliente HTTP con interceptores JWT |
-| @stomp/stompjs | 7.3.0 | WebSocket STOMP |
-| SockJS-client | — | Fallback WebSocket |
-| React Router DOM | 7.13.2 | Routing |
-| Recharts | 3.8.1 | Gráficas de reportes |
-| TanStack Table | 8.21.3 | Tablas con filtros/ordenamiento |
-| jwt-decode | 4.0.0 | Decodificar claims del token |
-| Sonner | 2.0.7 | Toast notifications |
-| Lucide React | — | Iconos |
-| next-themes | 0.4.6 | Soporte dark mode |
+- **Oscura por default.** En un restaurante las luces pueden ser tenues y las pantallas deslumbran. Fondos `slate-900` reducen la fatiga visual después de 8 horas de turno.
+- **Tipografía grande y bold.** Un mesero que lee una comanda a metro y medio tiene que poder identificar la mesa sin forzar la vista.
+- **Colores semánticos consistentes.** Naranja = acción principal / turno comida. Cian = turno desayuno. Verde = OK. Rojo = error/cancelación. El cerebro aprende el código en minutos.
+- **Cero navegación profunda.** Todo lo que un mesero necesita está a un tap desde la pantalla de mesas. No hay submenús de submenús.
+
+---
+
+## Stack
+
+| Herramienta | Para qué |
+|---|---|
+| **React 19 + Vite** | UI declarativa + dev server con HMR brutalmente rápido |
+| **Tailwind CSS 4** | Estilos inline sin salir del componente |
+| **shadcn/ui + Radix** | Primitivas accesibles (Dialog, DropdownMenu, Tabs) sin lock-in de librería |
+| **Axios** | Cliente HTTP con interceptores para JWT y manejo global de 401 |
+| **@stomp/stompjs + SockJS** | WebSocket STOMP con fallback para redes hostiles |
+| **React Router DOM 7** | Routing cliente |
+| **Recharts** | Gráficas del panel de reportes |
+| **TanStack Table** | Tablas de personal / cancelaciones con orden y filtro |
+| **Sonner** | Toasts (success / error / info) |
+| **Lucide** | Iconos (ligeros, consistentes) |
 
 ---
 
 ## Requisitos
 
-- Node.js 18+
-- npm o pnpm
-- Backend RestFood corriendo
+- Node.js 18+ (probado en 20)
+- npm (o pnpm si prefieres)
+- Backend RestFood corriendo y accesible desde la red del frontend
 
 ---
 
 ## Configuración
 
-Crea un archivo `.env.local` en la raíz del proyecto:
+Crea `.env.local` en la raíz de `RestFoodF/`:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080
 ```
 
+En producción (dentro de la LAN del restaurante) normalmente es la IP fija del servidor, por ejemplo `http://192.168.1.50:8080`.
+
+El WebSocket usa la misma base URL (cambia `http` por `ws` internamente), así que no hace falta configurar el WS por separado.
+
 ---
 
-## Levantar el proyecto
+## Levantarlo
 
 ```bash
 cd RestFoodF
@@ -51,7 +62,38 @@ npm install
 npm run dev
 ```
 
-La app queda disponible en `http://localhost:5173`.
+Queda en `http://localhost:5173`.
+
+Para build de producción:
+
+```bash
+npm run build     # genera dist/
+npm run preview   # sirve el build localmente para probar
+```
+
+La carpeta `dist/` es estática: la sirves con Nginx, Caddy, IIS, o incluso desde el mismo Spring Boot si quisieras.
+
+---
+
+## Cómo navega un usuario
+
+```mermaid
+flowchart TD
+    Login[/login/] -->|backend responde con destino| Decide{rol}
+    Decide -->|MESERO| Mesero[/mesero/<br/>tarjetas de mesas de su seccion]
+    Decide -->|COCINA| Cocina[/cocina-panel/<br/>grid de tickets en vivo]
+    Decide -->|ADMIN o DEV| Admin[/admin/<br/>todas las mesas de la sala]
+    Decide -->|CAJERO| AdminCajero[/admin/<br/>solo lectura de mesas]
+    Decide -->|REPARTIDOR| Entregas[/entregas/<br/>pedidos para llevar]
+
+    Admin --> Personal[/admin/personal/]
+    Admin --> Reportes[/admin/reportes/]
+    Admin --> Platillos[/admin/platillos/<br/>solo DEV]
+    Entregas --> Historial[/entregas/historial/]
+    Entregas --> Dia[/entregas/dia/]
+```
+
+La decisión de a qué ruta mandar al usuario tras el login **no la hace el frontend**: el backend devuelve un campo `destino` en la respuesta de `/login`, y el frontend solo navega ahí. Así si cambian los permisos de un rol, no hay que tocar código en dos repos.
 
 ---
 
@@ -60,365 +102,240 @@ La app queda disponible en `http://localhost:5173`.
 ```
 src/
 ├── api/
-│   └── axiosConfig.js           # Instancia Axios + interceptor JWT
-├── components/
-│   ├── ProtectedRoute.jsx        # Guard de rutas por rol
-│   ├── AuthRedirect.jsx          # Redirige si no hay sesión
-│   ├── RestLayout.jsx            # Layout principal con sidebar
-│   ├── AccessDenied.jsx          # Página 403
-│   ├── DataTable.jsx             # Tabla reutilizable (TanStack Table)
-│   ├── StatCard.jsx              # Tarjeta de estadística
-│   ├── WsIndicador.jsx           # Indicador de estado WebSocket
-│   ├── MesaAdmin.jsx             # Tarjeta de mesa en panel admin
-│   ├── ImpresionTickets.jsx      # Modal de impresión de ticket
-│   └── mesaMesero/               # Componentes de mesa para mesero
-│       ├── MesaMesero.jsx        # Tarjeta de mesa del mesero
-│       ├── MesaCard.jsx          # Variante de tarjeta
-│       ├── MesaAbrirOrden.jsx    # Formulario abrir orden nueva
-│       ├── MesaMenu.jsx          # Menú de productos por categoría
-│       ├── MesaOrden.jsx         # Resumen de orden actual
-│       ├── MesaDialogContent.jsx # Contenido del dialog de mesa
-│       ├── MesaDialogHeader.jsx  # Header del dialog
-│       ├── TiemposSection.jsx    # Sección de tiempos de orden
-│       └── constants.js          # Colores y configuración de UI
+│   └── axiosConfig.js         # instancia Axios + interceptores JWT/401
+├── components/                 # Reutilizables
+│   ├── ProtectedRoute.jsx      # guard por rol
+│   ├── AuthRedirect.jsx        # redirige segun sesion
+│   ├── RestLayout.jsx          # layout principal con sidebar
+│   ├── WsIndicador.jsx         # estado WebSocket en header
+│   ├── DataTable.jsx           # tabla reutilizable (TanStack)
+│   ├── MesaAdmin.jsx           # tarjeta de mesa en panel admin
+│   └── mesaMesero/             # sub-componentes del panel mesero
 ├── constants/
-│   ├── roles.js                  # Definición de roles y grupos
-│   └── menuConfig.js             # Configuración de navegación sidebar
-├── hooks/
-│   ├── useAuth.js                # Login, logout, JWT claims
-│   ├── useMesas.js               # Cargar mesas por rango de sección
-│   ├── useMesasSala.js           # Admin: todas las mesas + WS
-│   ├── useMesaCart.js            # Carrito de orden (localStorage)
-│   ├── useProductos.js           # Cargar productos con categorías
-│   ├── usePersonal.js            # Cargar usuarios / personal
-│   ├── useReportes.js            # Corte del día y cancelaciones
-│   ├── useTickets.js             # Estado de tickets para impresión
-│   ├── useCancelaciones.js       # Datos de cancelaciones por mesero
-│   ├── useTiempos.js             # Tiempos de orden
-│   ├── useFormEmpleado.js        # Estado de formularios de empleados
-│   └── useWsStatus.js            # Estado de conexión WebSocket
-├── pages/
-│   ├── Login.jsx
-│   ├── AdminPanel.jsx
-│   ├── Mesas/
-│   │   └── MeseroPanel.jsx
-│   ├── cocina/
-│   │   └── PedidosPanel.jsx
-│   ├── entregas/
-│   │   ├── EntregasPanel.jsx
-│   │   ├── HistorialPanel.jsx
-│   │   └── PlatillosDiaPanel.jsx
-│   ├── personal/
-│   │   ├── PersonalPanel.jsx
-│   │   ├── FormularioNuevoEmpleado.jsx
-│   │   ├── FormularioEditarEmpleado.jsx
-│   │   ├── DialogEliminar.jsx
-│   │   └── columns.jsx
-│   ├── reportes/
-│   │   ├── ReportesPanel.jsx
-│   │   ├── GraficaVentasEmpleados.jsx
-│   │   ├── GraficaServicios.jsx
-│   │   └── GraficaTiposPedido.jsx
-│   └── dev/
-│       └── DevPanel.jsx
-├── services/
-│   ├── authService.js
-│   ├── mesaService.js
-│   ├── ordenService.js
-│   ├── cocinaService.js
-│   ├── productoService.js
-│   ├── usuarioService.js
-│   ├── adminService.js
-│   └── websocketService.js
+│   ├── roles.js                # ROLES y SUPER_ROLES
+│   └── menuConfig.js           # sidebar segun rol
+├── hooks/                      # Toda la logica no-UI vive aqui
 ├── lib/
+│   ├── authStorage.js          # API centralizada sobre localStorage
 │   └── utils.js
-├── App.jsx                       # Definición de rutas
-└── main.jsx                      # Entry point
+├── pages/                      # Una carpeta por area funcional
+│   ├── Mesas/                  # mesero
+│   ├── cocina/
+│   ├── entregas/
+│   ├── personal/
+│   ├── reportes/
+│   └── dev/
+├── services/                   # Clientes HTTP (uno por dominio)
+├── App.jsx                     # Definicion de rutas
+└── main.jsx
 ```
+
+**Regla de separación**: un `service` solo hace HTTP, un `hook` tiene lógica (estado + efectos + WS), una `page` compone hooks y componentes y *no* llama a Axios directamente.
 
 ---
 
-## Autenticación
+## Sesión y autenticación
+
+### `authStorage.js` — la capa encima de `localStorage`
+
+Antes cada archivo leía/escribía `localStorage` con su propia key. Era un desastre para rastrear. Ahora hay un único módulo con una API limpia:
+
+```javascript
+authStorage.guardar({ jwTtoken, rol, nombre, id_usuarios, seccion, destino })
+authStorage.leer()       // { token, rol, nombre, id, seccion, destino } | null
+authStorage.actualizar({ ... }) // merge parcial
+authStorage.limpiar()    // logout
+
+// Accesos directos
+authStorage.token()
+authStorage.rol()
+authStorage.idUsuario()
+authStorage.seccion()
+authStorage.destino()
+```
 
 ### `useAuth.js`
 
-Maneja toda la sesión del usuario.
-
-```javascript
-loginUser(email, password)   // POST /login → guarda token en sessionStorage
-logOut()                     // Borra token y redirige a /login
-verifyLogin()                // Verifica expiración del JWT
-roleLog()                    // Retorna el rol del usuario (ADMIN, MESERO, etc.)
-getUsuarioId()               // Retorna el ID del usuario del token
-getSeccion()                 // Retorna la sección asignada al mesero
-```
-
-**Token:** se guarda en `sessionStorage` con la clave `token_restfood`.
-
-**Claims del JWT decodificados:**
-- `id` — ID del usuario
-- `email` — Correo
-- `role` — Rol (ADMIN, DEV, MESERO, COCINA, CAJERO, REPARTIDOR)
-- `seccion` — Número de sección del mesero
-- `exp` — Expiración
+- `loginUser(email, password)` — POST `/login`, guarda todo en `authStorage`, navega al `destino` que devolvió el backend.
+- `logOut()` — limpia storage y redirige a `/login`.
+- `verifyLogin()` — pega a `/usuarios/me`. Si el backend contesta 401 (token expirado o revocado), el interceptor de Axios redirige al login automáticamente. Se ejecuta al arrancar la app, al volver a la pestaña (focus) y cada 5 minutos.
 
 ### `ProtectedRoute.jsx`
 
-Componente guard que envuelve cada ruta. Recibe `roleRequired[]` y redirige a `/login` si el usuario no tiene sesión, o muestra `AccessDenied` si no tiene el rol requerido.
+Guardia de ruta que recibe `roleRequired={[...]}`. Lee el rol desde `authStorage` (no decodifica el JWT en el cliente — el backend ya dio el rol en la respuesta de login). Si no hay sesión, redirige a `/login`. Si hay sesión pero el rol no coincide, muestra `AccessDenied`.
 
 ### `axiosConfig.js`
 
-Instancia de Axios preconfigurada:
-- **Base URL:** `import.meta.env.VITE_API_BASE_URL`
-- **Request interceptor:** inyecta `Authorization: Bearer <token>` en cada request
-- **Response interceptor:** en 401/403 hace logout automático y redirige a `/login`
+- **Base URL** desde `VITE_API_BASE_URL`.
+- **Request interceptor**: inyecta `Authorization: Bearer <token>` si hay sesión.
+- **Response interceptor**: si el backend contesta 401 o 403, limpia `authStorage` y redirige a `/login` — pero solo si no estabas ya en `/login` (evita loops).
 
----
+### Persistencia de sesión
 
-## Rutas de la aplicación
+El token vive en `localStorage`. Sobrevive a cerrar y abrir el navegador, y a reinicios de la tablet. Se invalida de tres formas:
 
-```
-/login                              Pública — Login
-/admin                              ADMIN, DEV — Panel de todas las mesas
-/admin/personal                     ADMIN, DEV — Gestión de personal
-/admin/reportes                     ADMIN, DEV — Reportes y gráficas
-/admin/platillos                    DEV — Gestión de productos (solo DEV)
-/mesero                             MESERO, ADMIN, DEV — Panel de sección del mesero
-/cocina-panel                       COCINA, ADMIN, DEV — Pantalla de cocina
-/entregas                           REPARTIDOR, ADMIN, DEV — Órdenes para llevar
-/entregas/historial                 REPARTIDOR, ADMIN, DEV — Historial de entregas
-/entregas/dia                       REPARTIDOR, ADMIN, DEV — Platillos del día
-```
-
----
-
-## Páginas y funcionalidades
-
-### Login (`/login`)
-- Formulario de email y contraseña
-- Toggle mostrar/ocultar contraseña
-- Tema oscuro con acentos naranjas
-- Al autenticar, redirige según rol
-
----
-
-### Panel Admin (`/admin`) — `AdminPanel.jsx`
-- Hook: `useMesasSala()` — carga todas las mesas + escucha `/topic/mesas` y `/topic/tickets` via WebSocket
-- Tarjetas de estadística: total de mesas, ocupadas, libres
-- Grid de tarjetas `MesaAdmin` por mesa con estado en tiempo real
-- Indicador de conexión WebSocket (`WsIndicador`)
-- Modal `ImpresionTickets` se activa al recibir ticket por WebSocket
-
----
-
-### Panel Mesero (`/mesero`) — `MeseroPanel.jsx`
-- Hook: `useMesas(inicio, fin)` — carga mesas de la sección del mesero
-- Sección calculada desde el JWT (`seccion`): 10 mesas por sección (e.g., sección 2 → mesas 11–20)
-- Cada mesa muestra su estado (LIBRE / OCUPADA) con su mesero y platillos actuales
-- Al clic en mesa LIBRE → formulario para abrir orden (seleccionar turno DESAYUNO/COMIDA)
-- Al clic en mesa OCUPADA → dialog con:
-  - Menú por categorías (`MesaMenu`) con tabs de categoría y lista de productos
-  - Carrito con cantidades, comentarios por platillo
-  - Botón guardar → `POST /ordendetalles` (sincroniza la comanda)
-  - Botón cerrar orden → `PUT /ordenes/{id}/cerrar`
-- Carrito persiste en `localStorage` por `id_orden` (sobrevive recarga de página)
-
----
-
-### Panel Cocina (`/cocina-panel`) — `PedidosPanel.jsx`
-- Carga órdenes pendientes al entrar: `GET /cocina`
-- Escucha `/topic/cocina` via WebSocket para actualizaciones en tiempo real
-- Cada ticket muestra:
-  - Número de comanda y mesa / tipo (LOZA/LLEVAR)
-  - Platillos con estado visual: NUEVO, MODIFICADO, CANCELADO, REENVIO
-  - Comentarios del mesero por platillo
-- Botón "Listo" → `PATCH /cocina/{id}/servido`
-- No requiere recargar la página; las comandas llegan automáticamente
-
----
-
-### Panel Entregas (`/entregas`) — `EntregasPanel.jsx`
-- Flujo para órdenes tipo LLEVAR (para llevar / domicilio)
-- Selector de turno (DESAYUNO / COMIDA) con colores diferenciados
-- Menú de productos + carrito igual al panel de mesero
-- Botón crear orden → `POST /ordenes` con `tipo: LLEVAR`
-- Botón cerrar → `PUT /ordenes/{id}/cerrar`
-- Carga historial de entregas del día: `GET /ordenes/entregas/hoy`
-
----
-
-### Platillos del Día (`/entregas/dia`) — `PlatillosDiaPanel.jsx`
-- Gestión de disponibilidad diaria de productos
-- Activar/desactivar platillos para el día
-- Actualizar precio del día (platillo del día a precio especial)
-- Endpoints: `PATCH /productos/{id}/dia` y `PUT /productos/desactivar-dia/{categoriaId}`
-
----
-
-### Gestión de Personal (`/admin/personal`) — `PersonalPanel.jsx`
-- Hook: `usePersonal()` — lista todos los usuarios activos
-- Tabla con TanStack Table (`DataTable`): nombre, email, rol, sección
-- Columnas configuradas en `columns.jsx`
-- Acciones por fila: Editar, Eliminar
-- Modal crear empleado (`FormularioNuevoEmpleado`): nombre, email, contraseña, rol, sección (si es MESERO)
-- Modal editar empleado (`FormularioEditarEmpleado`): nombre, email
-- Dialog confirmar eliminación (`DialogEliminar`) → `DELETE /usuarios/{id}` (soft delete)
-- Roles disponibles: ADMIN, MESERO, COCINA, CAJERO, REPARTIDOR
-
----
-
-### Reportes (`/admin/reportes`) — `ReportesPanel.jsx`
-- Hook: `useReportes()` — corte del día + cancelaciones
-- Selector de fecha con botones rápidos "Hoy" y "Ayer"
-- Tarjetas de resumen: total general, total desayuno, total comida, total platillos
-- Gráficas con Recharts:
-  - `GraficaVentasEmpleados` — ventas por mesero (barras)
-  - `GraficaServicios` — desayuno vs comida (pie/donut)
-  - `GraficaTiposPedido` — loza vs para llevar (pie/donut)
-- Tabla de cancelaciones: mesero, platillo cancelado, cantidad, importe
-- Endpoints: `GET /admin?fecha=YYYY-MM-DD` y `GET /admin/cancelaciones?desde=&hasta=`
-
----
-
-### Gestión de Productos (`/admin/platillos`) — `DevPanel.jsx`
-- Solo accesible con rol DEV
-- CRUD completo de productos:
-  - Crear: nombre, precio comida, precio desayuno, disponibilidad, categoría
-  - Editar cualquier campo
-  - Eliminar producto
-- Endpoints: `POST/PUT/DELETE /productos`
+1. El usuario hace logout manual.
+2. El token expira (el backend contesta 401 en la siguiente request).
+3. Otro usuario loguea en el mismo dispositivo (sobreescribe la sesión).
 
 ---
 
 ## WebSocket
 
-### `websocketService.js` (Singleton)
+### `websocketService.js` — singleton
 
 ```javascript
-conectar(token)              // Conecta al broker STOMP con JWT
-subscribe(topic, callback)  // Suscribirse a un topic
-desconectar()               // Cerrar conexión
-onStatusChange(fn)          // Callback de cambios de estado
+websocketService.conectar(token)
+websocketService.subscribe(topic, callback)  // retorna funcion para desuscribir
+websocketService.desconectar()
+websocketService.onStatusChange(fn)          // conectado | reconectando | error | desconectado
 ```
 
-**Estados:** `conectado`, `reconectando`, `error`, `desconectado`
+Puntos finos:
 
-### Topics en uso
+- **Una sola conexión por pestaña.** No importa cuántos hooks se suscriban; todos comparten el mismo socket.
+- **Re-suscripción automática.** Si la conexión se cae y se recupera, todas las suscripciones activas se vuelven a registrar con el broker. Esto era un bug que arreglé: antes, al reconectar, el cliente no recibía los eventos hasta recargar la página.
+- **Backoff exponencial.** Si el backend está caído, no satura la red intentando cada milisegundo.
 
-| Topic | Qué llega | Quién lo usa |
+### Topics y quién los escucha
+
+| Topic | Qué llega | Hook que lo consume |
 |---|---|---|
-| `/topic/mesas` | Estado de mesa actualizado | `useMesasSala` (Admin), `useMesas` (Mesero) |
-| `/topic/cocina` | Ticket de cocina nuevo/modificado | `PedidosPanel` (Cocina) |
-| `/topic/tickets` | Ticket de cliente listo para imprimir | `useMesasSala` → `ImpresionTickets` |
+| `/topic/mesas` | Estado de mesa (LIBRE/OCUPADA) | `useMesasSala` (admin), `useMesas` (mesero) |
+| `/topic/cocina` | Tickets de cocina nuevos/modificados/cancelados | `PedidosPanel` (cocina) |
+| `/topic/tickets` | Ticket de cliente listo | `useMesasSala` → notificación toast |
 
 ### `WsIndicador.jsx`
-Muestra en la UI el estado actual de la conexión WebSocket: conectado (verde), reconectando (amarillo), error/desconectado (rojo).
+
+Pequeño indicador en la esquina superior derecha con el estado del socket. Verde = conectado. Amarillo = reconectando. Rojo = desconectado / error. No bloquea la UI; es informativo.
 
 ---
 
-## Servicios API
+## Pantallas (qué hace cada una)
 
-### `authService.js`
-```javascript
-login(email, password) → POST /login → { jwTtoken }
+### `/login`
+
+Formulario simple con email + contraseña. Tema oscuro, acentos naranjas. Toggle para mostrar contraseña. Tras un login exitoso, navega al `destino` que dictó el backend.
+
+### `/mesero` — panel del mesero
+
+```mermaid
+flowchart LR
+    inicio[Abre panel] --> carga[Carga mesas de su seccion<br/>GET /mesas/rango/inicio/fin]
+    carga --> grid[Grid de tarjetas de mesa]
+    grid --> click{Click en mesa}
+    click -->|LIBRE| abrir[Elige turno<br/>POST /ordenes]
+    click -->|OCUPADA| dialog[Abre dialog<br/>menu + carrito]
+    dialog --> guarda[Guardar comanda<br/>POST /ordendetalles]
+    dialog --> cerrar[Cerrar cuenta<br/>PUT /ordenes/id/cerrar]
+    guarda -.broadcast.-> grid
+    cerrar -.broadcast.-> grid
 ```
 
-### `mesaService.js`
-```javascript
-abrirMesa(datos)              → POST /ordenes
-mesasRango(inicio, fin)       → GET /mesas/rango/{inicio}/{fin}
-obtenerOrdenActiva(idMesa)    → GET /ordenes/activa/{idMesa}
-```
+- Cada mesero solo ve su sección (10 mesas). La sección la dicta el JWT al login.
+- El diálogo tiene dos zonas: menú izquierda (con tabs por categoría), carrito derecha.
+- Cada item del carrito tiene cantidad editable y campo de comentarios.
+- El botón cambia: **"ENVIAR ORDEN"** (verde) la primera vez que se envía la comanda completa, **"MODIFICAR"** (naranja/amber) en envíos posteriores. Esto ayuda al mesero a saber si ya mandó a cocina o si está modificando un pedido vivo.
+- El carrito persiste en `localStorage` por `id_orden`. Si el mesero cierra la tablet por accidente, al volver a abrirla sigue viendo lo que había capturado.
 
-### `ordenService.js`
-```javascript
-abrirOrdenSinMesa(datos)      → POST /ordenes (tipo LLEVAR)
-guardarDetalle(payload)       → POST /ordendetalles
-cerrarOrden(idOrden)          → PUT /ordenes/{id}/cerrar
-obtenerEntregasHoy()          → GET /ordenes/entregas/hoy
-reenviarACocina(idOrden)      → POST /ordenes/{id}/reenviar-cocina
-```
+### `/cocina-panel` — pantalla de cocina
 
-### `cocinaService.js`
-```javascript
-obtenerOrdenesPendientes()    → GET /cocina
-marcarServido(idOrden)        → PATCH /cocina/{id}/servido
-```
+- `GET /cocina` al entrar + suscripción a `/topic/cocina` para actualizaciones en vivo.
+- Grid de tickets (cards grandes) con número de comanda, mesa o "PARA LLEVAR", y cada platillo con cantidad, nombre y comentario.
+- Estado visual por platillo: NUEVO (neutral), MODIFICADO (amarillo), CANCELADO (rojo tachado), REENVIO (azul).
+- Botón "MARCAR LISTO" → `PATCH /cocina/{id}/servido`. Al marcarlo, el ticket desaparece del grid.
 
-### `productoService.js`
-```javascript
-obtenerTodos()                → GET /productos
-```
+Los `console.log` del handler de cocina están adrede: ayudan a depurar en vivo si algo no aparece.
 
-### `usuarioService.js`
-```javascript
-mostrarUsuarios()             → GET /usuarios
-crearUsuario(datos)           → POST /usuarios
-actualizarUsuario(datos)      → PUT /usuarios
-eliminarUsuario(id)           → DELETE /usuarios/{id}
-```
+### `/admin` — panel general
 
-### `adminService.js`
-```javascript
-obtenerCorteDia(fecha)        → GET /admin?fecha=YYYY-MM-DD
-obtenerCancelaciones(params)  → GET /admin/cancelaciones?desde=&hasta=
-```
+- `useMesasSala()` carga todas las mesas de la sala y las mantiene en vivo con `/topic/mesas`.
+- Tarjetas de estadística arriba: total / ocupadas / libres.
+- Grid con una tarjeta `MesaAdmin` por mesa. Cada una muestra estado, mesero asignado y platillos actuales.
+- Cuando se cierra una cuenta, aparece un toast discreto con el total del ticket.
+
+### `/admin/personal`
+
+- `usePersonal()` + `DataTable` de TanStack.
+- Columnas: nombre, email, rol, sección.
+- Acciones por fila: Editar / Eliminar (soft delete).
+- Dialog de crear empleado con validación client-side + backend.
+
+### `/admin/reportes`
+
+- Selector de fecha con atajos "Hoy" / "Ayer".
+- KPIs arriba: total general, total desayuno, total comida, cantidad de platillos loza vs llevar.
+- Tres gráficas con Recharts:
+  - **Ventas por empleado** (barras horizontales)
+  - **Servicios** (donut: desayuno vs comida)
+  - **Tipos de pedido** (donut: LOZA vs LLEVAR)
+- Tabla de cancelaciones con mesero, platillo, cantidad e importe.
+
+### `/admin/platillos` — solo DEV
+
+CRUD del menú: crear, editar, eliminar productos. Campos: nombre, precio comida, precio desayuno, disponibilidad, categoría. El backend valida el máximo de 7 platillos por categoría (si intentas crear el octavo, regresa 400).
+
+### `/entregas` — repartidor
+
+Flujo para pedidos "para llevar" (sin mesa). Similar al panel del mesero pero sin grid de mesas: es directo al menú + carrito. Al cerrar, el ticket se imprime como LLEVAR.
+
+Sub-rutas:
+
+- `/entregas/historial` — órdenes LLEVAR cerradas del día.
+- `/entregas/dia` — activar/desactivar platillos para hoy y ajustar precio del día.
 
 ---
 
-## Hooks personalizados
+## Hooks clave
 
-### `useMesaCart(idOrden, turno)`
-Carrito de orden persistido en `localStorage`. Permite agregar platillos, modificar cantidades, cambiar comentarios y limpiar. Al llamar `guardarCarrito()` hace `POST /ordendetalles` con la comanda completa.
-
-### `useMesasSala()`
-Carga todas las mesas y se suscribe a `/topic/mesas` y `/topic/tickets`. Expone `mesas[]`, `stats` (total, ocupadas, libres) y actualiza en tiempo real.
-
-### `useMesas(inicio, fin)`
-Carga mesas de una sección específica. `actualizarMesa()` aplica actualizaciones optimistas del estado local antes de confirmar con el servidor.
-
-### `usePersonal()`
-Lista usuarios con `recargar()` para refetch manual post-mutación.
-
-### `useReportes()`
-Maneja fecha seleccionada, carga corte del día y cancelaciones juntos. `aplicarPeriodo('hoy'|'ayer')` cambia la fecha y recarga.
-
----
-
-## Gestión de estado
-
-No se usa Redux ni Zustand. El estado se gestiona con:
-
-| Mecanismo | Dónde se usa |
+| Hook | Qué hace |
 |---|---|
-| React `useState` / `useEffect` | Estado local en hooks y componentes |
-| `localStorage` | Carrito de orden (persiste entre recargas) |
-| `sessionStorage` | JWT token de sesión |
-| WebSocket callbacks | Actualizaciones en tiempo real |
+| `useAuth` | login/logout/verifyLogin/info de usuario |
+| `useMesas(inicio, fin)` | carga mesas de una sección + WS `/topic/mesas` |
+| `useMesasSala` | admin: todas las mesas + `/topic/mesas` + `/topic/tickets` |
+| `useMesaCart(idOrden, turno)` | carrito persistido en localStorage; sincroniza con `POST /ordendetalles` |
+| `useProductos` | catálogo con categorías |
+| `usePersonal` | lista de usuarios con `recargar()` tras mutaciones |
+| `useReportes` | corte del día + cancelaciones, con selector de fecha |
+| `useTickets` | estado de tickets pendientes de imprimir |
+| `useWsStatus` | expone el estado del socket para `WsIndicador` |
 
 ---
 
-## Colores y temas
+## Servicios (clientes HTTP)
 
-La app usa un esquema oscuro basado en Slate con acentos de colores semánticos:
+Cada servicio es un objeto con funciones que mapean 1:1 a endpoints del backend. Nada más.
 
-| Color | Significado |
+| Servicio | Endpoints que toca |
 |---|---|
-| Naranja / Amber | Acción principal, turno comida |
-| Cyan / Blue | Turno desayuno |
-| Emerald / Green | Estado listo, disponible |
-| Red / Rose | Cancelaciones, errores |
-| Slate | Fondos, contenedores |
+| `authService` | `/login`, `/usuarios/me` |
+| `mesaService` | `/mesas`, `/mesas/rango/...`, `/ordenes` (abrir) |
+| `ordenService` | `/ordenes`, `/ordendetalles`, `/ordenes/{id}/cerrar`, `/ordenes/entregas/hoy` |
+| `cocinaService` | `/cocina`, `/cocina/{id}/servido` |
+| `productoService` | `/productos`, `/productos/{id}/dia` |
+| `usuarioService` | `/usuarios` (CRUD), `/usuarios/activar/{id}` |
+| `adminService` | `/admin`, `/admin/cancelaciones` |
 
 ---
 
-## Notificaciones
+## Convenciones de código
 
-`Sonner` provee toasts en cuatro variantes:
-- `toast.success()` — operación completada
-- `toast.error()` — error del servidor o validación
-- `toast.info()` — información neutral
-- `toast.loading()` → `toast.dismiss()` — operaciones asíncronas
+- **Nombres en español** donde coincide con el dominio (`mesa`, `orden`, `platillo`). Hooks y componentes en inglés/camelCase porque es lo idiomático de React.
+- **Un archivo por componente**. Si un archivo pasa de ~250 líneas, toca partirlo.
+- **Estado local con `useState`** para cosas simples. No hay Redux ni Zustand; la app no lo necesita y agregar otra librería sería ruido.
+- **Toast al éxito y al error.** Nunca dejamos una mutación "silenciosa". Si guardaste algo, el usuario tiene que verlo confirmado.
+
+---
+
+## Decisiones que podrías cuestionar
+
+**¿Por qué no TypeScript?** Porque empecé sin él y no quise detener el avance. Es lo que voy a migrar primero cuando reescriba.
+
+**¿Por qué Vite y no Next?** Porque no necesito SSR ni routing filesystem. Vite es más rápido en dev y el output es estático, lo que simplifica el deploy en LAN.
+
+**¿Por qué shadcn/ui y no Material/Ant?** Porque shadcn copia los componentes al repo (no es una dependencia): puedo modificarlos sin pelear con una API ajena. Trade-off: tengo que mantenerlos yo.
+
+**¿Por qué no hay tests todavía?** Igual que en el backend: prioricé que funcione antes que cobertura. Después de desplegar, lo primero es meter Vitest + React Testing Library al menos para los hooks críticos.
 
 ---
 
@@ -426,29 +343,19 @@ La app usa un esquema oscuro basado en Slate con acentos de colores semánticos:
 
 | Variable | Descripción | Ejemplo |
 |---|---|---|
-| `VITE_API_BASE_URL` | URL base del backend | `http://localhost:8080` |
+| `VITE_API_BASE_URL` | URL base del backend (REST + WS) | `http://192.168.1.50:8080` |
 
-En producción cambiar por la URL pública del servidor.
-
----
-
-## Build de producción
-
-```bash
-npm run build
-```
-
-Genera la carpeta `dist/` lista para servir con Nginx, Apache o cualquier CDN.
-
-```bash
-npm run preview   # Preview local del build de producción
-```
+Todas las variables que usa Vite deben empezar con `VITE_` para que lleguen al bundle.
 
 ---
 
-## Notas de producción
+## Problemas comunes
 
-- Cambiar `VITE_API_BASE_URL` a la URL del servidor en producción
-- El backend debe tener CORS configurado con el dominio real (no wildcard)
-- La URL de WebSocket en `websocketService.js` usa la misma base URL de la API
-- El token JWT en `sessionStorage` se pierde al cerrar la pestaña (comportamiento intencionado)
+| Síntoma | Causa probable | Solución |
+|---|---|---|
+| `Network Error` en todas las requests | Backend no está corriendo o `VITE_API_BASE_URL` apunta mal | Verifica con `curl` el backend desde esa misma máquina |
+| Inicia sesión y se sale solo | El token se firma con otro `JWT_SECRET` | Logout manual y volver a entrar con el secret actual |
+| CORS blocked | El origen del frontend no está en `CORS_ORIGINS` del backend | Agrégalo a la env var del backend y reinicia |
+| WS no conecta, log `Unauthorized` | Token expiró o no se está mandando | Revisa que `authStorage.token()` devuelva algo en DevTools |
+| La cocina no ve los pedidos nuevos | Re-suscripción falló tras reconexión | Ya debería estar arreglado; si vuelve a pasar, recargar la página |
+| El carrito del mesero quedó "pegado" con datos viejos | `localStorage` del carrito quedó sucio | En DevTools → Application → Local Storage → borra la key del carrito de esa orden |

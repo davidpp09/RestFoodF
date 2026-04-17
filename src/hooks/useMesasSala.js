@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import websocketService from '../services/websocketService';
 import api from '../api/axiosConfig';
+import { authStorage } from '../lib/authStorage';
 import { toast } from 'sonner';
 
 export const useMesasSala = () => {
@@ -25,7 +26,7 @@ export const useMesasSala = () => {
 
     // Suscripciones WebSocket
     useEffect(() => {
-        const token = sessionStorage.getItem('token_restfood');
+        const token = authStorage.token();
         let unsubMesas, unsubTickets;
         if (token) {
             websocketService.conectar(token);

@@ -1,14 +1,15 @@
 import api from '../api/axiosConfig';
 
 export const authService = {
+    // Devuelve el objeto completo de sesión del backend:
+    // { jwTtoken, rol, nombre, id_usuarios, seccion, destino }
     login: async (email, password) => {
-        // Esta función hace la petición y devuelve la respuesta
-        const response = await api.post(`/login`, {
-            email: email,
-            contrasena: password
-        });
-        return response.data.jwTtoken; // Devolvemos solo los datos (el token, etc.)
+        const response = await api.post(`/login`, { email, contrasena: password });
+        return response.data;
     },
-
-    // Aquí podrías agregar después: logout, register, etc.
+    // Revalida la sesión contra el backend. Útil al arrancar la app.
+    me: async () => {
+        const response = await api.get('/usuarios/me');
+        return response.data;
+    },
 };

@@ -23,7 +23,12 @@ export default function App() {
     verifyLogin();
     const handleFocus = () => verifyLogin();
     window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    // Chequeo periódico cada 5 min: si el token expiró o fue revocado el interceptor redirige a /login
+    const interval = setInterval(verifyLogin, 5 * 60 * 1000);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(interval);
+    };
   }, []);
 
   return (

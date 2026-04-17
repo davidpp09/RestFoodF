@@ -5,9 +5,10 @@ class WebSocketService {
     constructor() {
         this.stompClient = null;
         this.isConnected = false;
-        this.pendingSubscriptions = [];
+        this.activeSubscriptions = []; // { id, topic, callback, sub? } — persistentes
         this.connectionCount = 0;
         this._statusListeners = [];
+        this._subIdSeq = 0;
     }
 
     // — Estado de conexión —
@@ -37,10 +38,10 @@ class WebSocketService {
                 console.log('✅ WebSocket conectado');
                 this.isConnected = true;
                 this._notificar('conectado');
-                this.pendingSubscriptions.forEach(({ topic, callback }) => {
-                    this.stompClient.subscribe(topic, callback);
+                // Re-suscribir TODAS las suscripciones activas (también tras reconexión)
+                this.activeSubscriptions.forEach(entry => {
+                    entry.sub = this.stompClient.subscribe(entry.topic, entry.callback);
                 });
-                this.pendingSubscriptions = [];
             },
             onStompError: (frame) => {
                 console.error('❌ Error STOMP:', frame.headers['message']);
@@ -49,6 +50,8 @@ class WebSocketService {
             onWebSocketClose: () => {
                 console.log('🔌 WebSocket cerrado');
                 this.isConnected = false;
+                // Al reconectar onConnect volverá a registrar las suscripciones
+                this.activeSubscriptions.forEach(entry => { entry.sub = null; });
                 this._notificar('reconectando');
             },
         });
@@ -63,16 +66,18 @@ class WebSocketService {
             catch (error) { console.error(`❌ Error procesando mensaje de ${topic}:`, error); }
         };
 
-        if (this.isConnected) {
-            const sub = this.stompClient.subscribe(topic, wrapped);
-            return () => sub.unsubscribe();
-        } else {
-            const entry = { topic, callback: wrapped };
-            this.pendingSubscriptions.push(entry);
-            return () => {
-                this.pendingSubscriptions = this.pendingSubscriptions.filter(s => s !== entry);
-            };
+        const id = ++this._subIdSeq;
+        const entry = { id, topic, callback: wrapped, sub: null };
+        this.activeSubscriptions.push(entry);
+
+        if (this.isConnected && this.stompClient) {
+            entry.sub = this.stompClient.subscribe(topic, wrapped);
         }
+
+        return () => {
+            this.activeSubscriptions = this.activeSubscriptions.filter(s => s.id !== id);
+            try { entry.sub?.unsubscribe(); } catch { /* noop */ }
+        };
     }
 
     desconectar() {
@@ -81,7 +86,7 @@ class WebSocketService {
             this.stompClient.deactivate();
             this.isConnected = false;
             this.connectionCount = 0;
-            this.pendingSubscriptions = [];
+            this.activeSubscriptions = [];
             this._notificar('desconectado');
             console.log('👋 WebSocket desconectado');
         }

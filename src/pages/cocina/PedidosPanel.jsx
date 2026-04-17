@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { cocinaService } from '../../services/cocinaService';
 import websocketService from '../../services/websocketService';
+import { authStorage } from '../../lib/authStorage';
 import { toast } from 'sonner';
 import { UtensilsCrossed, CheckCircle2, Clock, ShoppingBag } from 'lucide-react';
 import WsIndicador from '../../components/WsIndicador';
@@ -24,7 +25,7 @@ const PedidosPanel = () => {
     useEffect(() => {
         cargarOrdenes();
 
-        const token = sessionStorage.getItem('token_restfood');
+        const token = authStorage.token();
 
         let unsubCocina;
         if (token) {

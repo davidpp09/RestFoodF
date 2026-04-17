@@ -1,28 +1,23 @@
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import { AccessDenied } from './AccessDenied';
 import { SUPER_ROLES } from '../constants/roles';
+import { authStorage } from '../lib/authStorage';
 
 const ProtectedRoute = ({ children, roleRequired }) => {
-    const token = sessionStorage.getItem('token_restfood');
-    if (!token) {
+    const sesion = authStorage.leer();
+    if (!sesion?.token || !sesion?.rol) {
         return <Navigate to="/login" />;
     }
 
-    try {
-        const decoded = jwtDecode(token);
-        const userRole = decoded.role;
-        const rolesPermitidos = Array.isArray(roleRequired) ? roleRequired : [roleRequired];
-        const esSuperUsuario = SUPER_ROLES.includes(userRole);
-        const tienePermiso = rolesPermitidos.includes(userRole);
+    const userRole = sesion.rol;
+    const rolesPermitidos = Array.isArray(roleRequired) ? roleRequired : [roleRequired];
+    const esSuperUsuario = SUPER_ROLES.includes(userRole);
+    const tienePermiso = rolesPermitidos.includes(userRole);
 
-        if (esSuperUsuario || tienePermiso) {
-            return children;
-        } else {
-            return <AccessDenied roleRequired={roleRequired} />;
-        }
-    } catch (error) {
-        return <Navigate to="/login" />;
+    if (esSuperUsuario || tienePermiso) {
+        return children;
     }
+    return <AccessDenied roleRequired={roleRequired} />;
 };
-export default ProtectedRoute
+
+export default ProtectedRoute;
