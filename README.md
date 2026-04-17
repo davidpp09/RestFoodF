@@ -80,15 +80,15 @@ La carpeta `dist/` es estática: la sirves con Nginx, Caddy, IIS, o incluso desd
 ```mermaid
 flowchart TD
     Login[/login/] -->|backend responde con destino| Decide{rol}
-    Decide -->|MESERO| Mesero[/mesero/<br>tarjetas de mesas de su seccion]
-    Decide -->|COCINA| Cocina[/cocina-panel/<br>grid de tickets en vivo]
-    Decide -->|ADMIN o DEV| Admin[/admin/<br>todas las mesas de la sala]
-    Decide -->|CAJERO| AdminCajero[/admin/<br>solo lectura de mesas]
-    Decide -->|REPARTIDOR| Entregas[/entregas/<br>pedidos para llevar]
+    Decide -->|MESERO| Mesero["/mesero/<br/>tarjetas de mesas de su seccion"]
+    Decide -->|COCINA| Cocina["/cocina-panel/<br/>grid de tickets en vivo"]
+    Decide -->|ADMIN o DEV| Admin["/admin/<br/>todas las mesas de la sala"]
+    Decide -->|CAJERO| AdminCajero["/admin/<br/>solo lectura de mesas"]
+    Decide -->|REPARTIDOR| Entregas["/entregas/<br/>pedidos para llevar"]
 
     Admin --> Personal[/admin/personal/]
     Admin --> Reportes[/admin/reportes/]
-    Admin --> Platillos[/admin/platillos/<br>solo DEV]
+    Admin --> Platillos["/admin/platillos/<br/>solo DEV"]
     Entregas --> Historial[/entregas/historial/]
     Entregas --> Dia[/entregas/dia/]
 ```
