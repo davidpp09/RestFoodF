@@ -327,17 +327,6 @@ Cada servicio es un objeto con funciones que mapean 1:1 a endpoints del backend.
 
 ---
 
-## Decisiones que podrías cuestionar
-
-**¿Por qué no TypeScript?** Porque empecé sin él y no quise detener el avance. Es lo que voy a migrar primero cuando reescriba.
-
-**¿Por qué Vite y no Next?** Porque no necesito SSR ni routing filesystem. Vite es más rápido en dev y el output es estático, lo que simplifica el deploy en LAN.
-
-**¿Por qué shadcn/ui y no Material/Ant?** Porque shadcn copia los componentes al repo (no es una dependencia): puedo modificarlos sin pelear con una API ajena. Trade-off: tengo que mantenerlos yo.
-
-**¿Por qué no hay tests todavía?** Igual que en el backend: prioricé que funcione antes que cobertura. Después de desplegar, lo primero es meter Vitest + React Testing Library al menos para los hooks críticos.
-
----
 
 ## Variables de entorno
 
@@ -349,13 +338,7 @@ Todas las variables que usa Vite deben empezar con `VITE_` para que lleguen al b
 
 ---
 
-## Problemas comunes
 
-| Síntoma | Causa probable | Solución |
-|---|---|---|
-| `Network Error` en todas las requests | Backend no está corriendo o `VITE_API_BASE_URL` apunta mal | Verifica con `curl` el backend desde esa misma máquina |
-| Inicia sesión y se sale solo | El token se firma con otro `JWT_SECRET` | Logout manual y volver a entrar con el secret actual |
-| CORS blocked | El origen del frontend no está en `CORS_ORIGINS` del backend | Agrégalo a la env var del backend y reinicia |
 | WS no conecta, log `Unauthorized` | Token expiró o no se está mandando | Revisa que `authStorage.token()` devuelva algo en DevTools |
 | La cocina no ve los pedidos nuevos | Re-suscripción falló tras reconexión | Ya debería estar arreglado; si vuelve a pasar, recargar la página |
 | El carrito del mesero quedó "pegado" con datos viejos | `localStorage` del carrito quedó sucio | En DevTools → Application → Local Storage → borra la key del carrito de esa orden |
