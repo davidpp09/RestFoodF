@@ -30,12 +30,8 @@ class WebSocketService {
         this.stompClient = new Client({
             webSocketFactory: () => new SockJS(`${baseUrl}/ws-restfood`),
             connectHeaders: { 'Authorization': `Bearer ${token}` },
-            debug: (str) => {
-                if (str.includes('CONNECTED') || str.includes('DISCONNECT')) console.log(str);
-            },
             reconnectDelay: 5000,
             onConnect: () => {
-                console.log('✅ WebSocket conectado');
                 this.isConnected = true;
                 this._notificar('conectado');
                 // Re-suscribir TODAS las suscripciones activas (también tras reconexión)
@@ -48,7 +44,6 @@ class WebSocketService {
                 this._notificar('error');
             },
             onWebSocketClose: () => {
-                console.log('🔌 WebSocket cerrado');
                 this.isConnected = false;
                 // Al reconectar onConnect volverá a registrar las suscripciones
                 this.activeSubscriptions.forEach(entry => { entry.sub = null; });
@@ -88,7 +83,6 @@ class WebSocketService {
             this.connectionCount = 0;
             this.activeSubscriptions = [];
             this._notificar('desconectado');
-            console.log('👋 WebSocket desconectado');
         }
     }
 }

@@ -8,6 +8,16 @@ import MesaDialogHeader from './MesaDialogHeader';
 import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
 import { TEMAS_MESA } from './constants';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
     const { getUsuarioId } = useAuth();
@@ -23,6 +33,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     const [busqueda, setBusqueda] = React.useState("");
     // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
     const [vista, setVista] = React.useState("menu");
+    const [confirmandoCancelar, setConfirmandoCancelar] = React.useState(false);
 
     const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
@@ -71,8 +82,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     };
 
     const handleCancelar = () => {
-        if (!window.confirm(`¿Cancelar la Mesa ${mesa.numero}? Se liberará sin generar ticket.`)) return;
-        onOrdenCancelada();
+        setConfirmandoCancelar(true);
     };
 
     const handleReenviarCocina = async () => {
@@ -150,6 +160,29 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                     </button>
                 )}
             </div>
+
+            {/* Confirmación de cancelar mesa */}
+            <AlertDialog open={confirmandoCancelar} onOpenChange={setConfirmandoCancelar}>
+                <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-white">¿Cancelar la Mesa {mesa.numero}?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-slate-400">
+                            Se liberará sin generar ticket.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="border-slate-700 text-slate-300 hover:text-white bg-transparent hover:bg-slate-800">
+                            Volver
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => { setConfirmandoCancelar(false); onOrdenCancelada(); }}
+                            className="bg-red-500 hover:bg-red-600 text-white border-transparent"
+                        >
+                            Sí, cancelar mesa
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };

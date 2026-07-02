@@ -33,7 +33,6 @@ export const useMesasSala = () => {
 
             // Actualizaciones de mesas en tiempo real
             unsubMesas = websocketService.subscribe('/topic/mesas', (aviso) => {
-                console.log("📺 [WS Admin] Recibido aviso:", aviso);
 
                 setMesas((prevMesas) => prevMesas.map((mesa) => {
                     const idRecibido = aviso.id_mesa || aviso.idMesa;

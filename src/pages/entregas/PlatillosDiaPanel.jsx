@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X } from 'lucide-react';
-import api from '@/api/axiosConfig';
+import { productoService } from '@/services/productoService';
+import { categoriaService } from '@/services/categoriaService';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,13 +14,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-
-const svc = {
-    productos:    ()          => api.get('/productos').then(r => r.data),
-    categorias:   ()          => api.get('/categorias').then(r => r.data),
-    actualizarDia:(id, datos) => api.patch(`/productos/${id}/dia`, datos).then(r => r.data),
-    desactivarDia:(catId)     => api.put(`/productos/desactivar-dia/${catId}`),
-};
 
 const MAX_ACTIVOS = 7;
 const norm = s => s.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -34,7 +28,7 @@ const PlatillosDiaPanel = () => {
 
     const cargar = async () => {
         try {
-            const [prods, cats] = await Promise.all([svc.productos(), svc.categorias()]);
+            const [prods, cats] = await Promise.all([productoService.obtenerTodos(), categoriaService.obtenerTodas()]);
             const catDia = cats.find(c => norm(c.nombre) === 'comida del dia');
             if (catDia) setCategoriaId(catDia.id);
             setProductos(prods);
@@ -58,7 +52,7 @@ const PlatillosDiaPanel = () => {
             return;
         }
         try {
-            const actualizado = await svc.actualizarDia(producto.id, { disponibilidad: activando });
+            const actualizado = await productoService.actualizarDia(producto.id, { disponibilidad: activando });
             setProductos(prev => prev.map(p => p.id === actualizado.id ? actualizado : p));
         } catch {
             toast.error('Error al cambiar estado');
@@ -72,7 +66,7 @@ const PlatillosDiaPanel = () => {
             return;
         }
         try {
-            const actualizado = await svc.actualizarDia(producto.id, { precio_comida: precio });
+            const actualizado = await productoService.actualizarDia(producto.id, { precio_comida: precio });
             setProductos(prev => prev.map(p => p.id === actualizado.id ? actualizado : p));
             setEditandoPrecio(null);
             toast.success('Precio actualizado');
@@ -84,7 +78,7 @@ const PlatillosDiaPanel = () => {
     const handleCerrarDia = async () => {
         setCerrando(true);
         try {
-            await svc.desactivarDia(categoriaId);
+            await productoService.desactivarDia(categoriaId);
             setProductos(prev =>
                 prev.map(p => p.categoria.id === categoriaId ? { ...p, disponibilidad: false } : p)
             );

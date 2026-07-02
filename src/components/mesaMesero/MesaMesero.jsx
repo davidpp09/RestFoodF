@@ -7,6 +7,16 @@ import MesaDialogContent from './MesaDialogContent';
 import MesaAbrirOrden from './MesaAbrirOrden';
 import MesaCard from './MesaCard';
 import { useMesaCart } from '@/hooks/useMesaCart';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const CACHE_TTL = 30_000; // 30 segundos
 
@@ -16,6 +26,8 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
     const [turno, setTurno] = React.useState("comida");
     const [cargando, setCargando] = React.useState(false);
     const [numeroComanda, setNumeroComanda] = React.useState(null);
+    // Turno que espera confirmación porque hay productos sin enviar en el carrito
+    const [turnoPendiente, setTurnoPendiente] = React.useState(null);
 
     // Caché por instancia de mesa — se invalida cuando cambia idOrden
     const cacheOrden = React.useRef({ timestamp: 0, data: null });
@@ -91,9 +103,18 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
     const cambiarTurno = (nuevoTurno) => {
         if (nuevoTurno === turno) return;
         const tienePendientes = carrito.some(item => !item.id_detalle);
-        if (tienePendientes && !window.confirm('Cambiar turno eliminará los productos no enviados. ¿Continuar?')) return;
+        if (tienePendientes) {
+            setTurnoPendiente(nuevoTurno);
+            return;
+        }
         limpiarCarrito();
         setTurno(nuevoTurno);
+    };
+
+    const confirmarCambioTurno = () => {
+        limpiarCarrito();
+        setTurno(turnoPendiente);
+        setTurnoPendiente(null);
     };
 
     const abrirOrden = async (tipo) => {
@@ -157,6 +178,29 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
                         cargando={cargando}
                     />
                 )}
+
+                {/* Confirmación de cambio de turno con productos sin enviar */}
+                <AlertDialog open={!!turnoPendiente} onOpenChange={(v) => { if (!v) setTurnoPendiente(null); }}>
+                    <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white">¿Cambiar turno?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-slate-400">
+                                Se eliminarán los productos que aún no has enviado a cocina.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="border-slate-700 text-slate-300 hover:text-white bg-transparent hover:bg-slate-800">
+                                Volver
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={confirmarCambioTurno}
+                                className="bg-red-500 hover:bg-red-600 text-white border-transparent"
+                            >
+                                Sí, cambiar turno
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </DialogContent>
         </Dialog>
     );

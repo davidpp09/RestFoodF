@@ -31,7 +31,6 @@ const PedidosPanel = () => {
         if (token) {
             websocketService.conectar(token);
             unsubCocina = websocketService.subscribe('/topic/cocina', (mensaje) => {
-                console.log("🔥 [WS Cocina] Recibido mensaje:", mensaje);
                 // Mesa cerrada: quitar la orden del panel sin importar si se marcó como lista
                 if (mensaje.accion === 'CERRADA') {
                     setOrdenes(prev => prev.filter(o => o.id_orden !== mensaje.id_orden));

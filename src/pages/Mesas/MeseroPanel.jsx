@@ -36,9 +36,7 @@ const MeseroPanel = () => {
         }
 
         try {
-            console.log("💳 Iniciando proceso de cobro...");
             const ticketData = await ordenService.cerrarOrden(idOrden);
-            console.log("✅ Servidor respondió con ticket:", ticketData);
             
             // 1. Liberar la mesa en el mapa visual
             actualizarMesa(mesaId, { id_orden: null, estado: 'LIBRE' });

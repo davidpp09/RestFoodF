@@ -1,150 +1,32 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, ChefHat, CheckCircle2, XCircle, X, Search } from 'lucide-react';
-import api from '@/api/axiosConfig';
+import { productoService } from '@/services/productoService';
+import { categoriaService } from '@/services/categoriaService';
+import FormPlatilloDialog from './FormPlatilloDialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
-// ── Servicios ──────────────────────────────────────────────────────────────
-const svc = {
-    productos:  () => api.get('/productos').then(r => r.data),
-    categorias: () => api.get('/categorias').then(r => r.data),
-    crear:  (d)     => api.post('/productos', d).then(r => r.data),
-    editar: (id, d) => api.put(`/productos/${id}`, d).then(r => r.data),
-    borrar: (id)    => api.delete(`/productos/${id}`),
-};
-
-// ── Formulario dialog ──────────────────────────────────────────────────────
-const VACIO = { nombre: '', precio_comida: '', precio_desayuno: '', disponibilidad: true, id_categoria: '' };
-
-const FormDialog = ({ producto, categorias, onGuardar, onCerrar }) => {
-    const editando = !!producto?.id;
-    const [form, setForm] = useState(
-        editando
-            ? { nombre: producto.nombre, precio_comida: producto.precioComida, precio_desayuno: producto.precioDesayuno, disponibilidad: producto.disponibilidad, id_categoria: producto.categoria.id }
-            : VACIO
-    );
-    const [guardando, setGuardando] = useState(false);
-
-    const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
-
-    const handleGuardar = async () => {
-        if (!form.nombre.trim() || !form.precio_comida || !form.precio_desayuno || !form.id_categoria) {
-            toast.error('Completa todos los campos');
-            return;
-        }
-        setGuardando(true);
-        try {
-            const payload = { ...form, precio_comida: Number(form.precio_comida), precio_desayuno: Number(form.precio_desayuno), id_categoria: Number(form.id_categoria) };
-            await onGuardar(payload);
-            onCerrar();
-        } finally {
-            setGuardando(false);
-        }
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl">
-                <div className="flex items-center justify-between p-6 border-b border-slate-800">
-                    <h2 className="text-lg font-black text-white">{editando ? 'Editar Platillo' : 'Nuevo Platillo'}</h2>
-                    <button onClick={onCerrar} className="text-slate-500 hover:text-white transition-colors"><X size={20} /></button>
-                </div>
-
-                <div className="p-6 space-y-4">
-                    <div>
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Nombre</label>
-                        <input
-                            value={form.nombre}
-                            onChange={e => set('nombre', e.target.value)}
-                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500 transition-colors"
-                            placeholder="Ej: Pechuga Empanizada"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Precio Comida</label>
-                            <input
-                                type="text"
-                                inputMode="decimal"
-                                value={form.precio_comida}
-                                onChange={e => {
-                                    const val = e.target.value.replace(/[^0-9.]/g, '');
-                                    set('precio_comida', val);
-                                }}
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500 transition-colors"
-                                placeholder="0.00"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Precio Desayuno</label>
-                            <input
-                                type="text"
-                                inputMode="decimal"
-                                value={form.precio_desayuno}
-                                onChange={e => {
-                                    const val = e.target.value.replace(/[^0-9.]/g, '');
-                                    set('precio_desayuno', val);
-                                }}
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500 transition-colors"
-                                placeholder="0.00"
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Categoría</label>
-                        <select
-                            value={form.id_categoria}
-                            onChange={e => set('id_categoria', e.target.value)}
-                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500 transition-colors"
-                        >
-                            <option value="">Selecciona categoría</option>
-                            {categorias.map(c => (
-                                <option key={c.id} value={c.id}>{c.nombre}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => set('disponibilidad', !form.disponibilidad)}
-                            className={`w-10 h-6 rounded-full transition-colors relative ${form.disponibilidad ? 'bg-emerald-500' : 'bg-slate-700'}`}
-                        >
-                            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${form.disponibilidad ? 'left-[18px]' : 'left-0.5'}`} />
-                        </button>
-                        <span className="text-sm text-slate-300 font-semibold">{form.disponibilidad ? 'Disponible' : 'No disponible'}</span>
-                    </div>
-                </div>
-
-                <div className="px-6 pb-6 flex gap-3">
-                    <button onClick={onCerrar} className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-bold transition-colors">
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={handleGuardar}
-                        disabled={guardando}
-                        className="flex-1 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white font-black text-sm transition-colors"
-                    >
-                        {guardando ? 'Guardando...' : 'Guardar'}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// ── Panel principal ────────────────────────────────────────────────────────
 const DevPanel = () => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [dialog, setDialog] = useState(null); // null | 'nuevo' | producto
+    const [productoAEliminar, setProductoAEliminar] = useState(null);
     const [filtroCat, setFiltroCat] = useState('');
     const [busqueda, setBusqueda] = useState('');
 
     const cargar = async () => {
         try {
-            const [prods, cats] = await Promise.all([svc.productos(), svc.categorias()]);
+            const [prods, cats] = await Promise.all([productoService.obtenerTodos(), categoriaService.obtenerTodas()]);
             setProductos(prods);
             setCategorias(cats);
         } catch {
@@ -157,21 +39,22 @@ const DevPanel = () => {
     useEffect(() => { cargar(); }, []);
 
     const handleCrear = async (payload) => {
-        const nuevo = await svc.crear(payload);
+        const nuevo = await productoService.crear(payload);
         setProductos(prev => [...prev, nuevo]);
         toast.success('Platillo creado');
     };
 
     const handleEditar = async (payload) => {
-        const actualizado = await svc.editar(dialog.id, payload);
+        const actualizado = await productoService.actualizar(dialog.id, payload);
         setProductos(prev => prev.map(p => p.id === actualizado.id ? actualizado : p));
         toast.success('Platillo actualizado');
     };
 
-    const handleBorrar = async (producto) => {
-        if (!confirm(`¿Eliminar "${producto.nombre}"? Esta acción no se puede deshacer.`)) return;
+    const handleBorrar = async () => {
+        const producto = productoAEliminar;
+        setProductoAEliminar(null);
         try {
-            await svc.borrar(producto.id);
+            await productoService.eliminar(producto.id);
             setProductos(prev => prev.filter(p => p.id !== producto.id));
             toast.success('Platillo eliminado');
         } catch {
@@ -282,7 +165,7 @@ const DevPanel = () => {
                                             <Pencil size={13} className="text-slate-400" />
                                         </button>
                                         <button
-                                            onClick={() => handleBorrar(p)}
+                                            onClick={() => setProductoAEliminar(p)}
                                             className="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 flex items-center justify-center transition-colors"
                                         >
                                             <Trash2 size={13} className="text-red-400" />
@@ -302,15 +185,38 @@ const DevPanel = () => {
                 )}
             </div>
 
-            {/* Dialog */}
+            {/* Dialog crear/editar */}
             {dialog && (
-                <FormDialog
+                <FormPlatilloDialog
                     producto={dialog === 'nuevo' ? null : dialog}
                     categorias={categorias}
                     onGuardar={dialog === 'nuevo' ? handleCrear : handleEditar}
                     onCerrar={() => setDialog(null)}
                 />
             )}
+
+            {/* Confirmación de eliminar */}
+            <AlertDialog open={!!productoAEliminar} onOpenChange={(v) => { if (!v) setProductoAEliminar(null); }}>
+                <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-white">¿Eliminar "{productoAEliminar?.nombre}"?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-slate-400">
+                            Esta acción no se puede deshacer.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="border-slate-700 text-slate-300 hover:text-white bg-transparent hover:bg-slate-800">
+                            Cancelar
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleBorrar}
+                            className="bg-red-500 hover:bg-red-600 text-white border-transparent"
+                        >
+                            Sí, eliminar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };
