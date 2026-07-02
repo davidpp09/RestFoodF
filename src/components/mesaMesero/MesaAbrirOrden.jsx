@@ -3,9 +3,11 @@ import { Loader2 } from 'lucide-react';
 
 const MesaAbrirOrden = ({ mesa, turno, onCambiarTurno, onAbrir, cargando }) => {
     return (
-        /* Overlay centrado sobre el fondo difuminado */
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="bg-slate-900 border border-slate-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col gap-6">
+        /* Overlay centrado sobre el fondo difuminado.
+           pointer-events-none en el wrapper: solo la tarjeta captura taps,
+           para no tapar el botón X de cerrar el dialog */
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <div className="pointer-events-auto bg-slate-900 border border-slate-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col gap-6">
 
                 {/* Título */}
                 <div className="text-center">

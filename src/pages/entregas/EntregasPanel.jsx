@@ -12,8 +12,9 @@ import MesaOrden from '@/components/mesaMesero/MesaOrden';
 
 // ── Selector de turno + botón iniciar ─────────────────────────────────────
 const TurnoSelector = ({ turno, onCambiarTurno, onAbrir, cargando }) => (
-    <div className="absolute inset-0 flex items-center justify-center z-10">
-        <div className="bg-slate-900 border border-slate-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col gap-6">
+    /* pointer-events-none en el wrapper para no tapar el botón X de cerrar el dialog */
+    <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+        <div className="pointer-events-auto bg-slate-900 border border-slate-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col gap-6">
             <div className="text-center">
                 <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <ShoppingBag size={28} className="text-orange-500" />
