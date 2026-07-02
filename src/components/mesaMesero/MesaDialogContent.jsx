@@ -1,5 +1,6 @@
 import React from 'react';
 import { toast } from 'sonner';
+import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ordenService } from '@/services/ordenService';
 import { useTiempos } from '@/hooks/useTiempos';
@@ -8,7 +9,7 @@ import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
 import { TEMAS_MESA } from './constants';
 
-const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
+const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
     const { getUsuarioId } = useAuth();
     const tema = TEMAS_MESA[turno];
     const { tiempos, cambiarCantidad: cambiarCantidadTiempo } = useTiempos(idOrden);
@@ -20,6 +21,10 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
 
     const [categoriaActiva, setCategoriaActiva] = React.useState("");
     const [busqueda, setBusqueda] = React.useState("");
+    // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
+    const [vista, setVista] = React.useState("menu");
+
+    const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
     React.useEffect(() => {
         if (categorias.length > 0 && !categoriaActiva) {
@@ -65,6 +70,11 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         onOrdenCerrada();
     };
 
+    const handleCancelar = () => {
+        if (!window.confirm(`¿Cancelar la Mesa ${mesa.numero}? Se liberará sin generar ticket.`)) return;
+        onOrdenCancelada();
+    };
+
     const handleReenviarCocina = async () => {
         try {
             await ordenService.reenviarACocina(idOrden);
@@ -78,32 +88,67 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         <div className="flex flex-col h-full min-h-0">
             <MesaDialogHeader mesa={mesa} tema={tema} numeroComanda={numeroComanda} />
 
-            <div className="grid grid-cols-[1.5fr_1fr] gap-6 pt-6 flex-1 min-h-0">
-                <MesaMenu
-                    productosFiltrados={productosFiltrados}
-                    categorias={categorias}
-                    categoriaActiva={categoriaActiva}
-                    setCategoriaActiva={setCategoriaActiva}
-                    busqueda={busqueda}
-                    setBusqueda={setBusqueda}
-                    onAgregar={onAgregar}
-                    precioSegunTurno={precioSegunTurno}
-                    tema={tema}
-                />
-                <MesaOrden
-                    carrito={carrito}
-                    total={total}
-                    tema={tema}
-                    tieneOrden={idOrden !== null}
-                    onCambiarCantidad={onCambiarCantidad}
-                    onEliminar={onEliminarItem}
-                    onCambiarComentario={onCambiarComentario}
-                    onActualizar={handleActualizar}
-                    onCerrar={handleCerrar}
-                    onReenviarCocina={handleReenviarCocina}
-                    tiempos={tiempos}
-                    onCambiarCantidadTiempo={cambiarCantidadTiempo}
-                />
+            {/* Vertical: una vista a la vez ('menu' | 'orden'). Horizontal: dos columnas */}
+            <div className="flex flex-col landscape:grid landscape:grid-cols-[1.5fr_1fr] gap-4 landscape:gap-6 pt-4 landscape:pt-6 flex-1 min-h-0">
+                <div className={`min-h-0 flex-1 ${vista === "menu" ? "flex flex-col" : "hidden"} landscape:flex landscape:flex-col`}>
+                    <MesaMenu
+                        productosFiltrados={productosFiltrados}
+                        categorias={categorias}
+                        categoriaActiva={categoriaActiva}
+                        setCategoriaActiva={setCategoriaActiva}
+                        busqueda={busqueda}
+                        setBusqueda={setBusqueda}
+                        onAgregar={onAgregar}
+                        precioSegunTurno={precioSegunTurno}
+                        tema={tema}
+                    />
+                </div>
+                <div className={`min-h-0 flex-1 ${vista === "orden" ? "flex flex-col" : "hidden"} landscape:flex landscape:flex-col`}>
+                    <MesaOrden
+                        carrito={carrito}
+                        total={total}
+                        tema={tema}
+                        tieneOrden={idOrden !== null}
+                        onCambiarCantidad={onCambiarCantidad}
+                        onEliminar={onEliminarItem}
+                        onCambiarComentario={onCambiarComentario}
+                        onActualizar={handleActualizar}
+                        onCerrar={handleCerrar}
+                        onCancelar={handleCancelar}
+                        onReenviarCocina={handleReenviarCocina}
+                        tiempos={tiempos}
+                        onCambiarCantidadTiempo={cambiarCantidadTiempo}
+                    />
+                </div>
+            </div>
+
+            {/* Barra inferior — solo en vertical: alterna entre menú y orden */}
+            <div className="landscape:hidden pt-3 shrink-0">
+                {vista === "menu" ? (
+                    <button
+                        onClick={() => setVista("orden")}
+                        className={`w-full px-4 py-4 rounded-xl ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-slate-950 font-bold text-base transition-all flex items-center justify-center gap-3`}
+                    >
+                        <span className="relative">
+                            <ShoppingCart size={20} />
+                            {totalItems > 0 && (
+                                <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-slate-950 text-white text-[11px] font-black flex items-center justify-center">
+                                    {totalItems}
+                                </span>
+                            )}
+                        </span>
+                        <span>Ver orden</span>
+                        <span className="font-black">${total.toFixed(2)}</span>
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => setVista("menu")}
+                        className="w-full px-4 py-4 rounded-xl border border-slate-700 hover:bg-slate-800 active:bg-slate-700 text-slate-300 font-bold text-base transition-colors flex items-center justify-center gap-2"
+                    >
+                        <ArrowLeft size={18} />
+                        Volver al menú
+                    </button>
+                )}
             </div>
         </div>
     );

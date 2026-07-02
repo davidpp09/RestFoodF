@@ -53,6 +53,25 @@ const MeseroPanel = () => {
         }
     };
 
+    const cancelarMesa = async (mesaId) => {
+        const mesa = mesas.find(m => (m.id === mesaId || m.id_mesa === mesaId));
+        const idOrden = mesa?.id_orden;
+
+        if (!idOrden) {
+            toast.error("No hay una orden activa para cancelar");
+            return;
+        }
+
+        try {
+            await ordenService.cancelarOrden(idOrden);
+            actualizarMesa(mesaId, { id_orden: null, estado: 'LIBRE' });
+            toast.success(`Mesa ${mesa.numero} cancelada`);
+        } catch (error) {
+            const mensaje = error.response?.data?.mensaje || "Error al cancelar la mesa";
+            toast.error(mensaje);
+        }
+    };
+
     if (cargandoMesas || cargandoProductos) {
         return <div className="text-white">Cargando... ⏳</div>;
     }
@@ -63,7 +82,7 @@ const MeseroPanel = () => {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 portrait:grid-cols-3 landscape:grid-cols-4 xl:landscape:grid-cols-5 gap-4">
                 {mesas.map((mesa) => {
                     const mesaId = mesa.id ?? mesa.id_mesa;
                     return (
@@ -74,6 +93,7 @@ const MeseroPanel = () => {
                             idOrden={mesa.id_orden ?? null}
                             onOrdenCreada={(idOrden) => registrarOrden(mesaId, idOrden)}
                             onOrdenCerrada={() => liberarMesa(mesaId)}
+                            onOrdenCancelada={() => cancelarMesa(mesaId)}
                         />
                     );
                 })}

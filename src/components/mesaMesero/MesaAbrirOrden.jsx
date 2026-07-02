@@ -19,7 +19,7 @@ const MesaAbrirOrden = ({ mesa, turno, onCambiarTurno, onAbrir, cargando }) => {
                     <div className="flex items-center bg-slate-800 border border-slate-700 rounded-xl p-1 gap-1">
                         <button
                             onClick={() => onCambiarTurno("desayuno")}
-                            className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-200
+                            className={`flex-1 py-3 rounded-lg text-base font-bold transition-all duration-200 active:scale-95
                                 ${turno === "desayuno"
                                     ? "bg-amber-500 text-slate-950 shadow-md"
                                     : "text-slate-500 hover:text-slate-300"}`}
@@ -28,7 +28,7 @@ const MesaAbrirOrden = ({ mesa, turno, onCambiarTurno, onAbrir, cargando }) => {
                         </button>
                         <button
                             onClick={() => onCambiarTurno("comida")}
-                            className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-200
+                            className={`flex-1 py-3 rounded-lg text-base font-bold transition-all duration-200 active:scale-95
                                 ${turno === "comida"
                                     ? "bg-cyan-500 text-slate-950 shadow-md"
                                     : "text-slate-500 hover:text-slate-300"}`}

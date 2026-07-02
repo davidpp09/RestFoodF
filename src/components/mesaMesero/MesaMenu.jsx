@@ -17,13 +17,13 @@ const MesaMenu = ({
 
         {/* Barra de búsqueda */}
         <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
             <input
                 type="text"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 placeholder="Buscar producto..."
-                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl pl-8 pr-8 py-2 text-sm text-slate-200 placeholder:text-slate-600 outline-none focus:border-slate-500 transition-colors"
+                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl pl-9 pr-9 py-3 text-base text-slate-200 placeholder:text-slate-600 outline-none focus:border-slate-500 transition-colors"
             />
             {busqueda && (
                 <button
@@ -35,14 +35,15 @@ const MesaMenu = ({
             )}
         </div>
 
-        {/* Tabs de categorías — se ocultan mientras se busca */}
+        {/* Tabs de categorías — se ocultan mientras se busca.
+            Vertical: fila con scroll horizontal; horizontal: wrap */}
         {!busqueda && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 overflow-x-auto pb-1 -mb-1 landscape:flex-wrap landscape:overflow-x-visible landscape:pb-0 landscape:mb-0">
                 {categorias.map((cat) => (
                     <button
                         key={cat}
                         onClick={() => setCategoriaActiva(cat)}
-                        className={`px-4 py-2 rounded-xl font-bold text-sm transition-all
+                        className={`px-5 py-3 rounded-xl font-bold text-base transition-all active:scale-95 shrink-0 whitespace-nowrap
                             ${categoriaActiva === cat
                                 ? `${tema.bg} text-slate-950`
                                 : "bg-slate-900/50 text-slate-400 hover:bg-slate-800"}`}
@@ -61,10 +62,10 @@ const MesaMenu = ({
             </p>
         )}
 
-        {/* Grid de productos */}
-        <div className="grid grid-cols-3 gap-3 overflow-y-auto flex-1 pr-2 content-start">
+        {/* Grid de productos — 2 columnas en vertical, 3 en horizontal */}
+        <div className="grid grid-cols-2 landscape:grid-cols-3 gap-3 overflow-y-auto flex-1 pr-2 content-start">
             {productosFiltrados.length === 0 ? (
-                <div className="col-span-3 flex flex-col items-center justify-center py-12 text-slate-600">
+                <div className="col-span-2 landscape:col-span-3 flex flex-col items-center justify-center py-12 text-slate-600">
                     <UtensilsCrossed size={32} className="mb-2 opacity-30" />
                     <p className="text-sm">
                         {busqueda ? "Sin resultados" : "Sin productos en esta categoría"}
@@ -77,18 +78,18 @@ const MesaMenu = ({
                         <button
                             key={producto.id}
                             onClick={() => onAgregar(producto)}
-                            className={`p-3 bg-slate-900/50 border border-slate-800 rounded-2xl ${tema.border} transition-all text-left h-fit active:scale-95`}
+                            className={`p-4 bg-slate-900/50 border border-slate-800 rounded-2xl ${tema.border} transition-all text-left h-fit active:scale-95`}
                         >
                             <div className="flex items-start justify-between mb-2">
-                                <div className={`w-9 h-9 rounded-lg ${tema.bgTenue} flex items-center justify-center`}>
-                                    <Icon size={18} className={tema.text} />
+                                <div className={`w-11 h-11 rounded-lg ${tema.bgTenue} flex items-center justify-center`}>
+                                    <Icon size={22} className={tema.text} />
                                 </div>
-                                <div className={`w-7 h-7 rounded-lg ${tema.bgTenue} ${tema.bgTenueHover} ${tema.text} hover:text-slate-950 flex items-center justify-center transition-all`}>
-                                    <Plus size={14} />
+                                <div className={`w-9 h-9 rounded-lg ${tema.bgTenue} ${tema.bgTenueHover} ${tema.text} hover:text-slate-950 flex items-center justify-center transition-all`}>
+                                    <Plus size={18} />
                                 </div>
                             </div>
-                            <p className="text-sm font-bold text-slate-200 mb-1 line-clamp-1">{producto.nombre}</p>
-                            <p className={`text-base font-black ${tema.text}`}>
+                            <p className="text-base font-bold text-slate-200 mb-1 line-clamp-2">{producto.nombre}</p>
+                            <p className={`text-lg font-black ${tema.text}`}>
                                 ${precioSegunTurno(producto).toFixed(2)}
                             </p>
                         </button>

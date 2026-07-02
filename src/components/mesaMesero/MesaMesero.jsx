@@ -10,7 +10,7 @@ import { useMesaCart } from '@/hooks/useMesaCart';
 
 const CACHE_TTL = 30_000; // 30 segundos
 
-const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada }) => {
+const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, onOrdenCancelada }) => {
     const { getUsuarioId } = useAuth();
     const [open, setOpen] = React.useState(false);
     const [turno, setTurno] = React.useState("comida");
@@ -38,7 +38,11 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
 
     const aplicarRespuestaOrden = (resp) => {
         if (resp?.id_orden) {
-            const serverCarrito = resp.platillos.map(p => ({
+            // Sincronizar el turno con el servicio real de la orden para mostrar los precios correctos
+            if (resp.servicio) {
+                setTurno(resp.servicio === "DESAYUNO" ? "desayuno" : "comida");
+            }
+            const serverCarrito = (resp.platillos ?? []).map(p => ({
                 id_detalle:  p.id_detalle,
                 id:          p.id_producto,
                 id_producto: p.id_producto,
@@ -117,7 +121,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
                 <MesaCard mesa={mesa} idOrden={idOrden} />
             </DialogTrigger>
 
-            <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 overflow-hidden flex flex-col">
+            <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 portrait:p-4 overflow-hidden flex flex-col">
                 <div className={`flex flex-col h-full min-h-0 transition-all duration-300 ${!idOrden ? "blur-sm opacity-30 pointer-events-none select-none" : ""}`}>
                     <MesaDialogContent
                         mesa={mesa}
@@ -130,6 +134,10 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada })
                         onOrdenCerrada={() => {
                             setOpen(false);
                             onOrdenCerrada();
+                        }}
+                        onOrdenCancelada={() => {
+                            setOpen(false);
+                            onOrdenCancelada();
                         }}
                         onAgregar={agregarAlCarrito}
                         onCambiarCantidad={cambiarCantidad}

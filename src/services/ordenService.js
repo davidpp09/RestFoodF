@@ -16,6 +16,10 @@ export const ordenService = {
         return response.data;
     },
 
+    cancelarOrden: async (idOrden) => {
+        await api.put(`/ordenes/${idOrden}/cancelar`);
+    },
+
     obtenerEntregasHoy: async () => {
         const response = await api.get('/ordenes/entregas/hoy');
         return response.data;

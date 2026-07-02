@@ -1,22 +1,22 @@
 import { Minus, Plus } from 'lucide-react';
 
 const Contador = ({ label, cantidad, onCambiar }) => (
-    <div className="flex items-center gap-1 flex-1">
-        <span className="text-[11px] font-semibold text-slate-400 flex-1 truncate">{label}</span>
+    <div className="flex items-center gap-1.5 flex-1">
+        <span className="text-xs font-semibold text-slate-400 flex-1 truncate">{label}</span>
         <button
             onClick={() => onCambiar(-1)}
-            className="w-5 h-5 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center transition-colors shrink-0"
+            className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 active:scale-95 flex items-center justify-center transition-all shrink-0"
         >
-            <Minus size={9} className="text-slate-300" />
+            <Minus size={13} className="text-slate-300" />
         </button>
-        <span className="w-4 text-center text-xs font-black text-white shrink-0">
+        <span className="w-5 text-center text-sm font-black text-white shrink-0">
             {Number(cantidad) || 0}
         </span>
         <button
             onClick={() => onCambiar(+1)}
-            className="w-5 h-5 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center transition-colors shrink-0"
+            className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 active:scale-95 flex items-center justify-center transition-all shrink-0"
         >
-            <Plus size={9} className="text-slate-300" />
+            <Plus size={13} className="text-slate-300" />
         </button>
     </div>
 );

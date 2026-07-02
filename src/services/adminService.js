@@ -3,7 +3,7 @@ import api from '../api/axiosConfig';
 export const adminService = {
     obtenerCorteDia: async (fecha) => {
         const params = fecha ? { fecha } : {};
-        const response = await api.get('/admin', { params });
+        const response = await api.get('/admin/corte-dia', { params });
         return response.data;
     },
 

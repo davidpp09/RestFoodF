@@ -13,11 +13,11 @@ const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
                 : "bg-[#0f172a]/40 border-slate-800/60 shadow-inner"}
         `}>
             <div className="flex justify-between items-center">
-                <span className={`text-sm font-black px-2.5 py-1 rounded-lg tracking-tighter
+                <span className={`text-lg font-black px-3 py-1.5 rounded-lg tracking-tighter
                     ${esOcupada || idOrden ? "bg-red-500/10 text-red-500" : "bg-slate-800 text-slate-400"}`}>
                     #{mesa.numero}
                 </span>
-                <div className={`w-2.5 h-2.5 rounded-full ${esOcupada || idOrden
+                <div className={`w-3 h-3 rounded-full ${esOcupada || idOrden
                     ? "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.8)] animate-pulse"
                     : "bg-slate-700"}`}
                 />
@@ -26,13 +26,13 @@ const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
             <div className="flex flex-col gap-1">
                 {idOrden ? (
                     <div className="flex items-center gap-2 text-slate-500 font-mono">
-                        <UtensilsCrossed size={11} />
-                        <span className="text-[9px]">ORD #{idOrden}</span>
+                        <UtensilsCrossed size={13} />
+                        <span className="text-xs">ORD #{idOrden}</span>
                     </div>
                 ) : (
                     <div className="flex items-center gap-2 text-slate-600">
-                        <UtensilsCrossed size={12} />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">
+                        <UtensilsCrossed size={14} />
+                        <span className="text-xs font-bold uppercase tracking-widest">
                             {esOcupada ? "Ocupada" : "Libre"}
                         </span>
                     </div>

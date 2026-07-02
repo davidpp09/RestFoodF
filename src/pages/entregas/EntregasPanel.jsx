@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
-import { ShoppingBag, PackagePlus, Loader2 } from 'lucide-react';
+import { ShoppingBag, PackagePlus, Loader2, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useProductos } from '@/hooks/useProductos';
@@ -25,14 +25,14 @@ const TurnoSelector = ({ turno, onCambiarTurno, onAbrir, cargando }) => (
             <div className="flex items-center bg-slate-800 border border-slate-700 rounded-xl p-1 gap-1">
                 <button
                     onClick={() => onCambiarTurno('desayuno')}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all
+                    className={`flex-1 py-3 rounded-lg text-base font-bold transition-all active:scale-95
                         ${turno === 'desayuno' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                     Desayuno
                 </button>
                 <button
                     onClick={() => onCambiarTurno('comida')}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all
+                    className={`flex-1 py-3 rounded-lg text-base font-bold transition-all active:scale-95
                         ${turno === 'comida' ? 'bg-cyan-500 text-slate-950 shadow-md' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                     Comida
@@ -64,6 +64,8 @@ const EntregasPanel = () => {
     const [cargando, setCargando] = useState(false);
     const [categoriaActiva, setCategoriaActiva] = useState('');
     const [busqueda, setBusqueda] = useState('');
+    // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
+    const [vista, setVista] = useState('menu');
 
     const tema = TEMAS_MESA[turno];
     const categorias = useMemo(() => [...new Set(productos.map(p => p.categoria.nombre))], [productos]);
@@ -77,6 +79,8 @@ const EntregasPanel = () => {
         agregarAlCarrito, cambiarCantidad, eliminarItem, cambiarComentario,
         total, precioSegunTurno, guardarCarrito,
     } = useMesaCart(idOrden, turno);
+
+    const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
     const abrirOrden = async () => {
         setCargando(true);
@@ -134,16 +138,16 @@ const EntregasPanel = () => {
                 <button
                     onClick={() => setOpen(true)}
                     disabled={cargandoProductos}
-                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors font-semibold"
+                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 active:scale-95 disabled:opacity-50 text-white px-6 py-3.5 rounded-xl transition-all font-bold text-base"
                 >
-                    <PackagePlus size={20} />
+                    <PackagePlus size={22} />
                     Nueva Entrega
                 </button>
             </div>
 
             {/* Dialog de orden */}
-            <Dialog open={open} onOpenChange={(v) => { if (!v) { setOpen(false); } }}>
-                <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 overflow-hidden flex flex-col">
+            <Dialog open={open} onOpenChange={(v) => { if (!v) { setOpen(false); setVista('menu'); } }}>
+                <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 portrait:p-4 overflow-hidden flex flex-col">
 
                     {/* Header del dialog */}
                     <div className="flex items-center gap-3 pb-4 border-b border-slate-800 shrink-0">
@@ -158,35 +162,71 @@ const EntregasPanel = () => {
                         </div>
                     </div>
 
-                    {/* Contenido: menú + carrito */}
-                    <div className={`grid grid-cols-[1.5fr_1fr] gap-6 pt-4 flex-1 min-h-0 transition-all duration-300 ${!idOrden ? 'blur-sm opacity-30 pointer-events-none select-none' : ''}`}>
-                        <MesaMenu
-                            productosFiltrados={productos.filter(p => {
-                                if (!p.disponibilidad || precioSegunTurno(p) <= 0) return false;
-                                if (busqueda.trim()) return p.nombre.toLowerCase().includes(busqueda.toLowerCase());
-                                return p.categoria.nombre === categoriaActiva;
-                            })}
-                            categorias={categorias}
-                            categoriaActiva={categoriaActiva}
-                            setCategoriaActiva={setCategoriaActiva}
-                            busqueda={busqueda}
-                            setBusqueda={setBusqueda}
-                            onAgregar={agregarAlCarrito}
-                            precioSegunTurno={precioSegunTurno}
-                            tema={tema}
-                        />
-                        <MesaOrden
-                            carrito={carrito}
-                            total={total}
-                            tema={tema}
-                            tieneOrden={!!idOrden}
-                            onCambiarCantidad={cambiarCantidad}
-                            onEliminar={eliminarItem}
-                            onCambiarComentario={cambiarComentario}
-                            onActualizar={handleEnviarACocina}
-                            labelEnviar="Enviar a Cocina"
-                            mostrarCerrar={false}
-                        />
+                    {/* Contenido: menú + carrito.
+                        Vertical: una vista a la vez ('menu' | 'orden'). Horizontal: dos columnas */}
+                    <div className={`flex flex-col flex-1 min-h-0 transition-all duration-300 ${!idOrden ? 'blur-sm opacity-30 pointer-events-none select-none' : ''}`}>
+                        <div className="flex flex-col landscape:grid landscape:grid-cols-[1.5fr_1fr] gap-4 landscape:gap-6 pt-4 flex-1 min-h-0">
+                            <div className={`min-h-0 flex-1 ${vista === 'menu' ? 'flex flex-col' : 'hidden'} landscape:flex landscape:flex-col`}>
+                                <MesaMenu
+                                    productosFiltrados={productos.filter(p => {
+                                        if (!p.disponibilidad || precioSegunTurno(p) <= 0) return false;
+                                        if (busqueda.trim()) return p.nombre.toLowerCase().includes(busqueda.toLowerCase());
+                                        return p.categoria.nombre === categoriaActiva;
+                                    })}
+                                    categorias={categorias}
+                                    categoriaActiva={categoriaActiva}
+                                    setCategoriaActiva={setCategoriaActiva}
+                                    busqueda={busqueda}
+                                    setBusqueda={setBusqueda}
+                                    onAgregar={agregarAlCarrito}
+                                    precioSegunTurno={precioSegunTurno}
+                                    tema={tema}
+                                />
+                            </div>
+                            <div className={`min-h-0 flex-1 ${vista === 'orden' ? 'flex flex-col' : 'hidden'} landscape:flex landscape:flex-col`}>
+                                <MesaOrden
+                                    carrito={carrito}
+                                    total={total}
+                                    tema={tema}
+                                    tieneOrden={!!idOrden}
+                                    onCambiarCantidad={cambiarCantidad}
+                                    onEliminar={eliminarItem}
+                                    onCambiarComentario={cambiarComentario}
+                                    onActualizar={handleEnviarACocina}
+                                    labelEnviar="Enviar a Cocina"
+                                    mostrarCerrar={false}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Barra inferior — solo en vertical: alterna entre menú y orden */}
+                        <div className="landscape:hidden pt-3 shrink-0">
+                            {vista === 'menu' ? (
+                                <button
+                                    onClick={() => setVista('orden')}
+                                    className={`w-full px-4 py-4 rounded-xl ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-slate-950 font-bold text-base transition-all flex items-center justify-center gap-3`}
+                                >
+                                    <span className="relative">
+                                        <ShoppingCart size={20} />
+                                        {totalItems > 0 && (
+                                            <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-slate-950 text-white text-[11px] font-black flex items-center justify-center">
+                                                {totalItems}
+                                            </span>
+                                        )}
+                                    </span>
+                                    <span>Ver orden</span>
+                                    <span className="font-black">${total.toFixed(2)}</span>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => setVista('menu')}
+                                    className="w-full px-4 py-4 rounded-xl border border-slate-700 hover:bg-slate-800 active:bg-slate-700 text-slate-300 font-bold text-base transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <ArrowLeft size={18} />
+                                    Volver al menú
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     {/* Overlay selector de turno cuando no hay orden */}
