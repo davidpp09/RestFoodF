@@ -30,9 +30,14 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
     const [turnoPendiente, setTurnoPendiente] = React.useState(null);
 
     // Caché por instancia de mesa — se invalida cuando cambia idOrden
+    // o cuando se modifica la orden (si no, al reabrir en <30s se pintaría
+    // el estado viejo del servidor pisando los cambios recién enviados)
     const cacheOrden = React.useRef({ timestamp: 0, data: null });
-    React.useEffect(() => {
+    const invalidarCacheOrden = () => {
         cacheOrden.current = { timestamp: 0, data: null };
+    };
+    React.useEffect(() => {
+        invalidarCacheOrden();
     }, [idOrden]);
 
     const { 
@@ -164,6 +169,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
                         onCambiarCantidad={cambiarCantidad}
                         onEliminarItem={eliminarItem}
                         onCambiarComentario={cambiarComentario}
+                        onOrdenModificada={invalidarCacheOrden}
                         total={total}
                         precioSegunTurno={precioSegunTurno}
                     />

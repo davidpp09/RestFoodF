@@ -19,7 +19,7 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, total, precioSegunTurno }) => {
+const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, onOrdenModificada, total, precioSegunTurno }) => {
     const { getUsuarioId } = useAuth();
     const tema = TEMAS_MESA[turno];
     const { tiempos, cambiarCantidad: cambiarCantidadTiempo } = useTiempos(idOrden);
@@ -70,6 +70,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                 const detalle = respuesta.platillos?.find(p => p.id_producto === item.id_producto);
                 return detalle ? { ...item, id_detalle: detalle.id_detalle } : item;
             }));
+            onOrdenModificada?.();
             toast.success(idOrden ? "Orden modificada" : "Orden enviada");
         } catch (error) {
             toast.error("Error al guardar la orden");
