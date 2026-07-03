@@ -43,5 +43,7 @@ La tablet cachea fuerte: después de un build, pull-to-refresh en Fully Kiosk pa
 ## Notas
 
 - `hooks/useCancelaciones.js` está **disponible pero sin pantalla**: carga el reporte de cancelaciones por mesero (`/admin/cancelaciones`) listo para cuando se construya esa vista. No confundir con *cancelar una mesa*, que vive en `MesaDialogContent` → `onOrdenCancelada`.
-- `components/DataTable.jsx`, `StatCard.jsx`, `MesaAdmin.jsx`, `WsIndicador.jsx`, `ImpresionTickets.jsx` son piezas del panel admin.
+- `components/DataTable.jsx`, `StatCard.jsx`, `MesaAdmin.jsx`, `EntregaAdmin.jsx`, `WsIndicador.jsx`, `ImpresionTickets.jsx` son piezas del panel admin.
+- **Panel admin dividido**: `AdminPanel.jsx` muestra dos mitades — mesas (`useMesasSala`) y pedidos para llevar en vivo (`hooks/useEntregasVivo.js`, que recarga `/ordenes/entregas/hoy` cuando llega algo por `/topic/cocina` o `/topic/tickets`, con un retraso de 600 ms porque el aviso WS puede ganarle a la transacción del backend). `EntregaAdmin.jsx` es la tarjeta de solo lectura.
+- **Menú de navegación**: es un cajón desplegable en `RestLayout.jsx` — botón ☰ en el header lo abre como overlay; se cierra al navegar o tocar el fondo. El rol MESERO no tiene menú.
 - Vertical vs horizontal en la tablet: las clases `portrait:` / `landscape:` de Tailwind controlan qué se ve; en vertical los paneles de mesa/entrega alternan entre "menú" y "orden" con el estado `vista`.
