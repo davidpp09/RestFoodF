@@ -6,18 +6,18 @@ const COLORES = {
     orange:  { gradiente: 'from-orange-500/10 to-orange-600/5',   borde: 'border-orange-500/20',      etiqueta: 'text-orange-500/80',      icono: 'text-orange-500',      iconoBg: 'bg-orange-500/10',      fantasma: 'text-orange-500/5'  },
 };
 
-const StatCard = ({ color, label, value, icon: Icon, subtitulo }) => {
+const StatCard = ({ color, label, value, icon: Icon, subtitulo, grande = false }) => {
     const c = COLORES[color];
     return (
-        <div className={`bg-gradient-to-br ${c.gradiente} border ${c.borde} rounded-2xl p-6 relative overflow-hidden`}>
+        <div className={`bg-gradient-to-br ${c.gradiente} border ${c.borde} rounded-2xl ${grande ? 'p-7' : 'p-6'} relative overflow-hidden`}>
             <div className="flex justify-between items-start relative z-10">
                 <div>
-                    <p className={`${c.etiqueta} text-xs font-bold uppercase tracking-wider mb-1`}>{label}</p>
-                    <h3 className="text-3xl font-black text-white">{value}</h3>
+                    <p className={`${c.etiqueta} ${grande ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider mb-1`}>{label}</p>
+                    <h3 className={`${grande ? 'text-5xl' : 'text-3xl'} font-black text-white`}>{value}</h3>
                     {subtitulo && <p className="text-xs text-slate-400 mt-1">{subtitulo}</p>}
                 </div>
-                <div className={`p-3 ${c.iconoBg} rounded-xl`}>
-                    <Icon size={24} className={c.icono} />
+                <div className={`${grande ? 'p-4' : 'p-3'} ${c.iconoBg} rounded-xl`}>
+                    <Icon size={grande ? 32 : 24} className={c.icono} />
                 </div>
             </div>
             <div className={`absolute -right-6 -bottom-6 ${c.fantasma} rotate-12`}>

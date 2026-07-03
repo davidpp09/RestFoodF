@@ -44,7 +44,8 @@ export const useMesasSala = () => {
                                 estado: 'LIBRE',
                                 nombre_mesero: '',
                                 id_orden: null,
-                                platillos: []
+                                platillos: [],
+                                fechaApertura: null
                             };
                         }
 
