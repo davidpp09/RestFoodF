@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { usuarioService } from "@/services/usuarioService";
+import { ROLES_FORM } from "@/constants/roles";
 import { toast } from "sonner";
 
 const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado }) => {
@@ -11,7 +13,9 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
     const [datos, setDatos] = useState({
         id_usuarios: "",
         nombre: "",
-        email: ""
+        email: "",
+        rol: "",
+        seccion: null
     });
 
     useEffect(() => {
@@ -19,7 +23,9 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
             setDatos({
                 id_usuarios: usuario.id_usuarios,
                 nombre: usuario.nombre,
-                email: usuario.email
+                email: usuario.email,
+                rol: usuario.rol,
+                seccion: usuario.seccion ?? null
             });
         }
     }, [usuario]);
@@ -30,6 +36,10 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
     };
 
     const manejarGuardado = async () => {
+        if (datos.rol === 'MESERO' && !datos.seccion) {
+            toast.error("Un mesero necesita una sección de mesas asignada.");
+            return;
+        }
         const toastId = toast.loading("Actualizando empleado...");
 
         try {
@@ -76,6 +86,43 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                             className="bg-slate-950 border-slate-800"
                         />
                     </div>
+
+                    <div className="grid gap-2">
+                        <Label>Puesto / Rol</Label>
+                        <Select
+                            value={datos.rol}
+                            onValueChange={(rol) => setDatos(prev => ({ ...prev, rol, seccion: rol === 'MESERO' ? prev.seccion : null }))}
+                        >
+                            <SelectTrigger className="bg-slate-950 border-slate-800">
+                                <SelectValue placeholder="Selecciona un rol" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                                {ROLES_FORM.map(rol => (
+                                    <SelectItem key={rol} value={rol}>{rol}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {datos.rol === 'MESERO' && (
+                        <div className="grid gap-2">
+                            <Label>Sección de mesas</Label>
+                            <Select
+                                value={datos.seccion?.toString() ?? ""}
+                                onValueChange={(v) => setDatos(prev => ({ ...prev, seccion: Number(v) }))}
+                            >
+                                <SelectTrigger className="bg-slate-950 border-slate-800">
+                                    <SelectValue placeholder="Selecciona la sección" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                                    <SelectItem value="1">Sección 1 — Mesas 1 al 10</SelectItem>
+                                    <SelectItem value="2">Sección 2 — Mesas 11 al 20</SelectItem>
+                                    <SelectItem value="3">Sección 3 — Mesas 21 al 30</SelectItem>
+                                    <SelectItem value="4">Sección 4 — Mesas 31 al 40</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex gap-2">

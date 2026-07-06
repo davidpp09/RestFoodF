@@ -21,5 +21,10 @@ export const usuarioService = {
     eliminarUsuario: async (id) => {
         const response = await api.delete(`/usuarios/${id}`);
         return response.data;
+    },
+
+    cambiarContrasena: async (id, contrasena) => {
+        const response = await api.put(`/usuarios/${id}/contrasena`, { contrasena });
+        return response.data;
     }
 };

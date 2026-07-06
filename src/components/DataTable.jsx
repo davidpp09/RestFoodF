@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
 
 // ✅ AGREGAR onEdit y onDelete como props
-export function DataTable({ columns, data, onEdit, onDelete }) {
+export function DataTable({ columns, data, onEdit, onDelete, onPassword }) {
     const [columnFilters, setColumnFilters] = React.useState([]);
 
     const table = useReactTable({
@@ -19,7 +19,8 @@ export function DataTable({ columns, data, onEdit, onDelete }) {
         // ✅ AGREGAR meta para pasar los callbacks
         meta: {
             onEdit,
-            onDelete
+            onDelete,
+            onPassword
         }
     })
 

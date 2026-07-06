@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { KeyRound, Pencil, Trash2 } from "lucide-react";
 
 const coloresRoles = {
     ADMIN: "text-rose-500 bg-rose-500/10 border-rose-500/20",
@@ -49,6 +49,15 @@ export const columns = [
                         className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-500"
                     >
                         <Pencil size={16} />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => table.options.meta?.onPassword(usuario)}
+                        className="h-8 w-8 p-0 hover:bg-amber-500/10 hover:text-amber-500"
+                        title="Cambiar contraseña"
+                    >
+                        <KeyRound size={16} />
                     </Button>
                     <Button
                         variant="ghost"

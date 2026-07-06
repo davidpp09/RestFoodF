@@ -6,12 +6,14 @@ import { Loader2 } from "lucide-react";
 import FormularioNuevoEmpleado from "./FormularioNuevoEmpleado";
 import FormularioEditarEmpleado from "./FormularioEditarEmpleado";
 import DialogEliminar from "./DialogEliminar";
+import DialogCambiarContrasena from "./DialogCambiarContrasena";
 
 const PersonalPanel = () => {
     const { usuarios, loading, recargar } = usePersonal();
 
     const [editarAbierto, setEditarAbierto] = useState(false);
     const [eliminarAbierto, setEliminarAbierto] = useState(false);
+    const [contrasenaAbierto, setContrasenaAbierto] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
     const manejarEditar = (usuario) => {
@@ -22,6 +24,11 @@ const PersonalPanel = () => {
     const manejarEliminar = (usuario) => {
         setUsuarioSeleccionado(usuario);
         setEliminarAbierto(true);
+    };
+
+    const manejarContrasena = (usuario) => {
+        setUsuarioSeleccionado(usuario);
+        setContrasenaAbierto(true);
     };
 
     if (loading) {
@@ -49,6 +56,7 @@ const PersonalPanel = () => {
                     data={usuarios}
                     onEdit={manejarEditar}
                     onDelete={manejarEliminar}
+                    onPassword={manejarContrasena}
                 />
             </div>
 
@@ -64,6 +72,12 @@ const PersonalPanel = () => {
                 abierto={eliminarAbierto}
                 onCerrar={() => setEliminarAbierto(false)}
                 onEliminado={recargar}
+            />
+
+            <DialogCambiarContrasena
+                usuario={usuarioSeleccionado}
+                abierto={contrasenaAbierto}
+                onCerrar={() => setContrasenaAbierto(false)}
             />
         </div>
     );
