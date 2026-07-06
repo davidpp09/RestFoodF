@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'sonner';
 import { authStorage } from '../lib/authStorage';
 
 const api = axios.create({
@@ -21,11 +22,17 @@ api.interceptors.response.use(
     (error) => {
         const status = error.response?.status;
         const url = error.config?.url;
-        if ((status === 401 || status === 403) && url !== '/login') {
+        // 401 = sesión inválida o expirada → cerrar sesión y volver al login.
+        if (status === 401 && url !== '/login') {
             authStorage.limpiar();
             if (!window.location.pathname.startsWith('/login')) {
                 window.location.href = '/login';
             }
+        }
+        // 403 = sesión válida pero sin permiso para ESTA acción → avisar sin tirar la sesión.
+        if (status === 403 && url !== '/login') {
+            const mensaje = error.response?.data?.mensaje ?? 'No tienes permiso para realizar esta acción.';
+            toast.error(mensaje, { id: 'error-403' });
         }
         return Promise.reject(error);
     }

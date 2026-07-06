@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router-dom';
 import { AccessDenied } from './AccessDenied';
-import { SUPER_ROLES } from '../constants/roles';
 import { authStorage } from '../lib/authStorage';
 
 const ProtectedRoute = ({ children, roleRequired }) => {
@@ -9,12 +8,13 @@ const ProtectedRoute = ({ children, roleRequired }) => {
         return <Navigate to="/login" />;
     }
 
-    const userRole = sesion.rol;
+    // roleRequired es la única fuente de verdad: las rutas que admiten ADMIN/DEV
+    // ya los listan explícitamente (ver App.jsx). Sin bypass de super-roles, para
+    // que las pantallas solo-DEV (p. ej. /admin/platillos) coincidan con los
+    // permisos reales del backend.
     const rolesPermitidos = Array.isArray(roleRequired) ? roleRequired : [roleRequired];
-    const esSuperUsuario = SUPER_ROLES.includes(userRole);
-    const tienePermiso = rolesPermitidos.includes(userRole);
 
-    if (esSuperUsuario || tienePermiso) {
+    if (rolesPermitidos.includes(sesion.rol)) {
         return children;
     }
     return <AccessDenied roleRequired={roleRequired} />;
