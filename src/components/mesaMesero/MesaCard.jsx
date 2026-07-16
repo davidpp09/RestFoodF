@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { UtensilsCrossed, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { resumenTiemposGuardados } from '../../hooks/useTiempos';
 
 const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
@@ -24,16 +24,10 @@ const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
             </span>
 
             <div className="flex flex-col items-start gap-1.5 min-w-0 w-full">
-                {idOrden && (
-                    <div className="flex items-center gap-1.5 text-rf-text-3 font-mono">
-                        <UtensilsCrossed size={13} className="shrink-0" />
-                        <span className="text-xs truncate">ORD #{idOrden}</span>
-                    </div>
-                )}
                 {tiempos && (
-                    <div className="flex items-center gap-1.5 text-rf-accent-ink min-w-0 w-full">
-                        <Clock size={11} className="shrink-0" />
-                        <span className="text-[11px] font-semibold truncate">{tiempos}</span>
+                    <div className="flex items-start gap-1.5 text-rf-accent-ink min-w-0 w-full">
+                        <Clock size={11} className="shrink-0 mt-0.5" />
+                        <span className="text-[11px] font-semibold leading-tight">{tiempos}</span>
                     </div>
                 )}
                 {activa ? (
