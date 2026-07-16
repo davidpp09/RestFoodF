@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -16,6 +17,43 @@
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Geist Variable', sans-serif;
+  --font-mono: 'Geist Mono Variable', monospace;
+
+  /* ===== RestFood design system (rediseño 2026-07) ===== */
+  --color-rf-bg: var(--rf-bg);
+  --color-rf-surface: var(--rf-surface);
+  --color-rf-surface-2: var(--rf-surface-2);
+  --color-rf-border: var(--rf-border);
+  --color-rf-border-strong: var(--rf-border-strong);
+  --color-rf-text: var(--rf-text);
+  --color-rf-text-2: var(--rf-text-2);
+  --color-rf-text-3: var(--rf-text-3);
+  --color-rf-accent: var(--rf-accent);
+  --color-rf-accent-strong: var(--rf-accent-strong);
+  --color-rf-accent-soft: var(--rf-accent-soft);
+  --color-rf-accent-border: var(--rf-accent-border);
+  --color-rf-accent-ink: var(--rf-accent-ink);
+  --color-rf-red: var(--rf-red);
+  --color-rf-red-soft: var(--rf-red-soft);
+  --color-rf-red-ink: var(--rf-red-ink);
+  --color-rf-green: var(--rf-green);
+  --color-rf-green-soft: var(--rf-green-soft);
+  --color-rf-green-ink: var(--rf-green-ink);
+  --color-rf-cyan: var(--rf-cyan);
+  --color-rf-cyan-soft: var(--rf-cyan-soft);
+  --color-rf-cyan-border: var(--rf-cyan-border);
+  --color-rf-cyan-ink: var(--rf-cyan-ink);
+  --color-rf-blue: var(--rf-blue);
+  --color-rf-blue-soft: var(--rf-blue-soft);
+  --color-rf-blue-ink: var(--rf-blue-ink);
+  --color-rf-turno: var(--rf-turno);
+  --color-rf-turno-strong: var(--rf-turno-strong);
+  --color-rf-turno-soft: var(--rf-turno-soft);
+  --color-rf-turno-border: var(--rf-turno-border);
+  --color-rf-turno-ink: var(--rf-turno-ink);
+  --shadow-rf-sm: var(--rf-shadow-sm);
+  --shadow-rf-md: var(--rf-shadow-md);
+  --shadow-rf-lg: var(--rf-shadow-lg);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -57,30 +95,45 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* RestFood — tema claro (principal) */
+  --rf-bg: #FAF9F7; --rf-surface: #FFFFFF; --rf-surface-2: #F4F2EE;
+  --rf-border: #E9E6E0; --rf-border-strong: #D9D4CC;
+  --rf-text: #211D17; --rf-text-2: #5D564B; --rf-text-3: #9A9184;
+  --rf-accent: #D97706; --rf-accent-strong: #B45309; --rf-accent-soft: #FBEFDC; --rf-accent-border: #F0D9B0; --rf-accent-ink: #96530A;
+  --rf-red: #DC2626; --rf-red-soft: #FBE9E7; --rf-red-ink: #B42318;
+  --rf-green: #16A34A; --rf-green-soft: #E6F4EA; --rf-green-ink: #187339;
+  --rf-cyan: #0891B2; --rf-cyan-soft: #E2F3F8; --rf-cyan-border: #BEE4EF; --rf-cyan-ink: #0A6E86;
+  --rf-blue: #2563EB; --rf-blue-soft: #E9EFFC; --rf-blue-ink: #1D4ED8;
+  --rf-shadow-sm: 0 1px 1px rgba(33,29,23,.04);
+  --rf-shadow-md: 0 1px 2px rgba(33,29,23,.06);
+  --rf-shadow-lg: 0 4px 10px rgba(33,29,23,.08), 0 16px 40px rgba(33,29,23,.14);
+  --rf-turno: var(--rf-accent); --rf-turno-strong: var(--rf-accent-strong);
+  --rf-turno-soft: var(--rf-accent-soft); --rf-turno-border: var(--rf-accent-border); --rf-turno-ink: var(--rf-accent-ink);
+
+  --background: var(--rf-bg);
+  --foreground: var(--rf-text);
+  --card: var(--rf-surface);
+  --card-foreground: var(--rf-text);
+  --popover: var(--rf-surface);
+  --popover-foreground: var(--rf-text);
+  --primary: var(--rf-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--rf-surface-2);
+  --secondary-foreground: var(--rf-text);
+  --muted: var(--rf-surface-2);
+  --muted-foreground: var(--rf-text-2);
+  --accent: var(--rf-accent-soft);
+  --accent-foreground: var(--rf-accent-ink);
+  --destructive: var(--rf-red);
+  --border: var(--rf-border);
+  --input: var(--rf-border-strong);
+  --ring: var(--rf-accent);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --radius: 0.375rem; /* 6px — esquinas rectas del rediseño */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -92,24 +145,37 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* RestFood — tema oscuro */
+  --rf-bg: #171411; --rf-surface: #201C18; --rf-surface-2: #2A251F;
+  --rf-border: #332E26; --rf-border-strong: #463F34;
+  --rf-text: #F3F0EA; --rf-text-2: #B5AC9E; --rf-text-3: #7E7566;
+  --rf-accent: #F59E0B; --rf-accent-strong: #FBBF24; --rf-accent-soft: #382A12; --rf-accent-border: #5A431A; --rf-accent-ink: #FBBF24;
+  --rf-red: #EF4444; --rf-red-soft: #3C1F1C; --rf-red-ink: #F49B93;
+  --rf-green: #22C55E; --rf-green-soft: #17301F; --rf-green-ink: #6FDCA0;
+  --rf-cyan: #22C3DD; --rf-cyan-soft: #10313A; --rf-cyan-border: #1C4A57; --rf-cyan-ink: #6FE0F2;
+  --rf-blue: #5B8DEF; --rf-blue-soft: #1C2A44; --rf-blue-ink: #9DBCF9;
+  --rf-shadow-sm: 0 1px 1px rgba(0,0,0,.3);
+  --rf-shadow-md: 0 1px 2px rgba(0,0,0,.3);
+  --rf-shadow-lg: 0 4px 10px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.5);
+
+  --background: var(--rf-bg);
+  --foreground: var(--rf-text);
+  --card: var(--rf-surface);
+  --card-foreground: var(--rf-text);
+  --popover: var(--rf-surface);
+  --popover-foreground: var(--rf-text);
+  --primary: var(--rf-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--rf-surface-2);
+  --secondary-foreground: var(--rf-text);
+  --muted: var(--rf-surface-2);
+  --muted-foreground: var(--rf-text-2);
+  --accent: var(--rf-accent-soft);
+  --accent-foreground: var(--rf-accent-ink);
+  --destructive: var(--rf-red);
+  --border: var(--rf-border);
+  --input: var(--rf-border-strong);
+  --ring: var(--rf-accent);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -123,6 +189,16 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Turno del día → recolorea la vista donde se aplique el atributo */
+[data-turno="desayuno"] {
+  --rf-turno: var(--rf-accent); --rf-turno-strong: var(--rf-accent-strong);
+  --rf-turno-soft: var(--rf-accent-soft); --rf-turno-border: var(--rf-accent-border); --rf-turno-ink: var(--rf-accent-ink);
+}
+[data-turno="comida"] {
+  --rf-turno: var(--rf-cyan); --rf-turno-strong: var(--rf-cyan-ink);
+  --rf-turno-soft: var(--rf-cyan-soft); --rf-turno-border: var(--rf-cyan-border); --rf-turno-ink: var(--rf-cyan-ink);
 }
 
 @layer base {
