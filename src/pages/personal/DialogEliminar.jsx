@@ -18,21 +18,21 @@ const DialogEliminar = ({ usuario, abierto, onCerrar, onEliminado }) => {
 
     return (
         <AlertDialog open={abierto} onOpenChange={onCerrar}>
-            <AlertDialogContent className="bg-slate-900 border-slate-800 text-white">
+            <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
                 <AlertDialogHeader>
                     <AlertDialogTitle>¿Estás seguro? 🗑️</AlertDialogTitle>
-                    <AlertDialogDescription className="text-slate-400">
-                        Vas a desactivar a <span className="font-bold text-white">{usuario?.nombre}</span>.
+                    <AlertDialogDescription className="text-rf-text-2">
+                        Vas a desactivar a <span className="font-bold text-rf-text">{usuario?.nombre}</span>.
                         El usuario quedará inactivo pero podrás reactivarlo después.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-slate-800 border-slate-700 hover:bg-slate-700">
+                    <AlertDialogCancel className="bg-transparent border border-rf-border-strong text-rf-text-2 hover:bg-rf-surface-2">
                         Cancelar
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={manejarEliminar}
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-rf-red hover:bg-rf-red/90"
                     >
                         Desactivar
                     </AlertDialogAction>

@@ -2,8 +2,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 
 const GraficaServicios = ({ desayuno, comida }) => {
     const datos = [
-        { name: 'Desayuno', value: parseFloat(desayuno), color: '#f59e0b' },
-        { name: 'Comida', value: parseFloat(comida), color: '#f97316' }
+        { name: 'Desayuno', value: parseFloat(desayuno), color: 'var(--rf-accent)' },
+        { name: 'Comida', value: parseFloat(comida), color: 'var(--rf-cyan)' }
     ];
 
     const formatearDinero = (value) => {
@@ -13,9 +13,9 @@ const GraficaServicios = ({ desayuno, comida }) => {
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-lg">
-                    <p className="text-white font-semibold">{payload[0].name}</p>
-                    <p className="text-orange-500 font-bold text-lg">
+                <div className="bg-rf-surface border border-rf-border rounded-md p-3 shadow-rf-lg">
+                    <p className="text-rf-text font-semibold">{payload[0].name}</p>
+                    <p className="text-rf-accent-ink font-bold text-lg font-mono">
                         {formatearDinero(payload[0].value)}
                     </p>
                 </div>
@@ -44,7 +44,7 @@ const GraficaServicios = ({ desayuno, comida }) => {
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
                     iconType="circle"
-                    wrapperStyle={{ color: '#94a3b8' }}
+                    wrapperStyle={{ color: 'var(--rf-text-2)' }}
                 />
             </PieChart>
         </ResponsiveContainer>

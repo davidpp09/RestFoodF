@@ -51,14 +51,14 @@ const DialogCambiarContrasena = ({ usuario, abierto, onCerrar }) => {
 
     return (
         <Dialog open={abierto} onOpenChange={onCerrar}>
-            <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-[425px]">
+            <DialogContent className="bg-rf-surface border-rf-border text-rf-text sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <KeyRound size={18} className="text-amber-400" />
+                        <KeyRound size={18} className="text-rf-accent-ink" />
                         Cambiar contraseña
                     </DialogTitle>
-                    <DialogDescription className="text-slate-400">
-                        Nueva contraseña para <span className="text-white font-semibold">{usuario?.nombre}</span>.
+                    <DialogDescription className="text-rf-text-2">
+                        Nueva contraseña para <span className="text-rf-text font-semibold">{usuario?.nombre}</span>.
                         No se necesita la contraseña anterior.
                     </DialogDescription>
                 </DialogHeader>
@@ -72,19 +72,19 @@ const DialogCambiarContrasena = ({ usuario, abierto, onCerrar }) => {
                                 type={mostrar ? "text" : "password"}
                                 value={contrasena}
                                 onChange={(e) => setContrasena(e.target.value)}
-                                className="bg-slate-950 border-slate-800 pr-10"
+                                className="bg-rf-bg border-rf-border-strong pr-10"
                                 autoComplete="new-password"
                             />
                             <button
                                 type="button"
                                 onClick={() => setMostrar(m => !m)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-rf-text-3 hover:text-rf-text-2"
                                 tabIndex={-1}
                             >
                                 {mostrar ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
                         </div>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-rf-text-3">
                             Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo (@$!%*?&).
                         </span>
                     </div>
@@ -96,7 +96,7 @@ const DialogCambiarContrasena = ({ usuario, abierto, onCerrar }) => {
                             type={mostrar ? "text" : "password"}
                             value={confirmacion}
                             onChange={(e) => setConfirmacion(e.target.value)}
-                            className="bg-slate-950 border-slate-800"
+                            className="bg-rf-bg border-rf-border-strong"
                             autoComplete="new-password"
                         />
                     </div>
@@ -104,11 +104,11 @@ const DialogCambiarContrasena = ({ usuario, abierto, onCerrar }) => {
 
                 <div className="flex gap-2">
                     <Button onClick={onCerrar} disabled={guardando}
-                        className="flex-1 bg-transparent border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        className="flex-1 bg-transparent border border-rf-border-strong text-rf-text-2 hover:bg-rf-surface-2 hover:text-rf-text">
                         Cancelar
                     </Button>
                     <Button onClick={manejarGuardado} disabled={guardando}
-                        className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">
+                        className="flex-1 bg-rf-accent hover:bg-rf-accent-strong text-white">
                         {guardando ? "Guardando..." : "Cambiar contraseña"}
                     </Button>
                 </div>

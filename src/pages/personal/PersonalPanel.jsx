@@ -33,9 +33,9 @@ const PersonalPanel = () => {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center h-64 bg-slate-900 rounded-xl border border-slate-800">
-                <Loader2 className="w-10 h-10 text-orange-500 animate-spin mb-4" />
-                <p className="text-slate-400 font-medium">Cargando personal...</p>
+            <div className="flex flex-col items-center justify-center h-64 bg-rf-surface rounded-lg border border-rf-border">
+                <Loader2 className="w-10 h-10 text-rf-accent animate-spin mb-4" />
+                <p className="text-rf-text-2 font-medium">Cargando personal...</p>
             </div>
         );
     }
@@ -44,13 +44,13 @@ const PersonalPanel = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Gestión de Personal </h1>
-                    <p className="text-slate-400">Administra los usuarios y roles de tu restaurante</p>
+                    <h1 className="text-2xl font-bold text-rf-text">Gestión de Personal </h1>
+                    <p className="text-rf-text-2">Administra los usuarios y roles de tu restaurante</p>
                 </div>
                 <FormularioNuevoEmpleado onEmpleadoCreado={recargar} />
             </div>
 
-            <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+            <div className="bg-rf-surface rounded-lg border border-rf-border shadow-rf-sm overflow-hidden">
                 <DataTable
                     columns={columns}
                     data={usuarios}

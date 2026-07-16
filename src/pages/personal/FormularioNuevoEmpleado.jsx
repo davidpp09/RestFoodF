@@ -14,24 +14,24 @@ const Campo = ({ label, id, error, type, ...props }) => {
 
     return (
         <div className="grid gap-2">
-            <Label htmlFor={id} className={error && "text-red-500"}>{label}</Label>
+            <Label htmlFor={id} className={error && "text-rf-red"}>{label}</Label>
             <div className="relative">
                 <Input
                     id={id}
                     type={esContrasena ? (mostrar ? "text" : "password") : type}
-                    className={`bg-slate-950 ${esContrasena && "pr-10"} ${error ? "border-red-500 focus-visible:ring-red-500" : "border-slate-800"}`}
+                    className={`bg-rf-bg ${esContrasena && "pr-10"} ${error ? "border-rf-red focus-visible:ring-rf-red" : "border-rf-border-strong"}`}
                     {...props}
                 />
                 {esContrasena && (
                     <div
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-slate-400 hover:text-white"
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-rf-text-3 hover:text-rf-text"
                         onClick={() => setMostrar(!mostrar)}
                     >
                         {mostrar ? <EyeOff size={18} /> : <Eye size={18} />}
                     </div>
                 )}
             </div>
-            {error && <span className="text-xs text-red-500 font-medium">{error}</span>}
+            {error && <span className="text-xs text-rf-red font-medium">{error}</span>}
         </div>
     );
 };
@@ -51,15 +51,15 @@ const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
 
     return (
         <Dialog open={dialogAbierto} onOpenChange={setDialogAbierto}>
-            <DialogTrigger className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold cursor-pointer select-none active:scale-95">
+            <DialogTrigger className="inline-flex items-center gap-2 bg-rf-accent hover:bg-rf-accent-strong text-white px-4 py-2 rounded-lg transition-colors font-semibold cursor-pointer select-none active:scale-95">
                 <UserPlus size={20} />
                 <span>Nuevo Empleado</span>
             </DialogTrigger>
 
-            <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-[425px]">
+            <DialogContent className="bg-rf-surface border-rf-border text-rf-text sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Registrar Nuevo Empleado 👤</DialogTitle>
-                    <DialogDescription className="text-slate-400">
+                    <DialogDescription className="text-rf-text-2">
                         Completa los datos del integrante del equipo.
                     </DialogDescription>
                 </DialogHeader>
@@ -70,40 +70,40 @@ const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
                     <Campo label="Contraseña" id="contrasena" name="contrasena" type="password" value={nuevoUsuario.contrasena} onChange={manejarCambio} error={errores.contrasena} />
 
                     <div className="grid gap-2">
-                        <Label className={errores.rol && "text-red-500"}>Puesto / Rol</Label>
+                        <Label className={errores.rol && "text-rf-red"}>Puesto / Rol</Label>
                         <Select value={nuevoUsuario.rol} onValueChange={actualizarRol}>
-                            <SelectTrigger className={`bg-slate-950 ${errores.rol ? "border-red-500 focus:ring-red-500" : "border-slate-800"}`}>
+                            <SelectTrigger className={`bg-rf-bg ${errores.rol ? "border-rf-red focus:ring-rf-red" : "border-rf-border-strong"}`}>
                                 <SelectValue placeholder="Selecciona un rol" />
                             </SelectTrigger>
-                            <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                            <SelectContent className="bg-rf-surface border-rf-border text-rf-text">
                                 {ROLES_FORM.map(rol => (
                                     <SelectItem key={rol} value={rol}>{rol}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
-                        {errores.rol && <span className="text-xs text-red-500 font-medium">{errores.rol}</span>}
+                        {errores.rol && <span className="text-xs text-rf-red font-medium">{errores.rol}</span>}
                     </div>
 
                     {nuevoUsuario.rol === 'MESERO' && (
                         <div className="grid gap-2">
-                            <Label className={errores.seccion && "text-red-500"}>Sección de mesas</Label>
+                            <Label className={errores.seccion && "text-rf-red"}>Sección de mesas</Label>
                             <Select value={nuevoUsuario.seccion?.toString() ?? ""} onValueChange={(v) => actualizarSeccion(Number(v))}>
-                                <SelectTrigger className={`bg-slate-950 ${errores.seccion ? "border-red-500 focus:ring-red-500" : "border-slate-800"}`}>
+                                <SelectTrigger className={`bg-rf-bg ${errores.seccion ? "border-rf-red focus:ring-rf-red" : "border-rf-border-strong"}`}>
                                     <SelectValue placeholder="Selecciona la sección" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                                <SelectContent className="bg-rf-surface border-rf-border text-rf-text">
                                     <SelectItem value="1">Sección 1 — Mesas 1 al 10</SelectItem>
                                     <SelectItem value="2">Sección 2 — Mesas 11 al 20</SelectItem>
                                     <SelectItem value="3">Sección 3 — Mesas 21 al 30</SelectItem>
                                     <SelectItem value="4">Sección 4 — Mesas 31 al 40</SelectItem>
                                 </SelectContent>
                             </Select>
-                            {errores.seccion && <span className="text-xs text-red-500 font-medium">{errores.seccion}</span>}
+                            {errores.seccion && <span className="text-xs text-rf-red font-medium">{errores.seccion}</span>}
                         </div>
                     )}
                 </div>
 
-                <Button onClick={manejarGuardado} className="bg-orange-600 hover:bg-orange-700 w-full mt-2">
+                <Button onClick={manejarGuardado} className="bg-rf-accent hover:bg-rf-accent-strong w-full mt-2">
                     Guardar Empleado
                 </Button>
             </DialogContent>

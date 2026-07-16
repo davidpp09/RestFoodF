@@ -2,16 +2,16 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 
 const GraficaTiposPedido = ({ loza, paraLlevar }) => {
     const datos = [
-        { name: 'En Loza', value: loza, color: '#3b82f6' },
-        { name: 'Para Llevar', value: paraLlevar, color: '#10b981' }
+        { name: 'En Loza', value: loza, color: 'var(--rf-blue)' },
+        { name: 'Para Llevar', value: paraLlevar, color: 'var(--rf-green)' }
     ];
 
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-lg">
-                    <p className="text-white font-semibold">{payload[0].name}</p>
-                    <p className="text-orange-500 font-bold text-lg">
+                <div className="bg-rf-surface border border-rf-border rounded-md p-3 shadow-rf-lg">
+                    <p className="text-rf-text font-semibold">{payload[0].name}</p>
+                    <p className="text-rf-accent-ink font-bold text-lg font-mono">
                         {payload[0].value} platillos
                     </p>
                 </div>
@@ -45,7 +45,7 @@ const GraficaTiposPedido = ({ loza, paraLlevar }) => {
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
                     iconType="circle"
-                    wrapperStyle={{ color: '#94a3b8' }}
+                    wrapperStyle={{ color: 'var(--rf-text-2)' }}
                 />
             </PieChart>
         </ResponsiveContainer>

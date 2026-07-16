@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button";
 import { KeyRound, Pencil, Trash2 } from "lucide-react";
 
 const coloresRoles = {
-    ADMIN: "text-rose-500 bg-rose-500/10 border-rose-500/20",
-    MESERO: "text-sky-500 bg-sky-500/10 border-sky-500/20",
-    COCINA: "text-orange-500 bg-orange-500/10 border-orange-500/20",
-    CAJERO: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
-    DEV: "text-violet-500 bg-violet-500/10 border-violet-500/20",
-    REPARTIDOR: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+    ADMIN: "text-rf-red-ink bg-rf-red-soft",
+    MESERO: "text-rf-blue-ink bg-rf-blue-soft",
+    COCINA: "text-rf-accent-ink bg-rf-accent-soft",
+    CAJERO: "text-rf-green-ink bg-rf-green-soft",
+    DEV: "text-violet-700 bg-violet-500/10 dark:text-violet-300",
+    REPARTIDOR: "text-rf-cyan-ink bg-rf-cyan-soft",
 };
 
 export const columns = [
@@ -24,10 +24,10 @@ export const columns = [
         header: "Rol",
         cell: ({ row }) => {
             const rol = row.getValue("rol");
-            const estilo = coloresRoles[rol] || "text-slate-500 bg-slate-500/10";
+            const estilo = coloresRoles[rol] || "text-rf-text-3 bg-rf-surface-2";
 
             return (
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${estilo}`}>
+                <span className={`inline-flex items-center h-[22px] px-2 rounded-[3px] text-[11px] font-bold tracking-[.02em] ${estilo}`}>
                     {rol}
                 </span>
             );
@@ -46,7 +46,7 @@ export const columns = [
                         variant="ghost"
                         size="sm"
                         onClick={() => table.options.meta?.onEdit(usuario)}
-                        className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-500"
+                        className="h-8 w-8 p-0 hover:bg-rf-blue-soft hover:text-rf-blue-ink"
                     >
                         <Pencil size={16} />
                     </Button>
@@ -54,7 +54,7 @@ export const columns = [
                         variant="ghost"
                         size="sm"
                         onClick={() => table.options.meta?.onPassword(usuario)}
-                        className="h-8 w-8 p-0 hover:bg-amber-500/10 hover:text-amber-500"
+                        className="h-8 w-8 p-0 hover:bg-rf-accent-soft hover:text-rf-accent-ink"
                         title="Cambiar contraseña"
                     >
                         <KeyRound size={16} />
@@ -63,7 +63,7 @@ export const columns = [
                         variant="ghost"
                         size="sm"
                         onClick={() => table.options.meta?.onDelete(usuario)}
-                        className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-500"
+                        className="h-8 w-8 p-0 hover:bg-rf-red-soft hover:text-rf-red-ink"
                     >
                         <Trash2 size={16} />
                     </Button>
