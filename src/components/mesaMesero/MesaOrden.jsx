@@ -116,7 +116,15 @@ const MesaOrden = ({
             </div>
         </div>
 
-        {/* Botones — en vertical los secundarios comparten fila para ahorrar altura */}
+        {/* Botones — en vertical los secundarios comparten fila SOLO cuando de
+            verdad se renderizan ambos; si no, cada uno ocupa la fila completa */}
+        {(() => {
+            const muestraReenviar = tieneOrden && !!onReenviarCocina && yaEnviada;
+            const muestraCancelar = mostrarCerrar && carrito.length === 0 && tieneOrden;
+            const muestraCerrar   = mostrarCerrar && carrito.length > 0 && coincideConEnviado;
+            const dosSecundarios  = muestraReenviar && (muestraCancelar || muestraCerrar);
+            const anchoSecundario = dosSecundarios ? "" : "portrait:col-span-2";
+            return (
         <div className="grid grid-cols-1 portrait:grid-cols-2 gap-2.5">
             <button
                 onClick={onActualizar}
@@ -127,34 +135,35 @@ const MesaOrden = ({
             </button>
             {/* Cerrar y Cobrar SOLO cuando el carrito coincide con lo enviado a
                 cocina — con cambios sin enviar se cobraría distinto a lo servido */}
-            {mostrarCerrar && (carrito.length === 0 ? (
-                tieneOrden && (
-                    <button
-                        onClick={onCancelar}
-                        className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-md border border-rf-red hover:bg-rf-red-soft active:bg-rf-red-soft text-rf-red-ink font-bold text-base portrait:text-sm transition-colors flex items-center justify-center gap-2`}
-                    >
-                        <Ban size={16} />
-                        Cancelar Mesa
-                    </button>
-                )
-            ) : coincideConEnviado && (
+            {muestraCancelar && (
+                <button
+                    onClick={onCancelar}
+                    className={`w-full ${anchoSecundario} px-4 py-4 rounded-md border border-rf-red hover:bg-rf-red-soft active:bg-rf-red-soft text-rf-red-ink font-bold text-base portrait:text-sm transition-colors flex items-center justify-center gap-2`}
+                >
+                    <Ban size={16} />
+                    Cancelar Mesa
+                </button>
+            )}
+            {muestraCerrar && (
                 <button
                     onClick={onCerrar}
-                    className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-md border border-rf-green hover:bg-rf-green-soft active:bg-rf-green-soft text-rf-green-ink font-bold text-base portrait:text-sm transition-colors`}
+                    className={`w-full ${anchoSecundario} px-4 py-4 rounded-md border border-rf-green hover:bg-rf-green-soft active:bg-rf-green-soft text-rf-green-ink font-bold text-base portrait:text-sm transition-colors`}
                 >
                     Cerrar y Cobrar
                 </button>
-            ))}
-            {tieneOrden && onReenviarCocina && yaEnviada && (
+            )}
+            {muestraReenviar && (
                 <button
                     onClick={onReenviarCocina}
-                    className={`w-full ${!mostrarCerrar ? "portrait:col-span-2" : ""} px-4 py-3.5 rounded-md border border-rf-border-strong hover:bg-rf-surface-2 active:bg-rf-surface-2 text-rf-text-2 hover:text-rf-text font-bold text-sm transition-colors flex items-center justify-center gap-2`}
+                    className={`w-full ${dosSecundarios ? "" : "portrait:col-span-2"} px-4 py-3.5 rounded-md border border-rf-border-strong hover:bg-rf-surface-2 active:bg-rf-surface-2 text-rf-text-2 hover:text-rf-text font-bold text-sm transition-colors flex items-center justify-center gap-2`}
                 >
                     <RefreshCw size={16} />
                     Reenviar a Cocina
                 </button>
             )}
         </div>
+            );
+        })()}
     </div>
     );
 };

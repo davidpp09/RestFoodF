@@ -23,12 +23,12 @@ const MesaAdmin = ({ id_mesa, estado, nombre_mesero, id_orden, platillos = [], f
                 `}>
 
                     {/* Encabezado de Tarjeta (Fijo) */}
-                    <div className="flex justify-between items-center">
-                        <span className={`text-[15px] font-bold tracking-[.04em] font-mono ${esOcupada ? "text-rf-text" : "text-rf-text-3"}`}>
+                    <div className="flex justify-between items-center gap-2 min-w-0">
+                        <span className={`text-[15px] font-bold tracking-[.04em] font-mono truncate ${esOcupada ? "text-rf-text" : "text-rf-text-3"}`}>
                             MESA {id_mesa}
                         </span>
                         {esOcupada && (
-                            <span className="inline-flex items-center h-[22px] px-2 rounded-[3px] bg-rf-red-soft text-rf-red-ink text-[11px] font-bold tracking-[.06em]">
+                            <span className="inline-flex items-center h-[22px] px-2 rounded-[3px] bg-rf-red-soft text-rf-red-ink text-[11px] font-bold tracking-[.06em] shrink-0 whitespace-nowrap">
                                 OCUPADA
                             </span>
                         )}
