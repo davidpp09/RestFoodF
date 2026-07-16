@@ -17,27 +17,27 @@ export default function Login() {
     };
 
     return (
-        <div className="flex min-h-screen justify-center items-center bg-[#020617] p-4">
+        <div className="flex min-h-screen justify-center items-center bg-rf-bg p-6">
             {/* Card Principal */}
-            <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+            <div className="w-full max-w-md bg-rf-surface border border-rf-border rounded-xl shadow-rf-md overflow-hidden">
 
                 {/* Header con Logo */}
-                <div className="p-8 pb-6 border-b border-slate-800/50">
-                    <div className="flex items-center justify-center gap-3 mb-2">
-                        <div className="bg-orange-600 p-3 rounded-xl shadow-lg shadow-orange-900/20">
-                            <Utensils size={28} className="text-white" />
-                        </div>
-                        <span className="text-2xl font-black tracking-tighter text-white">RESTFOOD</span>
+                <div className="px-8 pt-9 pb-7 flex flex-col items-center gap-3.5 text-center">
+                    <div className="flex size-14 items-center justify-center rounded-md bg-rf-accent text-white">
+                        <Utensils size={26} />
                     </div>
-                    <p className="text-center text-slate-400 text-sm mt-3">Ingresa tus credenciales para continuar</p>
+                    <div className="flex flex-col gap-1.5">
+                        <span className="text-[22px] font-bold tracking-[.18em] text-rf-text">RESTFOOD</span>
+                        <p className="text-sm text-rf-text-2">Ingresa tus credenciales para continuar</p>
+                    </div>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-8">
+                <form onSubmit={handleSubmit} className="px-8 pb-8">
                     <div className="space-y-5">
                         {/* Email */}
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-slate-300 text-sm font-semibold">
+                            <Label htmlFor="email" className="text-rf-text-2 text-sm font-semibold">
                                 Correo Electrónico
                             </Label>
                             <Input
@@ -46,14 +46,14 @@ export default function Login() {
                                 placeholder="tu@correo.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="bg-slate-950 border-slate-800 text-white placeholder:text-slate-600 h-12 rounded-xl focus-visible:ring-orange-600/50 focus-visible:border-orange-600/50"
+                                className="h-12 rounded-md bg-rf-bg border-rf-border-strong text-rf-text placeholder:text-rf-text-3"
                                 required
                             />
                         </div>
 
                         {/* Password con Ojito */}
                         <div className="space-y-2">
-                            <Label htmlFor="password" className="text-slate-300 text-sm font-semibold">
+                            <Label htmlFor="password" className="text-rf-text-2 text-sm font-semibold">
                                 Contraseña
                             </Label>
                             <div className="relative">
@@ -63,12 +63,12 @@ export default function Login() {
                                     placeholder="••••••••"
                                     value={pass}
                                     onChange={(e) => setPass(e.target.value)}
-                                    className="bg-slate-950 border-slate-800 text-white placeholder:text-slate-600 h-12 rounded-xl pr-12 focus-visible:ring-orange-600/50 focus-visible:border-orange-600/50"
+                                    className="h-12 rounded-md bg-rf-bg border-rf-border-strong text-rf-text placeholder:text-rf-text-3 pr-12"
                                     required
                                 />
                                 {/* 👁️ Ojito para mostrar/ocultar */}
                                 <div
-                                    className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer text-slate-500 hover:text-orange-500 transition-colors"
+                                    className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer text-rf-text-3 hover:text-rf-text-2 transition-colors"
                                     onClick={() => setMostrarPassword(!mostrarPassword)}
                                 >
                                     {mostrarPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -80,7 +80,7 @@ export default function Login() {
                     {/* Botón de Login */}
                     <Button
                         type="submit"
-                        className="w-full mt-8 h-12 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-lg shadow-orange-900/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full mt-8 h-13 bg-rf-accent hover:bg-rf-accent-strong text-white text-base font-bold rounded-md shadow-rf-sm transition-all active:scale-[.99] disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={loading}
                     >
                         {loading ? (
@@ -95,7 +95,7 @@ export default function Login() {
 
                     {/* Link de recuperación */}
                     <div className="mt-6 text-center">
-                        <a href="#" className="text-sm text-slate-400 hover:text-orange-500 transition-colors">
+                        <a href="#" className="text-sm font-medium text-rf-accent-ink hover:text-rf-accent-strong transition-colors">
                             ¿Olvidaste tu contraseña?
                         </a>
                     </div>
