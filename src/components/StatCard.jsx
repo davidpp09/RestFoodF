@@ -1,27 +1,22 @@
 const COLORES = {
-    blue:    { gradiente: 'from-blue-500/10 to-blue-600/5',       borde: 'border-blue-500/20',       etiqueta: 'text-blue-500/80',       icono: 'text-blue-500',       iconoBg: 'bg-blue-500/10',       fantasma: 'text-blue-500/5'    },
-    red:     { gradiente: 'from-red-500/10 to-red-600/5',         borde: 'border-red-500/20',         etiqueta: 'text-red-500/80',         icono: 'text-red-500',         iconoBg: 'bg-red-500/10',         fantasma: 'text-red-500/5'     },
-    emerald: { gradiente: 'from-emerald-500/10 to-emerald-600/5', borde: 'border-emerald-500/20',     etiqueta: 'text-emerald-500/80',     icono: 'text-emerald-500',     iconoBg: 'bg-emerald-500/10',     fantasma: 'text-emerald-500/5' },
-    amber:   { gradiente: 'from-amber-500/10 to-amber-600/5',     borde: 'border-amber-500/20',       etiqueta: 'text-amber-500/80',       icono: 'text-amber-500',       iconoBg: 'bg-amber-500/10',       fantasma: 'text-amber-500/5'   },
-    orange:  { gradiente: 'from-orange-500/10 to-orange-600/5',   borde: 'border-orange-500/20',      etiqueta: 'text-orange-500/80',      icono: 'text-orange-500',      iconoBg: 'bg-orange-500/10',      fantasma: 'text-orange-500/5'  },
+    blue:    'text-rf-blue',
+    red:     'text-rf-red',
+    emerald: 'text-rf-green',
+    amber:   'text-rf-accent',
+    orange:  'text-rf-accent',
 };
 
 const StatCard = ({ color, label, value, icon: Icon, subtitulo, grande = false }) => {
-    const c = COLORES[color];
+    const icono = COLORES[color] ?? 'text-rf-text-2';
     return (
-        <div className={`bg-gradient-to-br ${c.gradiente} border ${c.borde} rounded-2xl ${grande ? 'p-7' : 'p-6'} relative overflow-hidden`}>
-            <div className="flex justify-between items-start relative z-10">
-                <div>
-                    <p className={`${c.etiqueta} ${grande ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider mb-1`}>{label}</p>
-                    <h3 className={`${grande ? 'text-5xl' : 'text-3xl'} font-black text-white`}>{value}</h3>
-                    {subtitulo && <p className="text-xs text-slate-400 mt-1">{subtitulo}</p>}
-                </div>
-                <div className={`${grande ? 'p-4' : 'p-3'} ${c.iconoBg} rounded-xl`}>
-                    <Icon size={grande ? 32 : 24} className={c.icono} />
-                </div>
+        <div className={`flex items-center gap-3.5 ${grande ? 'p-4' : 'p-3.5'} rounded-lg bg-rf-surface border border-rf-border shadow-rf-sm`}>
+            <div className={`flex ${grande ? 'size-11' : 'size-10'} shrink-0 items-center justify-center rounded-md bg-rf-surface-2 ${icono}`}>
+                <Icon size={grande ? 24 : 20} />
             </div>
-            <div className={`absolute -right-6 -bottom-6 ${c.fantasma} rotate-12`}>
-                <Icon size={120} />
+            <div className="flex flex-col gap-0.5 min-w-0">
+                <span className={`${grande ? 'text-3xl' : 'text-2xl'} font-bold leading-none tracking-tight font-mono text-rf-text`}>{value}</span>
+                <span className="text-[11.5px] font-semibold uppercase tracking-[.1em] text-rf-text-3 truncate">{label}</span>
+                {subtitulo && <span className="text-xs text-rf-text-3 truncate">{subtitulo}</span>}
             </div>
         </div>
     );

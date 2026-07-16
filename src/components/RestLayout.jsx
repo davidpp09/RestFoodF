@@ -3,16 +3,17 @@ import { LogOut, Utensils, Menu, X } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { CONFIG_MENU } from '@/constants/menuConfig';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const NavItem = ({ opcion, activa, onClick }) => {
     const Icono = opcion.icono;
     return (
         <button
             onClick={onClick}
-            className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+            className={`flex items-center gap-3 p-3 rounded-md transition-all ${
                 activa
-                    ? 'bg-orange-600/10 text-orange-500 border border-orange-600/20 font-semibold'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100 font-medium'
+                    ? 'bg-rf-accent-soft text-rf-accent-ink font-semibold'
+                    : 'text-rf-text-2 hover:bg-rf-surface-2 hover:text-rf-text font-medium'
             }`}
         >
             <Icono size={20} />
@@ -38,33 +39,33 @@ const RestLayout = () => {
     };
 
     return (
-        <div className="flex h-screen w-full bg-[#020617] text-slate-100 overflow-hidden font-sans">
+        <div className="flex h-screen w-full bg-rf-bg text-rf-text overflow-hidden font-sans">
             {/* Cajón de navegación desplegable (overlay) */}
             {conMenu && (
                 <div className={`fixed inset-0 z-50 ${menuAbierto ? '' : 'pointer-events-none'}`}>
                     <div
-                        className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${menuAbierto ? 'opacity-100' : 'opacity-0'}`}
+                        className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${menuAbierto ? 'opacity-100' : 'opacity-0'}`}
                         onClick={() => setMenuAbierto(false)}
                     />
-                    <aside className={`absolute left-0 top-0 h-full w-64 bg-[#0f172a] border-r border-slate-800 flex flex-col p-6 shadow-2xl
+                    <aside className={`absolute left-0 top-0 h-full w-64 bg-rf-surface border-r border-rf-border flex flex-col p-6 shadow-rf-lg
                         transition-transform duration-300 ${menuAbierto ? 'translate-x-0' : '-translate-x-full'}`}>
                         <div className="flex items-center justify-between mb-10">
                             <div className="flex items-center gap-3 px-2">
-                                <div className="bg-orange-600 p-2 rounded-xl shadow-lg shadow-orange-900/20">
-                                    <Utensils size={24} className="text-white" />
+                                <div className="flex size-10 items-center justify-center rounded-md bg-rf-accent text-white">
+                                    <Utensils size={20} />
                                 </div>
-                                <span className="text-xl font-black tracking-tighter text-white">RESTFOOD</span>
+                                <span className="text-lg font-bold tracking-[.14em] text-rf-text">RESTFOOD</span>
                             </div>
                             <button
                                 onClick={() => setMenuAbierto(false)}
-                                className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors"
+                                className="p-2 rounded-md text-rf-text-3 hover:bg-rf-surface-2 hover:text-rf-text transition-colors"
                             >
                                 <X size={20} />
                             </button>
                         </div>
 
-                        <nav className="flex flex-col gap-2 flex-1">
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-3 mb-2">Menú</p>
+                        <nav className="flex flex-col gap-1.5 flex-1">
+                            <p className="text-[10px] font-bold text-rf-text-3 uppercase tracking-widest ml-3 mb-2">Menú</p>
                             {menu.map((opcion, i) => (
                                 <NavItem
                                     key={i}
@@ -75,10 +76,10 @@ const RestLayout = () => {
                             ))}
                         </nav>
 
-                        <div className="pt-6 border-t border-slate-800">
+                        <div className="pt-6 border-t border-rf-border">
                             <button
                                 onClick={logOut}
-                                className="flex items-center gap-3 p-3 text-slate-400 rounded-xl transition-colors w-full hover:bg-red-500/10 hover:text-red-400"
+                                className="flex items-center gap-3 p-3 text-rf-text-2 rounded-md transition-colors w-full hover:bg-rf-red-soft hover:text-rf-red-ink"
                             >
                                 <LogOut size={20} />
                                 <span className="font-medium">Cerrar Sesión</span>
@@ -89,17 +90,19 @@ const RestLayout = () => {
             )}
 
             <main className="flex-1 flex flex-col min-w-0">
-                <header className="h-16 bg-[#0f172a]/50 backdrop-blur-md border-b border-slate-800 flex items-center gap-4 px-4 landscape:px-6 shrink-0">
+                <header className="h-16 bg-rf-surface border-b border-rf-border shadow-rf-sm flex items-center gap-3 px-4 landscape:px-6 shrink-0">
                     {conMenu && (
                         <button
                             onClick={() => setMenuAbierto(true)}
-                            className="p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 active:scale-95 transition-all"
+                            className="p-2.5 rounded-md text-rf-text-2 hover:bg-rf-surface-2 active:scale-[.97] transition-all"
                             aria-label="Abrir menú"
                         >
-                            <Menu size={24} />
+                            <Menu size={22} />
                         </button>
                     )}
-                    <h2 className="text-xl font-bold text-white">{tituloActual}</h2>
+                    <h2 className="text-xl font-bold text-rf-text">{tituloActual}</h2>
+                    <div className="flex-1" />
+                    <ThemeToggle />
                 </header>
                 <div className="flex-1 overflow-y-auto p-4 landscape:p-6 custom-scrollbar">
                     <Outlet />
