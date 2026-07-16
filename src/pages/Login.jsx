@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '../hooks/useAuth';
+import ThemeToggle from '../components/ThemeToggle';
 import { Eye, EyeOff, Utensils } from "lucide-react";
 
 export default function Login() {
@@ -17,7 +18,8 @@ export default function Login() {
     };
 
     return (
-        <div className="flex min-h-screen justify-center items-center bg-rf-bg p-6">
+        <div className="relative flex min-h-screen justify-center items-center bg-rf-bg p-6">
+            <ThemeToggle className="absolute top-4 right-4 shadow-rf-sm" />
             {/* Card Principal */}
             <div className="w-full max-w-md bg-rf-surface border border-rf-border rounded-xl shadow-rf-md overflow-hidden">
 
