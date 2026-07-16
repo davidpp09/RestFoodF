@@ -17,7 +17,12 @@ const MesaOrden = ({
     mostrarCerrar = true,
     tiempos,
     onCambiarCantidadTiempo,
-}) => (
+}) => {
+    // La orden se abre al abrir la mesa, pero "en curso" de verdad es cuando
+    // ya hay platillos enviados a cocina (tienen id_detalle del servidor)
+    const yaEnviada = carrito.some(item => item.id_detalle);
+
+    return (
     <div className="flex flex-col h-full min-h-0 gap-4">
 
         {/* Encabezado */}
@@ -28,7 +33,7 @@ const MesaOrden = ({
             <div>
                 <p className="text-xs font-bold text-rf-text-3 uppercase tracking-widest">ORDEN ACTUAL</p>
                 <p className="text-base font-bold text-rf-text">
-                    {tieneOrden ? "Orden en curso" : "Nueva orden"}
+                    {yaEnviada ? "Orden en curso" : "Nueva orden"}
                 </p>
             </div>
         </div>
@@ -117,7 +122,7 @@ const MesaOrden = ({
                 disabled={carrito.length === 0}
                 className={`w-full portrait:col-span-2 px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed`}
             >
-                {labelEnviar ?? (tieneOrden ? "Modificar Orden" : "Enviar Orden")}
+                {labelEnviar ?? (yaEnviada ? "Modificar Orden" : "Enviar Orden")}
             </button>
             {mostrarCerrar && (carrito.length === 0 ? (
                 tieneOrden && (
@@ -137,7 +142,7 @@ const MesaOrden = ({
                     Cerrar y Cobrar
                 </button>
             ))}
-            {tieneOrden && onReenviarCocina && (
+            {tieneOrden && onReenviarCocina && yaEnviada && (
                 <button
                     onClick={onReenviarCocina}
                     className={`w-full ${!mostrarCerrar ? "portrait:col-span-2" : ""} px-4 py-3.5 rounded-md border border-rf-border-strong hover:bg-rf-surface-2 active:bg-rf-surface-2 text-rf-text-2 hover:text-rf-text font-bold text-sm transition-colors flex items-center justify-center gap-2`}
@@ -148,6 +153,7 @@ const MesaOrden = ({
             )}
         </div>
     </div>
-);
+    );
+};
 
 export default MesaOrden;

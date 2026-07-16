@@ -64,6 +64,8 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     });
 
     const handleActualizar = async () => {
+        // Antes de guardar: si nada tenía id_detalle, es el primer envío a cocina
+        const eraPrimerEnvio = !carrito.some(item => item.id_detalle);
         try {
             const respuesta = await ordenService.guardarDetalle(construirPayload());
             setCarrito(prev => prev.map(item => {
@@ -71,7 +73,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                 return detalle ? { ...item, id_detalle: detalle.id_detalle } : item;
             }));
             onOrdenModificada?.();
-            toast.success(idOrden ? "Orden modificada" : "Orden enviada");
+            toast.success(eraPrimerEnvio ? "Orden enviada a cocina" : "Orden modificada");
         } catch (error) {
             toast.error("Error al guardar la orden");
             throw error;
