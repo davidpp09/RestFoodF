@@ -17,6 +17,7 @@ const MesaOrden = ({
     mostrarCerrar = true,
     tiempos,
     onCambiarCantidadTiempo,
+    coincideConEnviado = true,
 }) => {
     // La orden se abre al abrir la mesa, pero "en curso" de verdad es cuando
     // ya hay platillos enviados a cocina (tienen id_detalle del servidor)
@@ -124,6 +125,8 @@ const MesaOrden = ({
             >
                 {labelEnviar ?? (yaEnviada ? "Modificar Orden" : "Enviar Orden")}
             </button>
+            {/* Cerrar y Cobrar SOLO cuando el carrito coincide con lo enviado a
+                cocina — con cambios sin enviar se cobraría distinto a lo servido */}
             {mostrarCerrar && (carrito.length === 0 ? (
                 tieneOrden && (
                     <button
@@ -134,7 +137,7 @@ const MesaOrden = ({
                         Cancelar Mesa
                     </button>
                 )
-            ) : (
+            ) : coincideConEnviado && (
                 <button
                     onClick={onCerrar}
                     className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-md border border-rf-green hover:bg-rf-green-soft active:bg-rf-green-soft text-rf-green-ink font-bold text-base portrait:text-sm transition-colors`}

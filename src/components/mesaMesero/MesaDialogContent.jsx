@@ -19,7 +19,7 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, onOrdenModificada, total, precioSegunTurno }) => {
+const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, onOrdenModificada, total, precioSegunTurno, marcarSincronizado, coincideConEnviado }) => {
     const { getUsuarioId } = useAuth();
     const tema = TEMAS_MESA[turno];
     const { tiempos, cambiarCantidad: cambiarCantidadTiempo } = useTiempos(idOrden);
@@ -72,6 +72,8 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                 const detalle = respuesta.platillos?.find(p => p.id_producto === item.id_producto);
                 return detalle ? { ...item, id_detalle: detalle.id_detalle } : item;
             }));
+            // El servidor confirmó este estado — es la nueva foto de "lo enviado"
+            marcarSincronizado?.(idOrden, respuesta.platillos ?? []);
             onOrdenModificada?.();
             toast.success(eraPrimerEnvio ? "Orden enviada a cocina" : "Orden modificada");
         } catch (error) {
@@ -131,6 +133,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                         onReenviarCocina={handleReenviarCocina}
                         tiempos={tiempos}
                         onCambiarCantidadTiempo={cambiarCantidadTiempo}
+                        coincideConEnviado={coincideConEnviado}
                     />
                 </div>
             </div>

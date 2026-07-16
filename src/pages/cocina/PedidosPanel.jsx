@@ -65,70 +65,70 @@ const PedidosPanel = () => {
     };
 
     if (cargando) {
-        return <div className="p-10 text-white">Cargando pedidos...</div>;
+        return <div className="p-10 text-rf-text-2">Cargando pedidos...</div>;
     }
 
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="bg-orange-500/20 p-3 rounded-xl border border-orange-500/30">
-                        <UtensilsCrossed className="text-orange-500" size={24} />
+                    <div className="bg-rf-accent-soft p-3 rounded-md border border-rf-accent-border">
+                        <UtensilsCrossed className="text-rf-accent-ink" size={24} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-white tracking-tight">Panel de Cocina</h1>
-                        <p className="text-slate-400 text-sm">Gestiona los pedidos entrantes</p>
+                        <h1 className="text-2xl font-bold text-rf-text tracking-tight">Panel de Cocina</h1>
+                        <p className="text-rf-text-2 text-sm">Gestiona los pedidos entrantes</p>
                     </div>
                 </div>
                 <WsIndicador />
             </div>
 
             {ordenes.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-3xl bg-slate-900/50">
-                    <UtensilsCrossed size={48} className="text-slate-700 mb-4" />
-                    <h3 className="text-xl font-bold text-slate-400">No hay pedidos pendientes</h3>
-                    <p className="text-slate-500 text-sm mt-2">La cocina está al día</p>
+                <div className="flex-1 flex flex-col items-center justify-center border border-rf-border-strong rounded-lg bg-rf-surface">
+                    <UtensilsCrossed size={48} className="text-rf-text-3 mb-4" />
+                    <h3 className="text-xl font-bold text-rf-text-2">No hay pedidos pendientes</h3>
+                    <p className="text-rf-text-3 text-sm mt-2">La cocina está al día</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
                     {ordenes.map((orden) => (
-                        <div key={orden.id_orden} className="bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-xl flex flex-col">
+                        <div key={orden.id_orden} className="bg-rf-surface border border-rf-border rounded-lg overflow-hidden shadow-rf-sm flex flex-col">
                             {/* Header del Ticket */}
-                            <div className="bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+                            <div className="bg-rf-surface-2 p-4 border-b border-rf-border flex justify-between items-center">
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Comanda</p>
-                                    <p className="text-2xl font-black text-white">#{orden.numero_comanda ?? orden.id_orden}</p>
+                                    <p className="text-xs font-bold text-rf-text-3 uppercase tracking-widest mb-1">Comanda</p>
+                                    <p className="text-2xl font-bold font-mono text-rf-text">#{orden.numero_comanda ?? orden.id_orden}</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         {orden.tipo === 'LOZA' ? (
-                                            <div className="flex items-center gap-1.5 text-orange-400">
+                                            <div className="flex items-center gap-1.5 text-rf-accent-ink">
                                                 <UtensilsCrossed size={12} />
                                                 <span className="text-[10px] font-bold tracking-wider">MESA {orden.id_mesa}</span>
                                             </div>
                                         ) : (
-                                            <div className="flex items-center gap-1.5 text-purple-400">
+                                            <div className="flex items-center gap-1.5 text-rf-cyan-ink">
                                                 <ShoppingBag size={12} />
                                                 <span className="text-[10px] font-bold tracking-wider">PARA LLEVAR</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                                <div className="bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20 flex items-center gap-2">
-                                    <Clock size={16} className="text-orange-500 animate-pulse" />
-                                    <span className="text-orange-500 font-bold text-sm">En Proceso</span>
+                                <div className="bg-rf-accent-soft px-3 py-1.5 rounded-[3px] border border-rf-accent-border flex items-center gap-2">
+                                    <Clock size={16} className="text-rf-accent-ink" />
+                                    <span className="text-rf-accent-ink font-bold text-sm">En Proceso</span>
                                 </div>
                             </div>
 
                             {/* Lista de Platillos */}
                             <div className="p-4 flex-1 flex flex-col gap-3">
                                 {orden.platillos.map((p, idx) => (
-                                    <div key={idx} className="flex gap-3 items-start border-b border-slate-800 pb-3 last:border-0 last:pb-0">
-                                        <div className="bg-slate-800 text-cyan-400 font-black px-2 py-1 rounded text-sm min-w-[2rem] text-center">
+                                    <div key={idx} className="flex gap-3 items-start border-b border-rf-border pb-3 last:border-0 last:pb-0">
+                                        <div className="bg-rf-accent-soft text-rf-accent-ink font-bold font-mono px-2 py-1 rounded-[3px] text-sm min-w-[2rem] text-center">
                                             {p.cantidad}x
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-slate-200 font-bold leading-tight">{p.nombre_producto}</p>
+                                            <p className="text-rf-text font-bold leading-tight">{p.nombre_producto}</p>
                                             {p.comentarios && (
-                                                <p className="text-slate-500 text-xs mt-1 italic border-l-2 border-orange-500/50 pl-2">
+                                                <p className="text-rf-text-3 text-xs mt-1 italic border-l-2 border-rf-accent-border pl-2">
                                                     "{p.comentarios}"
                                                 </p>
                                             )}
@@ -142,7 +142,7 @@ const PedidosPanel = () => {
                                 <button
                                     onClick={() => marcarComoListo(orden.id_orden)}
                                     disabled={procesando.has(orden.id_orden)}
-                                    className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-3 rounded-md bg-rf-green hover:bg-rf-green/90 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <CheckCircle2 size={18} />
                                     {procesando.has(orden.id_orden) ? 'GUARDANDO...' : 'MARCAR LISTO'}

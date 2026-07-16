@@ -50,7 +50,9 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
         cambiarComentario,
         total,
         precioSegunTurno,
-        guardarCarrito
+        guardarCarrito,
+        marcarSincronizado,
+        coincideConEnviado
     } = useMesaCart(idOrden, turno);
 
     const aplicarRespuestaOrden = (resp) => {
@@ -70,6 +72,8 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
             }));
             onOrdenCreada(resp.id_orden);
             if (resp.numero_comanda != null) setNumeroComanda(resp.numero_comanda);
+            // Lo que responde el servidor ES el estado enviado — registrar la foto
+            marcarSincronizado(resp.id_orden, serverCarrito);
             // Preservar items locales sin enviar (id_detalle: null) que no estén ya en el servidor
             setCarrito(prev => {
                 const unsentLocal = prev.filter(
@@ -172,6 +176,8 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
                         onOrdenModificada={invalidarCacheOrden}
                         total={total}
                         precioSegunTurno={precioSegunTurno}
+                        marcarSincronizado={marcarSincronizado}
+                        coincideConEnviado={coincideConEnviado}
                     />
                 </div>
 

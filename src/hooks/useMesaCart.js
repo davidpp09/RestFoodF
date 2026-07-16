@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 const carritoKey = (idOrden) => `carrito_${idOrden}`;
+const syncKey    = (idOrden) => `carrito_sync_${idOrden}`;
 
 const cargarCarrito = (idOrden) => {
     if (!idOrden) return [];
@@ -14,8 +15,23 @@ const guardarCarrito = (idOrden, carrito) => {
     localStorage.setItem(carritoKey(idOrden), JSON.stringify(carrito));
 };
 
+// Forma canónica del carrito para comparar contra lo último enviado al servidor:
+// solo producto, cantidad y comentarios, ordenado por producto.
+const normalizar = (items) => JSON.stringify(
+    (items ?? [])
+        .map(i => ({ p: i.id_producto, c: i.cantidad, m: i.comentarios || '' }))
+        .sort((a, b) => a.p - b.p)
+);
+
+const cargarSync = (idOrden) => {
+    if (!idOrden) return null;
+    return localStorage.getItem(syncKey(idOrden));
+};
+
 export const useMesaCart = (idOrden, turno) => {
     const [carrito, setCarrito] = useState(() => cargarCarrito(idOrden));
+    // Foto de lo último confirmado por el servidor (persistida por orden)
+    const [fotoEnviado, setFotoEnviado] = useState(() => cargarSync(idOrden));
 
     // Precio según turno
     const precioSegunTurno = (producto) =>
@@ -23,6 +39,7 @@ export const useMesaCart = (idOrden, turno) => {
 
     useEffect(() => {
         setCarrito(cargarCarrito(idOrden));
+        setFotoEnviado(cargarSync(idOrden));
     }, [idOrden]);
 
     useEffect(() => {
@@ -79,16 +96,30 @@ export const useMesaCart = (idOrden, turno) => {
 
     const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
-    return { 
-        carrito, 
-        setCarrito, 
-        limpiarCarrito, 
-        agregarAlCarrito, 
-        cambiarCantidad, 
-        eliminarItem, 
+    // Registrar el estado que el servidor acaba de confirmar (al cargar la orden
+    // activa o tras un envío exitoso)
+    const marcarSincronizado = (idOrdenSync, items) => {
+        if (!idOrdenSync) return;
+        const foto = normalizar(items);
+        localStorage.setItem(syncKey(idOrdenSync), foto);
+        setFotoEnviado(foto);
+    };
+
+    // true solo si el carrito actual es idéntico a lo último enviado a cocina
+    const coincideConEnviado = fotoEnviado !== null && normalizar(carrito) === fotoEnviado;
+
+    return {
+        carrito,
+        setCarrito,
+        limpiarCarrito,
+        agregarAlCarrito,
+        cambiarCantidad,
+        eliminarItem,
         cambiarComentario,
         total,
         precioSegunTurno,
-        guardarCarrito
+        guardarCarrito,
+        marcarSincronizado,
+        coincideConEnviado
     };
 };
