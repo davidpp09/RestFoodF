@@ -21,8 +21,26 @@ const Contador = ({ label, cantidad, onCambiar }) => (
     </div>
 );
 
-const TiemposSection = ({ tiempos, onCambiarCantidad }) => (
+const ETIQUETAS = { consome: 'Consomé', sopa_crema: 'Sopa/Crema', arroz: 'Arroz', espaguetti: 'Espaguetti' };
+
+const TiemposSection = ({ tiempos, onCambiarCantidad }) => {
+    // Resumen legible de lo marcado — al reabrir la orden se ve de un vistazo
+    // qué tiempos se pidieron, sin buscar los números en los contadores
+    const resumen = [...Object.entries(tiempos.tiempo1), ...Object.entries(tiempos.tiempo2)]
+        .filter(([, v]) => Number(v) > 0)
+        .map(([k, v]) => `${v}× ${ETIQUETAS[k]}`)
+        .join('  ·  ');
+
+    return (
     <div className="border border-rf-border rounded-md px-2.5 py-2 bg-rf-surface shrink-0 space-y-1.5">
+        {/* Encabezado con el resumen de tiempos pedidos */}
+        <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[10px] font-bold text-rf-text-3 uppercase tracking-widest shrink-0">Tiempos</span>
+            {resumen && (
+                <span className="text-xs font-bold text-rf-turno-ink truncate">{resumen}</span>
+            )}
+        </div>
+
         {/* Tiempo 1 */}
         <div className="flex items-center gap-1.5">
             <span className="text-[9px] font-bold text-rf-text-3 uppercase tracking-widest w-6 shrink-0">1er</span>
@@ -57,6 +75,7 @@ const TiemposSection = ({ tiempos, onCambiarCantidad }) => (
             </div>
         </div>
     </div>
-);
+    );
+};
 
 export default TiemposSection;

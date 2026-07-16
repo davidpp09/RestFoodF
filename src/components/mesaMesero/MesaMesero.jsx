@@ -174,6 +174,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
                         onEliminarItem={eliminarItem}
                         onCambiarComentario={cambiarComentario}
                         onOrdenModificada={invalidarCacheOrden}
+                        onEnviado={() => setOpen(false)}
                         total={total}
                         precioSegunTurno={precioSegunTurno}
                         marcarSincronizado={marcarSincronizado}
