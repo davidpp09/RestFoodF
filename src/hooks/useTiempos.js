@@ -19,6 +19,29 @@ const cargar = (idOrden) => {
     catch { return INICIAL; }
 };
 
+export const ETIQUETAS_TIEMPOS = {
+    consome: 'Consomé',
+    sopa_crema: 'Sopa/Crema',
+    arroz: 'Arroz',
+    espaguetti: 'Espaguetti',
+};
+
+// Resumen legible ("2× Consomé · 1× Arroz") a partir del objeto de tiempos
+export const resumenDeTiempos = (tiempos) => {
+    if (!tiempos?.tiempo1) return '';
+    return [...Object.entries(tiempos.tiempo1), ...Object.entries(tiempos.tiempo2)]
+        .filter(([, v]) => Number(v) > 0)
+        .map(([k, v]) => `${v}× ${ETIQUETAS_TIEMPOS[k]}`)
+        .join(' · ');
+};
+
+// Igual pero leyendo lo guardado para una orden — para mostrar los tiempos
+// en la tarjeta de la mesa sin montar el hook
+export const resumenTiemposGuardados = (idOrden) => {
+    if (!idOrden) return '';
+    return resumenDeTiempos(cargar(idOrden));
+};
+
 export const useTiempos = (idOrden) => {
     const [tiempos, setTiempos] = useState(() => cargar(idOrden));
 

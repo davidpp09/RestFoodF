@@ -1,9 +1,13 @@
 import React, { forwardRef } from 'react';
-import { UtensilsCrossed } from 'lucide-react';
+import { UtensilsCrossed, Clock } from 'lucide-react';
+import { resumenTiemposGuardados } from '../../hooks/useTiempos';
 
 const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
     const esOcupada = mesa.estado === "OCUPADA";
     const activa = esOcupada || idOrden;
+    // Tiempos marcados para la orden de esta mesa (guardados en la tablet),
+    // visibles en el mapa aunque el pedido aún no se haya enviado
+    const tiempos = idOrden ? resumenTiemposGuardados(idOrden) : '';
 
     return (
         <div ref={ref} {...props} className={`
@@ -19,11 +23,17 @@ const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
                 MESA {mesa.numero}
             </span>
 
-            <div className="flex flex-col items-start gap-1.5">
+            <div className="flex flex-col items-start gap-1.5 min-w-0 w-full">
                 {idOrden && (
                     <div className="flex items-center gap-1.5 text-rf-text-3 font-mono">
                         <UtensilsCrossed size={13} className="shrink-0" />
                         <span className="text-xs truncate">ORD #{idOrden}</span>
+                    </div>
+                )}
+                {tiempos && (
+                    <div className="flex items-center gap-1.5 text-rf-accent-ink min-w-0 w-full">
+                        <Clock size={11} className="shrink-0" />
+                        <span className="text-[11px] font-semibold truncate">{tiempos}</span>
                     </div>
                 )}
                 {activa ? (
