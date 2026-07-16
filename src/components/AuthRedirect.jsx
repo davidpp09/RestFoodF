@@ -16,11 +16,11 @@ const AuthRedirect = () => {
     }, []);
 
     return (
-        <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-slate-50">
-            <Loader2 className="h-12 w-12 animate-spin text-orange-600" />
+        <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-rf-bg">
+            <Loader2 className="h-12 w-12 animate-spin text-rf-accent" />
             <div className="space-y-2 text-center">
-                <h2 className="text-xl font-semibold text-slate-900">RestFood</h2>
-                <p className="text-sm text-slate-500 animate-pulse">
+                <h2 className="text-xl font-semibold text-rf-text">RestFood</h2>
+                <p className="text-sm text-rf-text-3 animate-pulse">
                     Verificando tu sesión, por favor espera...
                 </p>
             </div>
