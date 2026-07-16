@@ -26,20 +26,15 @@ export const ETIQUETAS_TIEMPOS = {
     espaguetti: 'Espaguetti',
 };
 
-// Resumen legible ("2× Consomé · 1× Arroz") a partir del objeto de tiempos
-export const resumenDeTiempos = (tiempos) => {
-    if (!tiempos?.tiempo1) return '';
-    return [...Object.entries(tiempos.tiempo1), ...Object.entries(tiempos.tiempo2)]
+// Lista legible de los tiempos marcados (["Consomé: 3", "Arroz: 2"]) leyendo
+// lo guardado para una orden — para la tarjeta de la mesa sin montar el hook
+export const listaTiemposGuardados = (idOrden) => {
+    if (!idOrden) return [];
+    const t = cargar(idOrden);
+    if (!t?.tiempo1) return [];
+    return [...Object.entries(t.tiempo1), ...Object.entries(t.tiempo2)]
         .filter(([, v]) => Number(v) > 0)
-        .map(([k, v]) => `${v}× ${ETIQUETAS_TIEMPOS[k]}`)
-        .join(' · ');
-};
-
-// Igual pero leyendo lo guardado para una orden — para mostrar los tiempos
-// en la tarjeta de la mesa sin montar el hook
-export const resumenTiemposGuardados = (idOrden) => {
-    if (!idOrden) return '';
-    return resumenDeTiempos(cargar(idOrden));
+        .map(([k, v]) => `${ETIQUETAS_TIEMPOS[k]}: ${v}`);
 };
 
 export const useTiempos = (idOrden) => {

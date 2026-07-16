@@ -1,35 +1,35 @@
 import React, { forwardRef } from 'react';
-import { Clock } from 'lucide-react';
-import { resumenTiemposGuardados } from '../../hooks/useTiempos';
+import { listaTiemposGuardados } from '../../hooks/useTiempos';
 
 const MesaCard = forwardRef(({ mesa, idOrden, ...props }, ref) => {
     const esOcupada = mesa.estado === "OCUPADA";
     const activa = esOcupada || idOrden;
     // Tiempos marcados para la orden de esta mesa (guardados en la tablet),
     // visibles en el mapa aunque el pedido aún no se haya enviado
-    const tiempos = idOrden ? resumenTiemposGuardados(idOrden) : '';
+    const tiempos = idOrden ? listaTiemposGuardados(idOrden) : [];
 
     return (
         <div ref={ref} {...props} className={`
-            cursor-pointer px-4 py-3.5 rounded-md border transition-all duration-200 h-32
-            flex flex-col justify-between active:scale-[.985] overflow-hidden
+            cursor-pointer px-4 py-3.5 rounded-md border transition-all duration-200 min-h-32
+            flex flex-col gap-2 active:scale-[.985]
             ${activa
                 ? "bg-rf-surface border-rf-border border-l-[3px] border-l-rf-red shadow-rf-sm"
                 : "bg-rf-surface-2 border-rf-border"}
         `}>
-            {/* En tablets angostas la tarjeta mide ~140px: el número va solo en su
-                renglón y la etiqueta de estado abajo, para que nada se desborde */}
             <span className={`text-[15px] font-bold tracking-[.04em] font-mono truncate ${activa ? "text-rf-text" : "text-rf-text-3"}`}>
                 MESA {mesa.numero}
             </span>
 
-            <div className="flex flex-col items-start gap-1.5 min-w-0 w-full">
-                {tiempos && (
-                    <div className="flex items-start gap-1.5 text-rf-accent-ink min-w-0 w-full">
-                        <Clock size={11} className="shrink-0 mt-0.5" />
-                        <span className="text-[11px] font-semibold leading-tight">{tiempos}</span>
-                    </div>
-                )}
+            {/* Tiempos de la orden, uno por línea */}
+            {tiempos.length > 0 && (
+                <div className="flex flex-col gap-0.5">
+                    {tiempos.map((t) => (
+                        <span key={t} className="text-[11px] font-semibold leading-tight text-rf-accent-ink">{t}</span>
+                    ))}
+                </div>
+            )}
+
+            <div className="mt-auto">
                 {activa ? (
                     <span className="inline-flex items-center h-[22px] px-2 rounded-[3px] bg-rf-red-soft text-rf-red-ink text-[11px] font-bold tracking-[.06em] whitespace-nowrap">
                         OCUPADA
