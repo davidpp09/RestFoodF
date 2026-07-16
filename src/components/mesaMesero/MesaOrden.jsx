@@ -17,7 +17,7 @@ const MesaOrden = ({
     mostrarCerrar = true,
     tiempos,
     onCambiarCantidadTiempo,
-    coincideConEnviado = true,
+    coincideConEnviado = false,
 }) => {
     // La orden se abre al abrir la mesa, pero "en curso" de verdad es cuando
     // ya hay platillos enviados a cocina (tienen id_detalle del servidor)
@@ -128,7 +128,7 @@ const MesaOrden = ({
         <div className="grid grid-cols-1 portrait:grid-cols-2 gap-2.5">
             <button
                 onClick={onActualizar}
-                disabled={carrito.length === 0}
+                disabled={carrito.length === 0 || coincideConEnviado}
                 className={`w-full portrait:col-span-2 px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed`}
             >
                 {labelEnviar ?? (yaEnviada ? "Modificar Orden" : "Enviar Orden")}
