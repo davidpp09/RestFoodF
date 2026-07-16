@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useProductos } from '@/hooks/useProductos';
 import { useMesaCart } from '@/hooks/useMesaCart';
+import { useTiempos } from '@/hooks/useTiempos';
 import { ordenService } from '@/services/ordenService';
 import { TEMAS_MESA } from '@/components/mesaMesero/constants';
 import MesaMenu from '@/components/mesaMesero/MesaMenu';
@@ -43,7 +44,7 @@ const TurnoSelector = ({ turno, onCambiarTurno, onAbrir, cargando }) => (
             <button
                 onClick={onAbrir}
                 disabled={cargando}
-                className="w-full py-3.5 rounded-md bg-rf-accent hover:bg-rf-accent-strong text-white font-bold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-md bg-rf-turno hover:bg-rf-turno-strong text-white font-bold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
                 {cargando
                     ? <><Loader2 size={16} className="animate-spin" /> Abriendo...</>
@@ -81,6 +82,10 @@ const EntregasPanel = () => {
         total, precioSegunTurno, guardarCarrito,
     } = useMesaCart(idOrden, turno);
 
+    // Tiempos de la orden para llevar — al enviar se imprimen en la impresora
+    // de repartidores como talón aparte
+    const { tiempos, cambiarCantidad: cambiarCantidadTiempo, limpiar: limpiarTiempos } = useTiempos(idOrden);
+
     const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
     const abrirOrden = async () => {
@@ -102,6 +107,14 @@ const EntregasPanel = () => {
 
     // Envía a cocina y cierra el dialog — sin ticket para el repartidor
     const handleEnviarACocina = async () => {
+        // Tiempos marcados → el backend imprime el talón en la impresora de repartidores
+        const tiemposPlanos = {
+            consome:    tiempos.tiempo1.consome,
+            sopa_crema: tiempos.tiempo1.sopa_crema,
+            arroz:      tiempos.tiempo2.arroz,
+            espaguetti: tiempos.tiempo2.espaguetti,
+        };
+        const hayTiempos = Object.values(tiemposPlanos).some(v => v > 0);
         try {
             await ordenService.guardarDetalle({
                 id_usuario: getUsuarioId(),
@@ -110,8 +123,10 @@ const EntregasPanel = () => {
                 platillos: carrito.map(({ id_detalle, id_producto, cantidad, comentarios }) => ({
                     id_detalle, id_producto, cantidad, comentarios,
                 })),
+                tiempos: hayTiempos ? tiemposPlanos : null,
             });
             // Resetear todo y cerrar dialog
+            limpiarTiempos(idOrden);
             setIdOrden(null);
             setNumeroComanda(null);
             limpiarCarrito(false);
@@ -196,6 +211,8 @@ const EntregasPanel = () => {
                                     onActualizar={handleEnviarACocina}
                                     labelEnviar="Enviar a Cocina"
                                     mostrarCerrar={false}
+                                    tiempos={tiempos}
+                                    onCambiarCantidadTiempo={cambiarCantidadTiempo}
                                 />
                             </div>
                         </div>
