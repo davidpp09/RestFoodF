@@ -61,7 +61,7 @@ const ImpresionTickets = memo(({ ticket, onImprimir, onCerrar }) => {
                 {/* Acciones */}
                 <div className="flex gap-2 mt-4">
                     <button
-                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2 rounded-lg transition"
+                        className="flex-1 bg-rf-accent hover:bg-rf-accent-strong text-white text-sm font-semibold py-2 rounded-lg transition"
                         onClick={() => onImprimir()}
                     >
                         Imprimir

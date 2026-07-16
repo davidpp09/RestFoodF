@@ -8,25 +8,21 @@ export const CATEGORIA_ICON = {
     'Antojitos':      Cookie,
 };
 
+// Ambos turnos usan los tokens rf-turno-*; el color real lo decide el
+// atributo data-turno del dialog (desayuno = ámbar, comida = cyan) definido
+// en index.css, y se adapta solo al tema claro/oscuro.
+const TEMA_TURNO = {
+    bg: "bg-rf-turno",
+    bgHover: "hover:bg-rf-turno-strong",
+    bgTenue: "bg-rf-turno-soft",
+    bgTenueHover: "hover:bg-rf-turno",
+    text: "text-rf-turno-ink",
+    textHover: "hover:text-rf-turno-ink",
+    border: "hover:border-rf-turno",
+    shadow: "",
+};
+
 export const TEMAS_MESA = {
-    comida: {
-        bg: "bg-cyan-500",
-        bgHover: "hover:bg-cyan-600",
-        bgTenue: "bg-cyan-500/10",
-        bgTenueHover: "hover:bg-cyan-500",
-        text: "text-cyan-500",
-        textHover: "hover:text-cyan-500",
-        border: "hover:border-cyan-500/50",
-        shadow: "shadow-cyan-900/30",
-    },
-    desayuno: {
-        bg: "bg-amber-500",
-        bgHover: "hover:bg-amber-600",
-        bgTenue: "bg-amber-500/10",
-        bgTenueHover: "hover:bg-amber-500",
-        text: "text-amber-500",
-        textHover: "hover:text-amber-500",
-        border: "hover:border-amber-500/50",
-        shadow: "shadow-amber-900/30",
-    },
+    comida: TEMA_TURNO,
+    desayuno: TEMA_TURNO,
 };

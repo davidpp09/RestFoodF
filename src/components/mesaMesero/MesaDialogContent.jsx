@@ -138,23 +138,23 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                 {vista === "menu" ? (
                     <button
                         onClick={() => setVista("orden")}
-                        className={`w-full px-4 py-4 rounded-xl ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-slate-950 font-bold text-base transition-all flex items-center justify-center gap-3`}
+                        className={`w-full px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all flex items-center justify-center gap-3`}
                     >
                         <span className="relative">
                             <ShoppingCart size={20} />
                             {totalItems > 0 && (
-                                <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-slate-950 text-white text-[11px] font-black flex items-center justify-center">
+                                <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-white text-rf-turno-strong text-[11px] font-bold flex items-center justify-center">
                                     {totalItems}
                                 </span>
                             )}
                         </span>
                         <span>Ver orden</span>
-                        <span className="font-black">${total.toFixed(2)}</span>
+                        <span className="font-bold">${total.toFixed(2)}</span>
                     </button>
                 ) : (
                     <button
                         onClick={() => setVista("menu")}
-                        className="w-full px-4 py-4 rounded-xl border border-slate-700 hover:bg-slate-800 active:bg-slate-700 text-slate-300 font-bold text-base transition-colors flex items-center justify-center gap-2"
+                        className="w-full px-4 py-4 rounded-md border border-rf-border-strong hover:bg-rf-surface-2 active:bg-rf-surface-2 text-rf-text font-bold text-base transition-colors flex items-center justify-center gap-2"
                     >
                         <ArrowLeft size={18} />
                         Volver al menú
@@ -164,20 +164,20 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
 
             {/* Confirmación de cancelar mesa */}
             <AlertDialog open={confirmandoCancelar} onOpenChange={setConfirmandoCancelar}>
-                <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
+                <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
                     <AlertDialogHeader>
-                        <AlertDialogTitle className="text-white">¿Cancelar la Mesa {mesa.numero}?</AlertDialogTitle>
-                        <AlertDialogDescription className="text-slate-400">
+                        <AlertDialogTitle className="text-rf-text">¿Cancelar la Mesa {mesa.numero}?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-rf-text-2">
                             Se liberará sin generar ticket.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="border-slate-700 text-slate-300 hover:text-white bg-transparent hover:bg-slate-800">
+                        <AlertDialogCancel className="border-rf-border-strong text-rf-text-2 hover:text-rf-text bg-transparent hover:bg-rf-surface-2">
                             Volver
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={() => { setConfirmandoCancelar(false); onOrdenCancelada(); }}
-                            className="bg-red-500 hover:bg-red-600 text-white border-transparent"
+                            className="bg-rf-red hover:bg-rf-red/90 text-white border-transparent"
                         >
                             Sí, cancelar mesa
                         </AlertDialogAction>

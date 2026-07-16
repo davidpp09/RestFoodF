@@ -2,30 +2,30 @@ import { Minus, Plus } from 'lucide-react';
 
 const Contador = ({ label, cantidad, onCambiar }) => (
     <div className="flex items-center gap-1.5 flex-1">
-        <span className="text-xs font-semibold text-slate-400 flex-1 truncate">{label}</span>
+        <span className="text-xs font-semibold text-rf-text-2 flex-1 truncate">{label}</span>
         <button
             onClick={() => onCambiar(-1)}
-            className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 active:scale-95 flex items-center justify-center transition-all shrink-0"
+            className="w-8 h-8 rounded-lg bg-rf-surface-2 hover:bg-rf-border active:scale-95 flex items-center justify-center transition-all shrink-0"
         >
-            <Minus size={13} className="text-slate-300" />
+            <Minus size={13} className="text-rf-text-2" />
         </button>
-        <span className="w-5 text-center text-sm font-black text-white shrink-0">
+        <span className="w-5 text-center text-sm font-bold font-mono text-rf-text shrink-0">
             {Number(cantidad) || 0}
         </span>
         <button
             onClick={() => onCambiar(+1)}
-            className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 active:scale-95 flex items-center justify-center transition-all shrink-0"
+            className="w-8 h-8 rounded-lg bg-rf-surface-2 hover:bg-rf-border active:scale-95 flex items-center justify-center transition-all shrink-0"
         >
-            <Plus size={13} className="text-slate-300" />
+            <Plus size={13} className="text-rf-text-2" />
         </button>
     </div>
 );
 
 const TiemposSection = ({ tiempos, onCambiarCantidad }) => (
-    <div className="border border-slate-700/60 rounded-lg px-2.5 py-2 bg-slate-900/60 shrink-0 space-y-1.5">
+    <div className="border border-rf-border rounded-md px-2.5 py-2 bg-rf-surface shrink-0 space-y-1.5">
         {/* Tiempo 1 */}
         <div className="flex items-center gap-1.5">
-            <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest w-6 shrink-0">1er</span>
+            <span className="text-[9px] font-bold text-rf-text-3 uppercase tracking-widest w-6 shrink-0">1er</span>
             <div className="flex gap-2 flex-1">
                 <Contador
                     label="Consomé"
@@ -42,7 +42,7 @@ const TiemposSection = ({ tiempos, onCambiarCantidad }) => (
 
         {/* Tiempo 2 */}
         <div className="flex items-center gap-1.5">
-            <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest w-6 shrink-0">2do</span>
+            <span className="text-[9px] font-bold text-rf-text-3 uppercase tracking-widest w-6 shrink-0">2do</span>
             <div className="flex gap-2 flex-1">
                 <Contador
                     label="Arroz"

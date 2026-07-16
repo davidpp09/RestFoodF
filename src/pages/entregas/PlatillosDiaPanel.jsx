@@ -90,15 +90,15 @@ const PlatillosDiaPanel = () => {
         }
     };
 
-    if (cargando) return <div className="text-slate-400">Cargando platillos...</div>;
+    if (cargando) return <div className="text-rf-text-2">Cargando platillos...</div>;
 
     if (!categoriaId) return (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-            <AlertCircle size={40} className="text-slate-600 opacity-40" />
-            <p className="font-bold text-slate-400">Categoría no encontrada</p>
-            <p className="text-sm text-slate-500">
+            <AlertCircle size={40} className="text-rf-text-3 opacity-40" />
+            <p className="font-bold text-rf-text-2">Categoría no encontrada</p>
+            <p className="text-sm text-rf-text-3">
                 Pide al administrador que cree la categoría{' '}
-                <span className="text-amber-400 font-semibold">"Comida del día"</span>
+                <span className="text-rf-accent-ink font-semibold">"Comida del día"</span>
             </p>
         </div>
     );
@@ -109,12 +109,12 @@ const PlatillosDiaPanel = () => {
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-                        <Sun size={22} className="text-amber-400" />
+                    <div className="bg-rf-accent-soft p-3 rounded-md border border-rf-accent-border">
+                        <Sun size={22} className="text-rf-accent-ink" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-white">Platillos del Día</h1>
-                        <p className="text-slate-400 text-sm">{activos} / {MAX_ACTIVOS} activos hoy</p>
+                        <h1 className="text-2xl font-bold text-rf-text">Platillos del Día</h1>
+                        <p className="text-rf-text-2 text-sm">{activos} / {MAX_ACTIVOS} activos hoy</p>
                     </div>
                 </div>
 
@@ -123,27 +123,27 @@ const PlatillosDiaPanel = () => {
                         <AlertDialogTrigger asChild>
                             <button
                                 disabled={cerrando}
-                                className="inline-flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold px-4 py-2.5 rounded-xl transition-colors text-sm disabled:opacity-50"
+                                className="inline-flex items-center gap-2 bg-rf-red-soft hover:bg-rf-red-soft/80 border border-rf-red/40 text-rf-red-ink font-bold px-4 py-2.5 rounded-md transition-colors text-sm disabled:opacity-50"
                             >
                                 <Power size={15} />
                                 {cerrando ? 'Cerrando...' : 'Cerrar Día'}
                             </button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
+                        <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
                             <AlertDialogHeader>
-                                <AlertDialogTitle className="text-white">¿Cerrar el día?</AlertDialogTitle>
-                                <AlertDialogDescription className="text-slate-400">
-                                    Se desactivarán los <span className="text-white font-semibold">{activos} platillos</span> activos.
+                                <AlertDialogTitle className="text-rf-text">¿Cerrar el día?</AlertDialogTitle>
+                                <AlertDialogDescription className="text-rf-text-2">
+                                    Se desactivarán los <span className="text-rf-text font-semibold">{activos} platillos</span> activos.
                                     El mesero dejará de verlos en el menú.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel className="border-slate-700 text-slate-300 hover:text-white bg-transparent hover:bg-slate-800">
+                                <AlertDialogCancel className="border-rf-border-strong text-rf-text-2 hover:text-rf-text bg-transparent hover:bg-rf-surface-2">
                                     Cancelar
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                     onClick={handleCerrarDia}
-                                    className="bg-red-500 hover:bg-red-600 text-white border-transparent"
+                                    className="bg-rf-red hover:bg-rf-red/90 text-white border-transparent"
                                 >
                                     Sí, cerrar día
                                 </AlertDialogAction>
@@ -154,22 +154,22 @@ const PlatillosDiaPanel = () => {
             </div>
 
             {/* Barra de progreso */}
-            <div className="flex items-center gap-4 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest shrink-0">Activos</span>
-                <div className="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div className="flex items-center gap-4 bg-rf-surface border border-rf-border rounded-md px-4 py-3">
+                <span className="text-xs font-bold text-rf-text-3 uppercase tracking-widest shrink-0">Activos</span>
+                <div className="flex-1 bg-rf-surface-2 rounded-full h-2 overflow-hidden">
                     <div
-                        className={`h-2 rounded-full transition-all duration-500 ${activos >= MAX_ACTIVOS ? 'bg-red-500' : 'bg-amber-500'}`}
+                        className={`h-2 rounded-full transition-all duration-500 ${activos >= MAX_ACTIVOS ? 'bg-rf-red' : 'bg-rf-accent'}`}
                         style={{ width: `${porcentaje}%` }}
                     />
                 </div>
-                <span className={`text-sm font-black shrink-0 tabular-nums ${activos >= MAX_ACTIVOS ? 'text-red-400' : 'text-amber-400'}`}>
+                <span className={`text-sm font-bold shrink-0 tabular-nums ${activos >= MAX_ACTIVOS ? 'text-rf-red-ink' : 'text-rf-accent-ink'}`}>
                     {activos} / {MAX_ACTIVOS}
                 </span>
             </div>
 
             {/* Lista de platillos */}
             {productosDia.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-slate-600 bg-slate-900 border border-slate-800 rounded-2xl">
+                <div className="flex flex-col items-center justify-center py-16 text-rf-text-3 bg-rf-surface border border-rf-border rounded-lg">
                     <UtensilsCrossed size={36} className="mb-3 opacity-30" />
                     <p className="font-semibold">No hay platillos en la categoría</p>
                     <p className="text-xs mt-1">Agrega platillos desde el panel de administración</p>
@@ -181,10 +181,10 @@ const PlatillosDiaPanel = () => {
                         return (
                             <div
                                 key={p.id}
-                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all ${
+                                className={`flex items-center gap-4 px-4 py-3.5 rounded-md border transition-all ${
                                     p.disponibilidad
-                                        ? 'bg-emerald-500/5 border-emerald-500/20'
-                                        : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+                                        ? 'bg-rf-green-soft/60 border-rf-green/40'
+                                        : 'bg-rf-surface border-rf-border hover:border-rf-border-strong'
                                 }`}
                             >
                                 {/* Toggle switch */}
@@ -192,14 +192,14 @@ const PlatillosDiaPanel = () => {
                                     onClick={() => handleToggle(p)}
                                     disabled={bloqueado}
                                     className={`relative shrink-0 w-11 h-6 rounded-full transition-colors focus:outline-none ${
-                                        p.disponibilidad ? 'bg-emerald-500' : bloqueado ? 'bg-slate-700 opacity-40 cursor-not-allowed' : 'bg-slate-700 hover:bg-slate-600'
+                                        p.disponibilidad ? 'bg-rf-green' : bloqueado ? 'bg-rf-border-strong opacity-40 cursor-not-allowed' : 'bg-rf-border-strong'
                                     }`}
                                 >
                                     <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${p.disponibilidad ? 'left-[22px]' : 'left-0.5'}`} />
                                 </button>
 
                                 {/* Nombre */}
-                                <span className={`flex-1 font-semibold text-sm ${p.disponibilidad ? 'text-white' : 'text-slate-500'}`}>
+                                <span className={`flex-1 font-semibold text-sm ${p.disponibilidad ? 'text-rf-text' : 'text-rf-text-3'}`}>
                                     {p.nombre}
                                 </span>
 
@@ -218,14 +218,14 @@ const PlatillosDiaPanel = () => {
                                                 if (e.key === 'Enter') handleGuardarPrecio(p);
                                                 if (e.key === 'Escape') setEditandoPrecio(null);
                                             }}
-                                            className="w-20 bg-slate-800 border border-amber-500 rounded-lg px-2 py-1 text-white text-sm outline-none text-right"
+                                            className="w-20 bg-rf-bg border border-rf-accent rounded-md px-2 py-1 text-rf-text text-sm outline-none text-right"
                                             autoFocus
                                         />
-                                        <button onClick={() => handleGuardarPrecio(p)} className="w-7 h-7 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center transition-colors">
-                                            <Check size={13} className="text-emerald-400" />
+                                        <button onClick={() => handleGuardarPrecio(p)} className="w-7 h-7 rounded-lg bg-rf-green-soft hover:bg-rf-green-soft/80 border border-rf-green/30 flex items-center justify-center transition-colors">
+                                            <Check size={13} className="text-rf-green-ink" />
                                         </button>
-                                        <button onClick={() => setEditandoPrecio(null)} className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-colors">
-                                            <X size={13} className="text-slate-400" />
+                                        <button onClick={() => setEditandoPrecio(null)} className="w-7 h-7 rounded-lg bg-rf-surface-2 hover:bg-rf-border border border-rf-border-strong flex items-center justify-center transition-colors">
+                                            <X size={13} className="text-rf-text-2" />
                                         </button>
                                     </div>
                                 ) : (
@@ -234,10 +234,10 @@ const PlatillosDiaPanel = () => {
                                         className="flex items-center gap-1.5 shrink-0 group"
                                         title="Clic para editar precio"
                                     >
-                                        <span className={`font-mono text-sm font-bold transition-colors ${p.disponibilidad ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                                        <span className={`font-mono text-sm font-bold transition-colors ${p.disponibilidad ? 'text-rf-green-ink' : 'text-rf-text-3 group-hover:text-rf-text-2'}`}>
                                             ${Number(p.precioComida).toFixed(2)}
                                         </span>
-                                        <Pencil size={11} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+                                        <Pencil size={11} className="text-rf-text-3 group-hover:text-rf-text-2 transition-colors" />
                                     </button>
                                 )}
                             </div>

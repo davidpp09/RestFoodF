@@ -147,7 +147,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
                 <MesaCard mesa={mesa} idOrden={idOrden} />
             </DialogTrigger>
 
-            <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 portrait:p-4 overflow-hidden flex flex-col">
+            <DialogContent data-turno={turno} className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-rf-bg border-rf-border text-rf-text rounded-lg shadow-rf-lg p-6 portrait:p-4 overflow-hidden flex flex-col">
                 <div className={`flex flex-col h-full min-h-0 transition-all duration-300 ${!idOrden ? "blur-sm opacity-30 pointer-events-none select-none" : ""}`}>
                     <MesaDialogContent
                         mesa={mesa}
@@ -187,20 +187,20 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
 
                 {/* Confirmación de cambio de turno con productos sin enviar */}
                 <AlertDialog open={!!turnoPendiente} onOpenChange={(v) => { if (!v) setTurnoPendiente(null); }}>
-                    <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
+                    <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">¿Cambiar turno?</AlertDialogTitle>
-                            <AlertDialogDescription className="text-slate-400">
+                            <AlertDialogTitle className="text-rf-text">¿Cambiar turno?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-rf-text-2">
                                 Se eliminarán los productos que aún no has enviado a cocina.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel className="border-slate-700 text-slate-300 hover:text-white bg-transparent hover:bg-slate-800">
+                            <AlertDialogCancel className="border-rf-border-strong text-rf-text-2 hover:text-rf-text bg-transparent hover:bg-rf-surface-2">
                                 Volver
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={confirmarCambioTurno}
-                                className="bg-red-500 hover:bg-red-600 text-white border-transparent"
+                                className="bg-rf-red hover:bg-rf-red/90 text-white border-transparent"
                             >
                                 Sí, cambiar turno
                             </AlertDialogAction>

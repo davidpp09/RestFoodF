@@ -14,27 +14,27 @@ import MesaOrden from '@/components/mesaMesero/MesaOrden';
 const TurnoSelector = ({ turno, onCambiarTurno, onAbrir, cargando }) => (
     /* pointer-events-none en el wrapper para no tapar el botón X de cerrar el dialog */
     <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-        <div className="pointer-events-auto bg-slate-900 border border-slate-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col gap-6">
+        <div className="pointer-events-auto bg-rf-surface border border-rf-border rounded-lg p-8 w-full max-w-sm shadow-2xl flex flex-col gap-6">
             <div className="text-center">
-                <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <ShoppingBag size={28} className="text-orange-500" />
+                <div className="w-14 h-14 bg-rf-accent-soft rounded-md flex items-center justify-center mx-auto mb-3">
+                    <ShoppingBag size={28} className="text-rf-accent-ink" />
                 </div>
-                <p className="text-xl font-black text-white">Nueva Entrega</p>
-                <p className="text-xs text-slate-500 mt-1">Selecciona el turno</p>
+                <p className="text-xl font-bold text-rf-text">Nueva Entrega</p>
+                <p className="text-xs text-rf-text-3 mt-1">Selecciona el turno</p>
             </div>
 
-            <div className="flex items-center bg-slate-800 border border-slate-700 rounded-xl p-1 gap-1">
+            <div className="flex items-center bg-rf-surface-2 border border-rf-border rounded-md p-1 gap-1">
                 <button
                     onClick={() => onCambiarTurno('desayuno')}
                     className={`flex-1 py-3 rounded-lg text-base font-bold transition-all active:scale-95
-                        ${turno === 'desayuno' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-500 hover:text-slate-300'}`}
+                        ${turno === 'desayuno' ? 'bg-rf-accent text-white' : 'text-rf-text-3 hover:text-rf-text-2'}`}
                 >
                     Desayuno
                 </button>
                 <button
                     onClick={() => onCambiarTurno('comida')}
                     className={`flex-1 py-3 rounded-lg text-base font-bold transition-all active:scale-95
-                        ${turno === 'comida' ? 'bg-cyan-500 text-slate-950 shadow-md' : 'text-slate-500 hover:text-slate-300'}`}
+                        ${turno === 'comida' ? 'bg-rf-cyan text-white' : 'text-rf-text-3 hover:text-rf-text-2'}`}
                 >
                     Comida
                 </button>
@@ -43,7 +43,7 @@ const TurnoSelector = ({ turno, onCambiarTurno, onAbrir, cargando }) => (
             <button
                 onClick={onAbrir}
                 disabled={cargando}
-                className="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-black text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-md bg-rf-accent hover:bg-rf-accent-strong text-white font-bold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
                 {cargando
                     ? <><Loader2 size={16} className="animate-spin" /> Abriendo...</>
@@ -133,13 +133,13 @@ const EntregasPanel = () => {
             {/* Header del panel */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Área de Entrega</h1>
-                    <p className="text-slate-400">Gestiona los pedidos para llevar</p>
+                    <h1 className="text-2xl font-bold text-rf-text">Área de Entrega</h1>
+                    <p className="text-rf-text-2">Gestiona los pedidos para llevar</p>
                 </div>
                 <button
                     onClick={() => setOpen(true)}
                     disabled={cargandoProductos}
-                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 active:scale-95 disabled:opacity-50 text-white px-6 py-3.5 rounded-xl transition-all font-bold text-base"
+                    className="inline-flex items-center gap-2 bg-rf-accent hover:bg-rf-accent-strong active:scale-95 disabled:opacity-50 text-white px-6 py-3.5 rounded-md transition-all font-bold text-base"
                 >
                     <PackagePlus size={22} />
                     Nueva Entrega
@@ -148,16 +148,16 @@ const EntregasPanel = () => {
 
             {/* Dialog de orden */}
             <Dialog open={open} onOpenChange={(v) => { if (!v) { setOpen(false); setVista('menu'); } }}>
-                <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-[#0f172a] border-slate-800 text-slate-100 rounded-3xl shadow-2xl p-6 portrait:p-4 overflow-hidden flex flex-col">
+                <DialogContent data-turno={turno} className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-rf-bg border-rf-border text-rf-text rounded-lg shadow-rf-lg p-6 portrait:p-4 overflow-hidden flex flex-col">
 
                     {/* Header del dialog */}
-                    <div className="flex items-center gap-3 pb-4 border-b border-slate-800 shrink-0">
+                    <div className="flex items-center gap-3 pb-4 border-b border-rf-border shrink-0">
                         <div className={`p-2 rounded-lg ${tema.bgTenue}`}>
                             <ShoppingBag size={22} className={tema.text} />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-white">Para Llevar</p>
-                            <p className="text-xs text-slate-500 mt-0.5">
+                            <p className="text-xl font-bold text-rf-text">Para Llevar</p>
+                            <p className="text-xs text-rf-text-3 mt-0.5">
                                 {idOrden ? `Comanda #${numeroComanda} en curso` : 'Sin orden activa'}
                             </p>
                         </div>
@@ -205,23 +205,23 @@ const EntregasPanel = () => {
                             {vista === 'menu' ? (
                                 <button
                                     onClick={() => setVista('orden')}
-                                    className={`w-full px-4 py-4 rounded-xl ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-slate-950 font-bold text-base transition-all flex items-center justify-center gap-3`}
+                                    className={`w-full px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all flex items-center justify-center gap-3`}
                                 >
                                     <span className="relative">
                                         <ShoppingCart size={20} />
                                         {totalItems > 0 && (
-                                            <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-slate-950 text-white text-[11px] font-black flex items-center justify-center">
+                                            <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-white text-rf-turno-strong text-[11px] font-bold flex items-center justify-center">
                                                 {totalItems}
                                             </span>
                                         )}
                                     </span>
                                     <span>Ver orden</span>
-                                    <span className="font-black">${total.toFixed(2)}</span>
+                                    <span className="font-bold">${total.toFixed(2)}</span>
                                 </button>
                             ) : (
                                 <button
                                     onClick={() => setVista('menu')}
-                                    className="w-full px-4 py-4 rounded-xl border border-slate-700 hover:bg-slate-800 active:bg-slate-700 text-slate-300 font-bold text-base transition-colors flex items-center justify-center gap-2"
+                                    className="w-full px-4 py-4 rounded-md border border-rf-border-strong hover:bg-rf-surface-2 active:bg-rf-surface-2 text-rf-text font-bold text-base transition-colors flex items-center justify-center gap-2"
                                 >
                                     <ArrowLeft size={18} />
                                     Volver al menú

@@ -26,8 +26,8 @@ const MesaOrden = ({
                 <Utensils size={16} className={tema.text} />
             </div>
             <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">ORDEN ACTUAL</p>
-                <p className="text-base font-black text-slate-200">
+                <p className="text-xs font-bold text-rf-text-3 uppercase tracking-widest">ORDEN ACTUAL</p>
+                <p className="text-base font-bold text-rf-text">
                     {tieneOrden ? "Orden en curso" : "Nueva orden"}
                 </p>
             </div>
@@ -36,25 +36,25 @@ const MesaOrden = ({
         {/* Lista de items */}
         <div className="space-y-2 flex-1 min-h-0 overflow-y-auto custom-scrollbar">
             {carrito.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-600 py-8">
+                <div className="flex flex-col items-center justify-center h-full text-rf-text-3 py-8">
                     <Utensils size={28} className="mb-2 opacity-30" />
                     <p className="text-sm">Agrega productos del menú</p>
                 </div>
             ) : (
                 carrito.map((item) => (
-                    <div key={item.id} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+                    <div key={item.id} className="p-3 bg-rf-surface border border-rf-border rounded-md">
 
                         {/* Nombre + eliminar */}
                         <div className="flex justify-between items-start mb-2">
                             <div className="flex-1 min-w-0 mr-2">
-                                <p className="text-base font-bold text-slate-200 line-clamp-1">{item.nombre}</p>
-                                <p className="text-sm text-slate-500 font-mono">${Number(item.precio ?? 0).toFixed(2)}</p>
+                                <p className="text-base font-bold text-rf-text line-clamp-1">{item.nombre}</p>
+                                <p className="text-sm text-rf-text-3 font-mono">${Number(item.precio ?? 0).toFixed(2)}</p>
                             </div>
                             <button
                                 onClick={() => onEliminar(item.id)}
-                                className="w-10 h-10 rounded-lg bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/30 flex items-center justify-center transition-colors flex-shrink-0"
+                                className="w-10 h-10 rounded-lg bg-rf-red-soft hover:bg-rf-red-soft/80 active:bg-rf-red-soft/60 flex items-center justify-center transition-colors flex-shrink-0"
                             >
-                                <Trash2 size={16} className="text-red-500" />
+                                <Trash2 size={16} className="text-rf-red-ink" />
                             </button>
                         </div>
 
@@ -63,30 +63,30 @@ const MesaOrden = ({
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => onCambiarCantidad(item.id, -1)}
-                                    className="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 flex items-center justify-center transition-all"
+                                    className="w-11 h-11 rounded-md bg-rf-surface-2 hover:bg-rf-border active:scale-95 flex items-center justify-center transition-all"
                                 >
-                                    <Minus size={18} className="text-slate-300" />
+                                    <Minus size={18} className="text-rf-text-2" />
                                 </button>
-                                <span className="w-10 text-center text-lg font-black text-white">{item.cantidad}</span>
+                                <span className="w-10 text-center text-lg font-bold font-mono text-rf-text">{item.cantidad}</span>
                                 <button
                                     onClick={() => onCambiarCantidad(item.id, +1)}
-                                    className="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 flex items-center justify-center transition-all"
+                                    className="w-11 h-11 rounded-md bg-rf-surface-2 hover:bg-rf-border active:scale-95 flex items-center justify-center transition-all"
                                 >
-                                    <Plus size={18} className="text-slate-300" />
+                                    <Plus size={18} className="text-rf-text-2" />
                                 </button>
                             </div>
-                            <p className="text-lg font-black text-white">${(Number(item.precio ?? 0) * item.cantidad).toFixed(2)}</p>
+                            <p className="text-lg font-bold font-mono text-rf-text">${(Number(item.precio ?? 0) * item.cantidad).toFixed(2)}</p>
                         </div>
 
                         {/* Comentarios */}
                         <div className="flex items-center gap-2">
-                            <MessageSquare size={14} className="text-slate-600 flex-shrink-0" />
+                            <MessageSquare size={14} className="text-rf-text-3 flex-shrink-0" />
                             <input
                                 type="text"
                                 value={item.comentarios}
                                 onChange={(e) => onCambiarComentario(item.id, e.target.value)}
                                 placeholder="Comentarios..."
-                                className="w-full text-sm bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2.5 text-slate-300 placeholder:text-slate-600 outline-none focus:border-slate-500 transition-colors"
+                                className="w-full text-sm bg-rf-surface border border-rf-border rounded-md px-3 py-2.5 text-rf-text placeholder:text-rf-text-3 outline-none focus:border-rf-turno transition-colors"
                             />
                         </div>
                     </div>
@@ -103,10 +103,10 @@ const MesaOrden = ({
         )}
 
         {/* Total */}
-        <div className="pt-3 border-t border-slate-800">
+        <div className="pt-3 border-t border-rf-border">
             <div className="flex justify-between items-center">
-                <span className="text-base font-bold text-slate-200">Total</span>
-                <span className={`text-xl font-black ${tema.text}`}>${total.toFixed(2)}</span>
+                <span className="text-base font-bold text-rf-text">Total</span>
+                <span className={`text-xl font-bold ${tema.text}`}>${total.toFixed(2)}</span>
             </div>
         </div>
 
@@ -115,7 +115,7 @@ const MesaOrden = ({
             <button
                 onClick={onActualizar}
                 disabled={carrito.length === 0}
-                className={`w-full portrait:col-span-2 px-4 py-4 rounded-xl ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-slate-950 font-bold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed`}
+                className={`w-full portrait:col-span-2 px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed`}
             >
                 {labelEnviar ?? (tieneOrden ? "Modificar Orden" : "Enviar Orden")}
             </button>
@@ -123,7 +123,7 @@ const MesaOrden = ({
                 tieneOrden && (
                     <button
                         onClick={onCancelar}
-                        className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-xl border-2 border-red-500/30 hover:bg-red-500/10 active:bg-red-500/20 text-red-500 font-bold text-base portrait:text-sm transition-colors flex items-center justify-center gap-2`}
+                        className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-md border border-rf-red hover:bg-rf-red-soft active:bg-rf-red-soft text-rf-red-ink font-bold text-base portrait:text-sm transition-colors flex items-center justify-center gap-2`}
                     >
                         <Ban size={16} />
                         Cancelar Mesa
@@ -132,7 +132,7 @@ const MesaOrden = ({
             ) : (
                 <button
                     onClick={onCerrar}
-                    className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-xl border-2 border-green-500/30 hover:bg-green-500/10 active:bg-green-500/20 text-green-500 font-bold text-base portrait:text-sm transition-colors`}
+                    className={`w-full ${!(tieneOrden && onReenviarCocina) ? "portrait:col-span-2" : ""} px-4 py-4 rounded-md border border-rf-green hover:bg-rf-green-soft active:bg-rf-green-soft text-rf-green-ink font-bold text-base portrait:text-sm transition-colors`}
                 >
                     Cerrar y Cobrar
                 </button>
@@ -140,7 +140,7 @@ const MesaOrden = ({
             {tieneOrden && onReenviarCocina && (
                 <button
                     onClick={onReenviarCocina}
-                    className={`w-full ${!mostrarCerrar ? "portrait:col-span-2" : ""} px-4 py-3.5 rounded-xl border border-slate-700 hover:bg-slate-800 active:bg-slate-700 text-slate-400 hover:text-slate-200 font-bold text-sm transition-colors flex items-center justify-center gap-2`}
+                    className={`w-full ${!mostrarCerrar ? "portrait:col-span-2" : ""} px-4 py-3.5 rounded-md border border-rf-border-strong hover:bg-rf-surface-2 active:bg-rf-surface-2 text-rf-text-2 hover:text-rf-text font-bold text-sm transition-colors flex items-center justify-center gap-2`}
                 >
                     <RefreshCw size={16} />
                     Reenviar a Cocina

@@ -71,11 +71,11 @@ const MeseroPanel = () => {
     };
 
     if (cargandoMesas || cargandoProductos) {
-        return <div className="text-white">Cargando... ⏳</div>;
+        return <div className="text-rf-text-2">Cargando... ⏳</div>;
     }
 
     if (errorMesas) {
-        return <div className="text-red-400 p-6">Error al cargar las mesas. Verifica la conexión con el servidor.</div>;
+        return <div className="text-rf-red-ink p-6">Error al cargar las mesas. Verifica la conexión con el servidor.</div>;
     }
 
     return (
