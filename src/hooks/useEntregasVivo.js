@@ -13,7 +13,8 @@ export const useEntregasVivo = () => {
     const cargar = useCallback(async () => {
         try {
             const data = await ordenService.obtenerEntregasHoy();
-            setEntregas(data);
+            // Sin platillos = orden aún en captura (o abandonada), no una entrega real
+            setEntregas(data.filter(e => e.platillos?.length > 0));
         } catch (error) {
             console.error('Error cargando entregas del día:', error);
         } finally {

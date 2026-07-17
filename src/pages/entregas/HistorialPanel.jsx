@@ -97,7 +97,8 @@ const HistorialPanel = () => {
         setCargando(true);
         try {
             const data = await ordenService.obtenerEntregasHoy();
-            setEntregas(data);
+            // Sin platillos = orden aún en captura (o abandonada), no una entrega enviada
+            setEntregas(data.filter(e => e.platillos?.length > 0));
         } catch {
             toast.error('Error al cargar el historial');
         } finally {

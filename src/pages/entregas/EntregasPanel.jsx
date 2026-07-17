@@ -2,6 +2,16 @@ import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { ShoppingBag, PackagePlus, Loader2, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useProductos } from '@/hooks/useProductos';
 import { useMesaCart } from '@/hooks/useMesaCart';
@@ -55,6 +65,10 @@ const TurnoSelector = ({ turno, onCambiarTurno, onAbrir, cargando }) => (
 );
 
 // ── Panel principal ────────────────────────────────────────────────────────
+// Clave por usuario: la orden abierta sobrevive recargas de página (Fully Kiosk
+// recarga al cambiar de app y volver) — sin esto quedaba fantasma en el servidor
+const claveOrdenPendiente = (idUsuario) => `entrega-pendiente-${idUsuario}`;
+
 const EntregasPanel = () => {
     const { getUsuarioId } = useAuth();
     const { productos, cargando: cargandoProductos } = useProductos();
@@ -68,6 +82,7 @@ const EntregasPanel = () => {
     const [busqueda, setBusqueda] = useState('');
     // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
     const [vista, setVista] = useState('menu');
+    const [confirmandoCancelar, setConfirmandoCancelar] = useState(false);
 
     const tema = TEMAS_MESA[turno];
     const categorias = useMemo(() => [...new Set(productos.map(p => p.categoria.nombre))], [productos]);
@@ -75,6 +90,32 @@ const EntregasPanel = () => {
     useEffect(() => {
         if (categorias.length > 0 && !categoriaActiva) setCategoriaActiva(categorias[0]);
     }, [categorias, categoriaActiva]);
+
+    // Restaurar la orden pendiente tras una recarga: si sigue viva en el servidor
+    // (PREPARANDO y sin platillos enviados) se reabre el dialog donde se quedó
+    useEffect(() => {
+        const clave = claveOrdenPendiente(getUsuarioId());
+        const guardada = localStorage.getItem(clave);
+        if (!guardada) return;
+        let datos;
+        try { datos = JSON.parse(guardada); } catch { localStorage.removeItem(clave); return; }
+        ordenService.obtenerEntregasHoy()
+            .then(entregas => {
+                const viva = entregas.find(e =>
+                    e.id_orden === datos.idOrden &&
+                    e.estatus === 'PREPARANDO' &&
+                    e.platillos.length === 0
+                );
+                if (!viva) { localStorage.removeItem(clave); return; }
+                setTurno(datos.turno ?? 'comida');
+                setIdOrden(datos.idOrden);
+                setNumeroComanda(datos.numeroComanda);
+                setOpen(true);
+                toast.info(`Tienes la Comanda #${datos.numeroComanda} sin enviar`);
+            })
+            .catch(() => { /* sin red no se puede validar — se reintenta en la próxima carga */ });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const {
         carrito, setCarrito, limpiarCarrito,
@@ -97,6 +138,10 @@ const EntregasPanel = () => {
             });
             setIdOrden(id_orden);
             setNumeroComanda(numero_comanda);
+            localStorage.setItem(
+                claveOrdenPendiente(getUsuarioId()),
+                JSON.stringify({ idOrden: id_orden, numeroComanda: numero_comanda, turno })
+            );
             toast.success('Orden para llevar iniciada');
         } catch {
             toast.error('Error al abrir la orden');
@@ -126,6 +171,7 @@ const EntregasPanel = () => {
                 tiempos: hayTiempos ? tiemposPlanos : null,
             });
             // Resetear todo y cerrar dialog
+            localStorage.removeItem(claveOrdenPendiente(getUsuarioId()));
             limpiarTiempos(idOrden);
             setIdOrden(null);
             setNumeroComanda(null);
@@ -134,6 +180,25 @@ const EntregasPanel = () => {
             toast.success('Orden enviada a cocina');
         } catch {
             toast.error('Error al enviar la orden');
+        }
+    };
+
+    // Cancela la orden en el servidor — sin esto la orden queda fantasma
+    // (0 platillos, PREPARANDO) bloqueando el historial y el contador
+    const handleCancelarOrden = async () => {
+        try {
+            await ordenService.cancelarOrden(idOrden);
+            localStorage.removeItem(claveOrdenPendiente(getUsuarioId()));
+            limpiarTiempos(idOrden);
+            setIdOrden(null);
+            setNumeroComanda(null);
+            limpiarCarrito(false);
+            setConfirmandoCancelar(false);
+            setVista('menu');
+            setOpen(false);
+            toast.success('Orden cancelada');
+        } catch {
+            toast.error('Error al cancelar la orden');
         }
     };
 
@@ -162,7 +227,15 @@ const EntregasPanel = () => {
             </div>
 
             {/* Dialog de orden */}
-            <Dialog open={open} onOpenChange={(v) => { if (!v) { setOpen(false); setVista('menu'); } }}>
+            {/* Salir con una orden abierta (nunca hay nada enviado a cocina en este
+                punto) pide confirmación para cancelarla — evita órdenes fantasma */}
+            <Dialog open={open} onOpenChange={(v) => {
+                if (!v) {
+                    if (idOrden) { setConfirmandoCancelar(true); return; }
+                    setOpen(false);
+                    setVista('menu');
+                }
+            }}>
                 <DialogContent data-turno={turno} className="w-[90vw] max-w-[90vw] sm:max-w-[90vw] h-[90vh] max-h-[90vh] portrait:w-[100dvw] portrait:max-w-[100dvw] portrait:h-[100dvh] portrait:max-h-[100dvh] portrait:rounded-none bg-rf-bg border-rf-border text-rf-text rounded-lg shadow-rf-lg p-6 portrait:p-4 overflow-hidden flex flex-col">
 
                     {/* Header del dialog */}
@@ -210,7 +283,9 @@ const EntregasPanel = () => {
                                     onCambiarComentario={cambiarComentario}
                                     onActualizar={handleEnviarACocina}
                                     labelEnviar="Enviar a Cocina"
+                                    labelCancelar="Cancelar Orden"
                                     mostrarCerrar={false}
+                                    onCancelar={() => setConfirmandoCancelar(true)}
                                     tiempos={tiempos}
                                     onCambiarCantidadTiempo={cambiarCantidadTiempo}
                                 />
@@ -258,6 +333,31 @@ const EntregasPanel = () => {
                     )}
                 </DialogContent>
             </Dialog>
+
+            {/* Confirmación de cancelar orden */}
+            <AlertDialog open={confirmandoCancelar} onOpenChange={setConfirmandoCancelar}>
+                <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-rf-text">
+                            ¿Cancelar la Comanda #{numeroComanda}?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-rf-text-2">
+                            Se descartará sin enviar nada a cocina.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="border-rf-border-strong text-rf-text-2 hover:text-rf-text bg-transparent hover:bg-rf-surface-2">
+                            Volver
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleCancelarOrden}
+                            className="bg-rf-red hover:bg-rf-red/90 text-white border-transparent"
+                        >
+                            Sí, cancelar orden
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
         </div>
     );

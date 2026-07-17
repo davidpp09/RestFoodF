@@ -14,6 +14,7 @@ const MesaOrden = ({
     onCancelar,
     onReenviarCocina,
     labelEnviar,
+    labelCancelar = "Cancelar Mesa",
     mostrarCerrar = true,
     tiempos,
     onCambiarCantidadTiempo,
@@ -120,7 +121,7 @@ const MesaOrden = ({
             verdad se renderizan ambos; si no, cada uno ocupa la fila completa */}
         {(() => {
             const muestraReenviar = tieneOrden && !!onReenviarCocina && yaEnviada;
-            const muestraCancelar = mostrarCerrar && carrito.length === 0 && tieneOrden;
+            const muestraCancelar = !!onCancelar && carrito.length === 0 && tieneOrden;
             const muestraCerrar   = mostrarCerrar && carrito.length > 0 && coincideConEnviado;
             const dosSecundarios  = muestraReenviar && (muestraCancelar || muestraCerrar);
             const anchoSecundario = dosSecundarios ? "" : "portrait:col-span-2";
@@ -141,7 +142,7 @@ const MesaOrden = ({
                     className={`w-full ${anchoSecundario} px-4 py-4 rounded-md border border-rf-red hover:bg-rf-red-soft active:bg-rf-red-soft text-rf-red-ink font-bold text-base portrait:text-sm transition-colors flex items-center justify-center gap-2`}
                 >
                     <Ban size={16} />
-                    Cancelar Mesa
+                    {labelCancelar}
                 </button>
             )}
             {muestraCerrar && (
