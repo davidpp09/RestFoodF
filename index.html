@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- interactive-widget=overlays-content: el teclado en pantalla se pone ENCIMA
+         del contenido en vez de encoger el viewport — sin esto, al abrirse el
+         teclado la pantalla queda mas ancha que alta y los estilos landscape:
+         se activan en pleno carrito (todo amontonado) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content" />
     <meta name="theme-color" content="#D97706" />
     <title>RestFood</title>
   </head>
