@@ -108,6 +108,11 @@ export const useMesaCart = (idOrden, turno) => {
     // true solo si el carrito actual es idéntico a lo último enviado a cocina
     const coincideConEnviado = fotoEnviado !== null && normalizar(carrito) === fotoEnviado;
 
+    // true si ya hubo al menos un envío confirmado por el servidor para esta orden.
+    // Distingue "carrito vacío porque es una orden nueva" (nada que enviar) de
+    // "carrito vacío porque se quitó lo ya enviado" (hay que sincronizar el borrado).
+    const hayEnvioPrevio = fotoEnviado !== null;
+
     return {
         carrito,
         setCarrito,
@@ -120,6 +125,7 @@ export const useMesaCart = (idOrden, turno) => {
         precioSegunTurno,
         guardarCarrito,
         marcarSincronizado,
-        coincideConEnviado
+        coincideConEnviado,
+        hayEnvioPrevio
     };
 };

@@ -52,7 +52,8 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
         precioSegunTurno,
         guardarCarrito,
         marcarSincronizado,
-        coincideConEnviado
+        coincideConEnviado,
+        hayEnvioPrevio
     } = useMesaCart(idOrden, turno);
 
     const aplicarRespuestaOrden = (resp) => {
@@ -179,6 +180,7 @@ const MesaMesero = ({ mesa, productos, idOrden, onOrdenCreada, onOrdenCerrada, o
                         precioSegunTurno={precioSegunTurno}
                         marcarSincronizado={marcarSincronizado}
                         coincideConEnviado={coincideConEnviado}
+                        hayEnvioPrevio={hayEnvioPrevio}
                     />
                 </div>
 

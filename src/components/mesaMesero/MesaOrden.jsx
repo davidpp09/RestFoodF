@@ -19,10 +19,13 @@ const MesaOrden = ({
     tiempos,
     onCambiarCantidadTiempo,
     coincideConEnviado = false,
+    hayEnvioPrevio = false,
 }) => {
     // La orden se abre al abrir la mesa, pero "en curso" de verdad es cuando
-    // ya hay platillos enviados a cocina (tienen id_detalle del servidor)
-    const yaEnviada = carrito.some(item => item.id_detalle);
+    // ya hay platillos enviados a cocina — por id_detalle, o porque el carrito
+    // se vació después de un envío previo (hayEnvioPrevio cubre ese caso, ya
+    // que el carrito vacío no tiene id_detalle que mirar)
+    const yaEnviada = hayEnvioPrevio || carrito.some(item => item.id_detalle);
 
     return (
     <div className="flex flex-col h-full min-h-0 gap-4">
@@ -129,7 +132,7 @@ const MesaOrden = ({
         <div className="grid grid-cols-1 portrait:grid-cols-2 gap-2.5">
             <button
                 onClick={onActualizar}
-                disabled={carrito.length === 0 || coincideConEnviado}
+                disabled={hayEnvioPrevio ? coincideConEnviado : carrito.length === 0}
                 className={`w-full portrait:col-span-2 px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed`}
             >
                 {labelEnviar ?? (yaEnviada ? "Modificar Orden" : "Enviar Orden")}

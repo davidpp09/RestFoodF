@@ -20,7 +20,7 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, onOrdenModificada, onEnviado, total, precioSegunTurno, marcarSincronizado, coincideConEnviado }) => {
+const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrden, numeroComanda, onOrdenCerrada, onOrdenCancelada, onAgregar, onCambiarCantidad, onEliminarItem, onCambiarComentario, onOrdenModificada, onEnviado, total, precioSegunTurno, marcarSincronizado, coincideConEnviado, hayEnvioPrevio }) => {
     const { getUsuarioId } = useAuth();
     const tema = TEMAS_MESA[turno];
     const { tiempos, cambiarCantidad: cambiarCantidadTiempo } = useTiempos(idOrden);
@@ -70,8 +70,8 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     });
 
     const handleActualizar = async () => {
-        // Antes de guardar: si nada tenía id_detalle, es el primer envío a cocina
-        const eraPrimerEnvio = !carrito.some(item => item.id_detalle);
+        // Antes de guardar: si no había ningún envío previo, es el primer envío a cocina
+        const eraPrimerEnvio = !hayEnvioPrevio;
         try {
             const respuesta = await ordenService.guardarDetalle(construirPayload());
             setCarrito(prev => prev.map(item => {
@@ -82,8 +82,12 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
             marcarSincronizado?.(idOrden, respuesta.platillos ?? []);
             onOrdenModificada?.();
             toast.success(eraPrimerEnvio ? "Orden enviada a cocina" : "Orden modificada");
-            // Al enviar, el dialog se cierra solo — la mesera vuelve al mapa de mesas
-            onEnviado?.();
+            // Al enviar, el dialog se cierra solo y la mesera vuelve al mapa de mesas —
+            // salvo que el envío haya vaciado la orden: en ese caso se queda para que
+            // pueda cancelar la mesa sin tener que volver a abrir el dialog.
+            if ((respuesta.platillos ?? []).length > 0) {
+                onEnviado?.();
+            }
         } catch (error) {
             toast.error("Error al guardar la orden");
             throw error;
@@ -142,6 +146,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                         tiempos={tiempos}
                         onCambiarCantidadTiempo={cambiarCantidadTiempo}
                         coincideConEnviado={coincideConEnviado}
+                        hayEnvioPrevio={hayEnvioPrevio}
                     />
                 </div>
             </div>
