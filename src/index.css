@@ -6,6 +6,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* portrait:/landscape: por orientación FÍSICA de la pantalla (clase que pone
+   main.jsx desde screen.orientation) y no por media query: el teclado en
+   pantalla encoge el viewport, la media query cree que la tablet giró a
+   horizontal y el carrito se amontonaba al usar el buscador */
+@custom-variant portrait (&:is(.app-portrait *));
+@custom-variant landscape (&:is(.app-landscape *));
+
 .custom-scrollbar::-webkit-scrollbar {
   display: none;
 }
