@@ -19,3 +19,7 @@ export const obtenerRutaPorRol = (rol) => {
 
 export const formatearDinero = (cantidad) =>
     new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(cantidad);
+
+// Minúsculas y sin acentos, para que "cafe" encuentre "Café" en las búsquedas del menú.
+export const normalizarTexto = (texto) =>
+    texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();

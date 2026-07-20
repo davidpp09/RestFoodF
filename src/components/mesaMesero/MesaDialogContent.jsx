@@ -4,6 +4,7 @@ import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ordenService } from '@/services/ordenService';
 import { useTiempos } from '@/hooks/useTiempos';
+import { normalizarTexto } from '@/lib/utils';
 import MesaDialogHeader from './MesaDialogHeader';
 import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
@@ -43,13 +44,18 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         }
     }, [categorias, categoriaActiva]);
 
-    const productosFiltrados = productos.filter(p => {
-        if (!p.disponibilidad) return false;
-        if (precioSegunTurno(p) <= 0) return false;
-        if (busqueda.trim())
-            return p.nombre.toLowerCase().includes(busqueda.toLowerCase());
-        return p.categoria.nombre === categoriaActiva;
-    });
+    const productosFiltrados = productos
+        .filter(p => p.disponibilidad && precioSegunTurno(p) > 0)
+        .filter(p => busqueda.trim()
+            ? normalizarTexto(p.nombre).includes(normalizarTexto(busqueda))
+            : p.categoria.nombre === categoriaActiva)
+        .sort((a, b) => {
+            if (!busqueda.trim()) return 0;
+            const query = normalizarTexto(busqueda);
+            const aEmpieza = normalizarTexto(a.nombre).startsWith(query);
+            const bEmpieza = normalizarTexto(b.nombre).startsWith(query);
+            return aEmpieza === bEmpieza ? 0 : aEmpieza ? -1 : 1;
+        });
 
     const construirPayload = () => ({
         id_usuario: getUsuarioId(),

@@ -23,12 +23,13 @@ const MesaMenu = ({
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 placeholder="Buscar producto..."
-                className="w-full bg-rf-surface border border-rf-border-strong rounded-md pl-9 pr-9 py-3 text-base text-rf-text placeholder:text-rf-text-3 outline-none focus:border-rf-turno transition-colors"
+                className="w-full bg-rf-surface border border-rf-border-strong rounded-md pl-9 pr-10 py-3 text-base text-rf-text placeholder:text-rf-text-3 outline-none focus:border-rf-turno transition-colors"
             />
             {busqueda && (
                 <button
+                    type="button"
                     onClick={() => setBusqueda("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-rf-text-3 hover:text-rf-text-2 transition-colors"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2.5 text-rf-text-3 hover:text-rf-text-2 transition-colors"
                 >
                     <X size={13} />
                 </button>
