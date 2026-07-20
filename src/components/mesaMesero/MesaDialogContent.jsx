@@ -102,6 +102,23 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         setConfirmandoCancelar(true);
     };
 
+    const handleConfirmarCancelar = async () => {
+        setConfirmandoCancelar(false);
+        // El carrito ya está vacío (es la condición para ver este botón), pero si
+        // hubo un envío previo y el servidor aún no sabe que se vació, cancelar
+        // fallaría ahí — sincronizar primero el vaciado antes de cancelar.
+        if (hayEnvioPrevio && !coincideConEnviado) {
+            try {
+                const respuesta = await ordenService.guardarDetalle(construirPayload());
+                marcarSincronizado?.(idOrden, respuesta.platillos ?? []);
+            } catch {
+                toast.error("No se pudo sincronizar el carrito antes de cancelar");
+                return;
+            }
+        }
+        onOrdenCancelada();
+    };
+
     const handleReenviarCocina = async () => {
         try {
             await ordenService.reenviarACocina(idOrden);
@@ -194,7 +211,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                             Volver
                         </AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={() => { setConfirmandoCancelar(false); onOrdenCancelada(); }}
+                            onClick={handleConfirmarCancelar}
                             className="bg-rf-red hover:bg-rf-red/90 text-white border-transparent"
                         >
                             Sí, cancelar mesa
