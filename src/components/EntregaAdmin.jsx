@@ -1,6 +1,6 @@
 // src/components/EntregaAdmin.jsx
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ShoppingBag, Clock, Package, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Clock, Package, CheckCircle2, Bike } from 'lucide-react';
 
 const ESTATUS_CONFIG = {
     PREPARANDO: { icono: Clock,        chip: 'bg-rf-accent-soft text-rf-accent-ink', punto: 'bg-rf-accent', label: 'En Cocina' },
@@ -34,6 +34,13 @@ const EntregaAdmin = ({ entrega }) => {
                             {cfg.label}
                         </span>
                     </div>
+
+                    {entrega.nombreRepartidor && (
+                        <div className="flex items-center gap-2 text-rf-text-2">
+                            <Bike size={13} className="shrink-0" />
+                            <span className="text-xs font-bold truncate">{entrega.nombreRepartidor}</span>
+                        </div>
+                    )}
 
                     <div className="flex justify-between items-end">
                         <div className="flex flex-col gap-1.5">
@@ -72,6 +79,15 @@ const EntregaAdmin = ({ entrega }) => {
                                 {cfg.label}
                             </span>
                         </div>
+                        {entrega.nombreRepartidor && (
+                            <div className="text-center">
+                                <p className="text-xs font-bold text-rf-text-3 uppercase tracking-[.12em]">Repartidor</p>
+                                <p className="text-base font-bold text-rf-text mt-1.5 flex items-center gap-1.5 justify-center">
+                                    <Bike size={16} className="text-rf-text-2" />
+                                    {entrega.nombreRepartidor}
+                                </p>
+                            </div>
+                        )}
                         <div className="text-right">
                             <p className="text-xs font-bold text-rf-text-3 uppercase tracking-[.12em]">Hora</p>
                             <p className="text-xl font-bold text-rf-text font-mono mt-1">{hora}</p>
