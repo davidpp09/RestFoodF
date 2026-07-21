@@ -319,7 +319,7 @@ const EntregasPanel = () => {
                                         )}
                                     </span>
                                     <span>Ver orden</span>
-                                    <span className="font-bold">${total.toFixed(2)}</span>
+                                    <span className="font-bold">${total.toFixed(0)}</span>
                                 </button>
                             ) : (
                                 <button

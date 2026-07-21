@@ -60,7 +60,7 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
                                 </p>
                             )}
                         </div>
-                        <span className="text-rf-text-2 text-sm font-mono">${Number(p.subtotal).toFixed(2)}</span>
+                        <span className="text-rf-text-2 text-sm font-mono">${Number(p.subtotal).toFixed(0)}</span>
                     </div>
                 ))}
             </div>
@@ -68,7 +68,7 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
             {/* Total */}
             <div className="px-4 py-3 border-t border-rf-border flex justify-between items-center bg-rf-surface-2">
                 <span className="text-sm text-rf-text-2 font-bold">Total</span>
-                <span className="text-lg font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(2)}</span>
+                <span className="text-lg font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(0)}</span>
             </div>
 
             {/* Botón entregar — visible si aún no está entregada */}

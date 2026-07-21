@@ -235,7 +235,7 @@ const PlatillosDiaPanel = () => {
                                         title="Clic para editar precio"
                                     >
                                         <span className={`font-mono text-sm font-bold transition-colors ${p.disponibilidad ? 'text-rf-green-ink' : 'text-rf-text-3 group-hover:text-rf-text-2'}`}>
-                                            ${Number(p.precioComida).toFixed(2)}
+                                            ${Number(p.precioComida).toFixed(0)}
                                         </span>
                                         <Pencil size={11} className="text-rf-text-3 group-hover:text-rf-text-2 transition-colors" />
                                     </button>

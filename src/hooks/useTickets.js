@@ -61,14 +61,14 @@ export const generarHTMLTicket = (ticket) => `
         ${ticket.platillos?.map(p => `
             <div class="row">
                 <span>${p.cantidad}x ${p.nombre_producto}</span>
-                <span>$${p.subtotal.toFixed(2)}</span>
+                <span>$${p.subtotal.toFixed(0)}</span>
             </div>
             ${p.comentarios ? `<div class="nota">(${p.comentarios})</div>` : ''}
         `).join('')}
         <div class="line"></div>
         <div class="row total">
             <span>TOTAL:</span>
-            <span>$${ticket.total.toFixed(2)}</span>
+            <span>$${ticket.total.toFixed(0)}</span>
         </div>
         <div class="line"></div>
         <div class="center">¡Gracias por su visita!</div>

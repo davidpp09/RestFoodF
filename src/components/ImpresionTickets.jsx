@@ -39,7 +39,7 @@ const ImpresionTickets = memo(({ ticket, onImprimir, onCerrar }) => {
                         <div key={i}>
                             <div className="flex justify-between">
                                 <span>{p.cantidad}x {p.nombre_producto}</span>
-                                <span>${Number(p.subtotal || 0).toFixed(2)}</span>
+                                <span>${Number(p.subtotal || 0).toFixed(0)}</span>
                             </div>
                             {p.comentarios && (
                                 <div className="text-gray-500 ml-4">({p.comentarios})</div>
@@ -51,7 +51,7 @@ const ImpresionTickets = memo(({ ticket, onImprimir, onCerrar }) => {
                 <hr className="border-dashed border-black mb-2" />
                 <div className="flex justify-between font-bold text-base mb-1">
                     <span>TOTAL:</span>
-                    <span>${Number(ticket.total || 0).toFixed(2)}</span>
+                    <span>${Number(ticket.total || 0).toFixed(0)}</span>
                 </div>
                 <hr className="border-dashed border-black mb-3" />
 

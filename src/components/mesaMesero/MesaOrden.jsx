@@ -59,7 +59,7 @@ const MesaOrden = ({
                         <div className="flex justify-between items-start mb-2">
                             <div className="flex-1 min-w-0 mr-2">
                                 <p className="text-base font-bold text-rf-text line-clamp-1">{item.nombre}</p>
-                                <p className="text-sm text-rf-text-3 font-mono">${Number(item.precio ?? 0).toFixed(2)}</p>
+                                <p className="text-sm text-rf-text-3 font-mono">${Number(item.precio ?? 0).toFixed(0)}</p>
                             </div>
                             <button
                                 onClick={() => onEliminar(item.id)}
@@ -86,7 +86,7 @@ const MesaOrden = ({
                                     <Plus size={18} className="text-rf-text-2" />
                                 </button>
                             </div>
-                            <p className="text-lg font-bold font-mono text-rf-text">${(Number(item.precio ?? 0) * item.cantidad).toFixed(2)}</p>
+                            <p className="text-lg font-bold font-mono text-rf-text">${(Number(item.precio ?? 0) * item.cantidad).toFixed(0)}</p>
                         </div>
 
                         {/* Comentarios */}
@@ -118,7 +118,7 @@ const MesaOrden = ({
         <div className="pt-3 border-t border-rf-border">
             <div className="flex justify-between items-center">
                 <span className="text-base font-bold text-rf-text">Total</span>
-                <span className={`text-xl font-bold ${tema.text}`}>${total.toFixed(2)}</span>
+                <span className={`text-xl font-bold ${tema.text}`}>${total.toFixed(0)}</span>
             </div>
         </div>
 

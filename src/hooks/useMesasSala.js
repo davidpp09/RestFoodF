@@ -63,7 +63,7 @@ export const useMesasSala = () => {
             unsubTickets = websocketService.subscribe('/topic/tickets', (ticket) => {
                 const mesaStr = ticket.numeroMesa ? `Mesa ${ticket.numeroMesa}` : 'Para llevar';
                 toast.success(`Cuenta cerrada — ${mesaStr}`, {
-                    description: `Comanda #${ticket.numero_comanda ?? ticket.id_orden} · Total: $${ticket.total?.toFixed(2)}`,
+                    description: `Comanda #${ticket.numero_comanda ?? ticket.id_orden} · Total: $${ticket.total?.toFixed(0)}`,
                     duration: 5000,
                 });
             });

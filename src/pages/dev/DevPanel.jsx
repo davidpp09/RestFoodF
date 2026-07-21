@@ -148,8 +148,8 @@ const DevPanel = () => {
                                         {p.categoria.nombre}
                                     </span>
                                 </td>
-                                <td className="px-4 py-3.5 text-right font-mono text-rf-text-2">${Number(p.precioComida).toFixed(2)}</td>
-                                <td className="px-4 py-3.5 text-right font-mono text-rf-text-2">${Number(p.precioDesayuno).toFixed(2)}</td>
+                                <td className="px-4 py-3.5 text-right font-mono text-rf-text-2">${Number(p.precioComida).toFixed(0)}</td>
+                                <td className="px-4 py-3.5 text-right font-mono text-rf-text-2">${Number(p.precioDesayuno).toFixed(0)}</td>
                                 <td className="px-4 py-3.5 text-center">
                                     {p.disponibilidad
                                         ? <span className="inline-flex items-center gap-1 text-rf-green-ink text-xs font-bold"><CheckCircle2 size={13} /> Activo</span>

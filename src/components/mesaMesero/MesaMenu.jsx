@@ -91,7 +91,7 @@ const MesaMenu = ({
                             </div>
                             <p className="text-base font-bold text-rf-text mb-1 line-clamp-2">{producto.nombre}</p>
                             <p className={`text-lg font-bold ${tema.text}`}>
-                                ${precioSegunTurno(producto).toFixed(2)}
+                                ${precioSegunTurno(producto).toFixed(0)}
                             </p>
                         </button>
                     );
