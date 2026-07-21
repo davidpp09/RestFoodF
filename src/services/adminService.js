@@ -7,6 +7,12 @@ export const adminService = {
         return response.data;
     },
 
+    obtenerComandas: async (fecha) => {
+        const params = fecha ? { fecha } : {};
+        const response = await api.get('/admin/comandas-dia', { params });
+        return response.data;
+    },
+
     obtenerCancelaciones: async ({ desde, hasta } = {}) => {
         const params = {};
         if (desde) params.desde = desde;

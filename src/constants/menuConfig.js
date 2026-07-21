@@ -1,13 +1,15 @@
-import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat } from 'lucide-react';
+import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList } from 'lucide-react';
 
 export const CONFIG_MENU = {
     ADMIN: [
         { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'          },
+        { icono: ClipboardList,   texto: 'Comandas',       ruta: '/admin/comandas' },
         { icono: Users,           texto: 'Personal',       ruta: '/admin/personal' },
         { icono: TrendingUp,      texto: 'Reportes',       ruta: '/admin/reportes' },
     ],
     DEV: [
         { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'           },
+        { icono: ClipboardList,   texto: 'Comandas',       ruta: '/admin/comandas'  },
         { icono: Users,           texto: 'Personal',       ruta: '/admin/personal'  },
         { icono: TrendingUp,      texto: 'Reportes',       ruta: '/admin/reportes'  },
         { icono: ChefHat,         texto: 'Platillos',      ruta: '/admin/platillos' },
