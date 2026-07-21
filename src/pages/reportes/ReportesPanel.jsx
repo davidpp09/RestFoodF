@@ -3,7 +3,7 @@ import { Loader2, DollarSign, Users, UtensilsCrossed, Package, RefreshCw, XCircl
 import { Button } from '@/components/ui/button';
 import { formatearDinero } from '@/lib/utils';
 import StatCard from '@/components/StatCard';
-import GraficaVentasEmpleados from './GraficaVentasEmpleados';
+import VentasPorPersona from './VentasPorPersona';
 import GraficaServicios from './GraficaServicios';
 import GraficaTiposPedido from './GraficaTiposPedido';
 
@@ -72,15 +72,17 @@ const ReportesPanel = () => {
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="bg-rf-surface border border-rf-border rounded-lg p-6 shadow-rf-sm">
-                            <h3 className="text-lg font-bold text-rf-text mb-4 flex items-center gap-2">
-                                <Users size={20} className="text-rf-accent" />
-                                Ventas por Empleado
-                            </h3>
-                            <GraficaVentasEmpleados datos={datos.ventaEmpleados} />
-                        </div>
+                    {/* Ventas por persona — separadas por rol (meseros / repartidores) */}
+                    <div className="bg-rf-surface border border-rf-border rounded-lg p-6 shadow-rf-sm">
+                        <h3 className="text-lg font-bold text-rf-text mb-1 flex items-center gap-2">
+                            <Users size={20} className="text-rf-accent" />
+                            Ventas por persona
+                        </h3>
+                        <p className="text-rf-text-3 text-sm mb-4">Cuánto vendió cada quien, agrupado por meseros y repartidores.</p>
+                        <VentasPorPersona datos={datos.ventaEmpleados} />
+                    </div>
 
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="bg-rf-surface border border-rf-border rounded-lg p-6 shadow-rf-sm">
                             <h3 className="text-lg font-bold text-rf-text mb-4 flex items-center gap-2">
                                 <UtensilsCrossed size={20} className="text-rf-accent" />
@@ -88,14 +90,14 @@ const ReportesPanel = () => {
                             </h3>
                             <GraficaServicios desayuno={datos.totalDesayuno} comida={datos.totalComida} />
                         </div>
-                    </div>
 
-                    <div className="bg-rf-surface border border-rf-border rounded-lg p-6 shadow-rf-sm">
-                        <h3 className="text-lg font-bold text-rf-text mb-4 flex items-center gap-2">
-                            <Package size={20} className="text-rf-accent" />
-                            Platillos por Tipo
-                        </h3>
-                        <GraficaTiposPedido loza={datos.totalPlatillosLoza} paraLlevar={datos.totalPlatillosParaLlevar} />
+                        <div className="bg-rf-surface border border-rf-border rounded-lg p-6 shadow-rf-sm">
+                            <h3 className="text-lg font-bold text-rf-text mb-4 flex items-center gap-2">
+                                <Package size={20} className="text-rf-accent" />
+                                Platillos por Tipo
+                            </h3>
+                            <GraficaTiposPedido loza={datos.totalPlatillosLoza} paraLlevar={datos.totalPlatillosParaLlevar} />
+                        </div>
                     </div>
 
                     {/* Cancelaciones por mesero */}

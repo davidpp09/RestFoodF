@@ -7,7 +7,7 @@ const GraficaServicios = ({ desayuno, comida }) => {
     ];
 
     const formatearDinero = (value) => {
-        return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
     };
 
     const CustomTooltip = ({ active, payload }) => {

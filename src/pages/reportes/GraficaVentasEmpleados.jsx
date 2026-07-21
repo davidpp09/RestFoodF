@@ -12,7 +12,7 @@ const GraficaVentasEmpleados = ({ datos }) => {
     }
 
     const formatearDinero = (value) => {
-        return `$${value.toLocaleString('es-MX')}`;
+        return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
     };
 
     return (
