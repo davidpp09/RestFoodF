@@ -8,13 +8,18 @@ import { toast } from 'sonner';
 import ImpresionTickets from '@/components/ImpresionTickets';
 import { useTickets } from '@/hooks/useTickets';
 
-const MESAS_POR_SECCION = 10;
+// Rango de mesas (por id/número) que atiende cada sección. Reparto desigual:
+// Valeria (1) → 15 mesas, Magui (2) → 15 mesas, Mareli (3) → 20 mesas.
+const SECCION_RANGOS = {
+    1: { inicio: 1,  fin: 15 },
+    2: { inicio: 16, fin: 30 },
+    3: { inicio: 31, fin: 50 },
+};
 
 const MeseroPanel = () => {
     const { getSeccion } = useAuth();
     const seccion = getSeccion() ?? 1;
-    const mesaInicio = (seccion - 1) * MESAS_POR_SECCION + 1;
-    const mesaFin    = seccion * MESAS_POR_SECCION;
+    const { inicio: mesaInicio, fin: mesaFin } = SECCION_RANGOS[seccion] ?? SECCION_RANGOS[1];
 
     const { mesas, cargando: cargandoMesas, error: errorMesas, actualizarMesa } = useMesas(mesaInicio, mesaFin);
     const { productos, cargando: cargandoProductos }          = useProductos();
