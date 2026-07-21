@@ -35,6 +35,12 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
     const [vista, setVista] = React.useState("menu");
     const [confirmandoCancelar, setConfirmandoCancelar] = React.useState(false);
+    // Guard anti doble-envío: mientras una sincronización está en curso, un segundo
+    // tap del botón NO debe disparar otro guardarDetalle (cada uno reimprime la
+    // comanda en cocina → ticket doble). El ref es síncrono (bloquea el doble-tap
+    // en el mismo tick); el estado es solo para deshabilitar/etiquetar el botón.
+    const enviandoRef = React.useRef(false);
+    const [enviando, setEnviando] = React.useState(false);
 
     const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
@@ -70,6 +76,12 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     });
 
     const handleActualizar = async () => {
+        // Doble-tap / re-render: si ya hay un envío en curso, ignorar. Sin esto, dos
+        // taps antes de que responda el servidor mandan dos guardarDetalle y la
+        // comanda sale duplicada en la impresora de cocina.
+        if (enviandoRef.current) return;
+        enviandoRef.current = true;
+        setEnviando(true);
         // Antes de guardar: si no había ningún envío previo, es el primer envío a cocina
         const eraPrimerEnvio = !hayEnvioPrevio;
         try {
@@ -91,6 +103,9 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         } catch (error) {
             toast.error("Error al guardar la orden");
             throw error;
+        } finally {
+            enviandoRef.current = false;
+            setEnviando(false);
         }
     };
 
@@ -157,6 +172,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                         onEliminar={onEliminarItem}
                         onCambiarComentario={onCambiarComentario}
                         onActualizar={handleActualizar}
+                        enviando={enviando}
                         onCerrar={handleCerrar}
                         onCancelar={handleCancelar}
                         onReenviarCocina={handleReenviarCocina}

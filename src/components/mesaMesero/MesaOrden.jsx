@@ -10,6 +10,7 @@ const MesaOrden = ({
     onEliminar,
     onCambiarComentario,
     onActualizar,
+    enviando = false,
     onCerrar,
     onCancelar,
     onReenviarCocina,
@@ -134,10 +135,10 @@ const MesaOrden = ({
         <div className="grid grid-cols-1 portrait:grid-cols-2 gap-2.5">
             <button
                 onClick={onActualizar}
-                disabled={hayEnvioPrevio ? coincideConEnviado : carrito.length === 0}
+                disabled={enviando || (hayEnvioPrevio ? coincideConEnviado : carrito.length === 0)}
                 className={`w-full portrait:col-span-2 px-4 py-4 rounded-md ${tema.bg} ${tema.bgHover} active:scale-[0.98] text-white font-bold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed`}
             >
-                {labelEnviar ?? (yaEnviada ? "Modificar Orden" : "Enviar Orden")}
+                {enviando ? "Enviando..." : (labelEnviar ?? (yaEnviada ? "Modificar Orden" : "Enviar Orden"))}
             </button>
             {/* Cerrar y Cobrar SOLO cuando el carrito coincide con lo enviado a
                 cocina — con cambios sin enviar se cobraría distinto a lo servido */}
