@@ -3,15 +3,23 @@ import { useState, useEffect } from 'react';
 const KEY = (idOrden) => `tiempos_${idOrden}`;
 
 const INICIAL = {
-    tiempo1: { consome: 0, sopa_crema: 0 },
-    tiempo2: { arroz: 0, espaguetti: 0 },
+    tiempo1: { consome: 0, sopa_crema: 0 },   // COMIDA
+    tiempo2: { arroz: 0, espaguetti: 0 },     // COMIDA
+    desayuno: { cafe: 0, jugo: 0 },           // DESAYUNO
 };
 
 const cargar = (idOrden) => {
     if (!idOrden) return INICIAL;
     try {
         const data = JSON.parse(localStorage.getItem(KEY(idOrden)));
-        if (data && typeof data.tiempo1?.consome === 'number') return data;
+        if (data && typeof data.tiempo1?.consome === 'number') {
+            // Fusionar con INICIAL para tolerar formatos previos sin 'desayuno'
+            return {
+                tiempo1:  { ...INICIAL.tiempo1,  ...data.tiempo1 },
+                tiempo2:  { ...INICIAL.tiempo2,  ...data.tiempo2 },
+                desayuno: { ...INICIAL.desayuno, ...data.desayuno },
+            };
+        }
         // Formato viejo o inválido — lo borra y usa el inicial limpio
         localStorage.removeItem(KEY(idOrden));
         return INICIAL;
@@ -24,15 +32,17 @@ export const ETIQUETAS_TIEMPOS = {
     sopa_crema: 'Sopa/Crema',
     arroz: 'Arroz',
     espaguetti: 'Espaguetti',
+    cafe: 'Café',
+    jugo: 'Jugo',
 };
 
-// Lista legible de los tiempos marcados (["Consomé: 3", "Arroz: 2"]) leyendo
-// lo guardado para una orden — para la tarjeta de la mesa sin montar el hook
+// Lista legible de lo marcado (["Consomé: 3", "Café: 2"]) leyendo lo guardado
+// para una orden — para la tarjeta de la mesa sin montar el hook
 export const listaTiemposGuardados = (idOrden) => {
     if (!idOrden) return [];
     const t = cargar(idOrden);
     if (!t?.tiempo1) return [];
-    return [...Object.entries(t.tiempo1), ...Object.entries(t.tiempo2)]
+    return [...Object.entries(t.tiempo1), ...Object.entries(t.tiempo2), ...Object.entries(t.desayuno ?? {})]
         .filter(([, v]) => Number(v) > 0)
         .map(([k, v]) => `${ETIQUETAS_TIEMPOS[k]}: ${v}`);
 };

@@ -21,7 +21,30 @@ const Contador = ({ label, cantidad, onCambiar }) => (
     </div>
 );
 
-const TiemposSection = ({ tiempos, onCambiarCantidad }) => {
+const TiemposSection = ({ tiempos, onCambiarCantidad, esDesayuno = false }) => {
+    // DESAYUNO: bebida (café / jugo). COMIDA: 1er y 2do tiempo.
+    if (esDesayuno) {
+        return (
+        <div className="border border-rf-border rounded-md px-2.5 py-2 bg-rf-surface shrink-0 space-y-1.5">
+            <div className="flex items-center gap-1.5">
+                <span className="text-[9px] font-bold text-rf-text-3 uppercase tracking-widest w-8 shrink-0">Beb.</span>
+                <div className="flex gap-2 flex-1">
+                    <Contador
+                        label="Café"
+                        cantidad={tiempos.desayuno.cafe}
+                        onCambiar={(d) => onCambiarCantidad('desayuno', 'cafe', d)}
+                    />
+                    <Contador
+                        label="Jugo"
+                        cantidad={tiempos.desayuno.jugo}
+                        onCambiar={(d) => onCambiarCantidad('desayuno', 'jugo', d)}
+                    />
+                </div>
+            </div>
+        </div>
+        );
+    }
+
     return (
     <div className="border border-rf-border rounded-md px-2.5 py-2 bg-rf-surface shrink-0 space-y-1.5">
         {/* Tiempo 1 */}

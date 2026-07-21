@@ -162,6 +162,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                         onReenviarCocina={handleReenviarCocina}
                         tiempos={tiempos}
                         onCambiarCantidadTiempo={cambiarCantidadTiempo}
+                        esDesayuno={turno !== "comida"}
                         coincideConEnviado={coincideConEnviado}
                         hayEnvioPrevio={hayEnvioPrevio}
                     />

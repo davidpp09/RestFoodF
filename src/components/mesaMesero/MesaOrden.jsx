@@ -18,6 +18,7 @@ const MesaOrden = ({
     mostrarCerrar = true,
     tiempos,
     onCambiarCantidadTiempo,
+    esDesayuno = false,
     coincideConEnviado = false,
     hayEnvioPrevio = false,
 }) => {
@@ -104,11 +105,12 @@ const MesaOrden = ({
             )}
         </div>
 
-        {/* Tiempos — solo mesero */}
+        {/* Tiempos (comida) / bebida (desayuno) */}
         {tiempos && (
             <TiemposSection
                 tiempos={tiempos}
                 onCambiarCantidad={onCambiarCantidadTiempo}
+                esDesayuno={esDesayuno}
             />
         )}
 
