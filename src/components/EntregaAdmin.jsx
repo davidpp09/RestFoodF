@@ -55,7 +55,7 @@ const EntregaAdmin = ({ entrega }) => {
                                 <span className="text-xs">{hora}</span>
                             </div>
                         </div>
-                        <span className="text-xl font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(2)}</span>
+                        <span className="text-xl font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(0)}</span>
                     </div>
                 </div>
             </DialogTrigger>
@@ -108,7 +108,7 @@ const EntregaAdmin = ({ entrega }) => {
                                             )}
                                         </div>
                                     </div>
-                                    <span className="text-rf-text-2 text-base font-mono">${Number(p.subtotal).toFixed(2)}</span>
+                                    <span className="text-rf-text-2 text-base font-mono">${Number(p.subtotal).toFixed(0)}</span>
                                 </div>
                             ))}
                         </div>
@@ -116,7 +116,7 @@ const EntregaAdmin = ({ entrega }) => {
 
                     <div className="flex justify-between items-center px-2 shrink-0">
                         <span className="text-sm font-bold uppercase tracking-[.1em] text-rf-text-3">Total</span>
-                        <span className="text-3xl font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(2)}</span>
+                        <span className="text-3xl font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(0)}</span>
                     </div>
                 </div>
             </DialogContent>

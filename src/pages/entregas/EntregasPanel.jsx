@@ -159,6 +159,8 @@ const EntregasPanel = () => {
             sopa_crema: tiempos.tiempo1.sopa_crema,
             arroz:      tiempos.tiempo2.arroz,
             espaguetti: tiempos.tiempo2.espaguetti,
+            cafe:       tiempos.desayuno.cafe,
+            jugo:       tiempos.desayuno.jugo,
         };
         const hayTiempos = Object.values(tiemposPlanos).some(v => v > 0);
         try {
@@ -296,6 +298,7 @@ const EntregasPanel = () => {
                                     onCancelar={() => setConfirmandoCancelar(true)}
                                     tiempos={tiempos}
                                     onCambiarCantidadTiempo={cambiarCantidadTiempo}
+                                    esDesayuno={turno !== 'comida'}
                                 />
                             </div>
                         </div>
