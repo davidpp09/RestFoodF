@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { CONFIG_MENU } from '@/constants/menuConfig';
 import ThemeToggle from '@/components/ThemeToggle';
+import MisComandas from '@/components/MisComandas';
 
 const NavItem = ({ opcion, activa, onClick }) => {
     const Icono = opcion.icono;
@@ -102,6 +103,7 @@ const RestLayout = () => {
                     )}
                     <h2 className="text-xl font-bold text-rf-text">{tituloActual}</h2>
                     <div className="flex-1" />
+                    {rol === 'MESERO' && <MisComandas />}
                     <ThemeToggle />
                 </header>
                 <div className="flex-1 overflow-y-auto p-4 landscape:p-6 custom-scrollbar">

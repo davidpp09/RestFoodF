@@ -28,4 +28,14 @@ export const ordenService = {
     reenviarACocina: async (idOrden) => {
         await api.post(`/ordenes/${idOrden}/reenviar-cocina`);
     },
+
+    misComandas: async () => {
+        const response = await api.get('/ordenes/mis-comandas');
+        return response.data;
+    },
+
+    reimprimirTicket: async (idOrden) => {
+        const response = await api.post(`/ordenes/${idOrden}/reimprimir-ticket`);
+        return response.data;
+    },
 };
