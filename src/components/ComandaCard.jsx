@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Utensils, ShoppingBag, Clock, CheckCircle2, Package, Coffee, Sun } from 'lucide-react';
+import { Utensils, ShoppingBag, Clock, CheckCircle2, Package, Coffee, Sun, Ban } from 'lucide-react';
 import { formatearDinero } from '@/lib/utils';
 
 const ESTATUS_CONFIG = {
@@ -17,9 +17,12 @@ const ComandaCard = ({ orden }) => {
     const Icono = esLlevar ? ShoppingBag : Utensils;
     const hora = new Date(orden.fechaApertura).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
     const platillos = orden.platillos ?? [];
+    const cancelados = orden.cancelados ?? [];
     const totalPlatillos = platillos.reduce((acc, p) => acc + p.cantidad, 0);
+    const totalCancelados = cancelados.reduce((acc, p) => acc + (p.cantidad ?? 0), 0);
     const destino = esLlevar ? 'Para llevar' : `Mesa ${orden.numeroMesa}`;
     const ServIcono = orden.servicio === 'DESAYUNO' ? Coffee : Sun;
+    const horaDe = (t) => t ? new Date(t).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '';
 
     return (
         <Dialog>
@@ -50,6 +53,14 @@ const ComandaCard = ({ orden }) => {
                                     {totalPlatillos} {totalPlatillos === 1 ? 'platillo' : 'platillos'}
                                 </span>
                             </div>
+                            {cancelados.length > 0 && (
+                                <div className="flex items-center gap-2 text-rf-red-ink">
+                                    <Ban size={13} />
+                                    <span className="text-xs font-bold">
+                                        {totalCancelados} cancelado{totalCancelados === 1 ? '' : 's'}
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-2 text-rf-text-3 font-mono">
                                 <Clock size={13} />
                                 <span className="text-xs">{hora}</span>
@@ -120,6 +131,35 @@ const ComandaCard = ({ orden }) => {
                             ))}
                         </div>
                     </div>
+
+                    {cancelados.length > 0 && (
+                        <div className="space-y-3 shrink-0">
+                            <p className="text-[13px] font-bold text-rf-red-ink uppercase tracking-[.14em] ml-1 flex items-center gap-2">
+                                <Ban size={15} /> Cancelados en esta comanda
+                            </p>
+                            <div className="divide-y divide-rf-red-soft border border-rf-red-soft rounded-md overflow-hidden">
+                                {cancelados.map((c, i) => (
+                                    <div key={i} className="flex justify-between items-center p-4 bg-rf-surface">
+                                        <div className="flex items-center gap-4">
+                                            <span className="flex items-center justify-center w-9 h-9 rounded-[3px] bg-rf-red-soft text-rf-red-ink text-sm font-bold font-mono">{c.cantidad}</span>
+                                            <div>
+                                                <span className="text-base font-medium text-rf-text line-through decoration-rf-red-ink">{c.nombre}</span>
+                                                {c.comentarios && (
+                                                    <p className="text-rf-text-3 text-sm italic mt-0.5">{c.comentarios}</p>
+                                                )}
+                                                <p className="text-rf-red-ink text-xs font-semibold mt-0.5">
+                                                    Canceló {c.canceladoPor}{c.hora ? ` · ${horaDe(c.hora)}` : ''}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className="inline-flex items-center gap-1 text-rf-red-ink text-xs font-bold uppercase tracking-wide">
+                                            <Ban size={13} /> Cancelado
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex justify-between items-center px-2 shrink-0">
                         <span className="text-sm font-bold uppercase tracking-[.1em] text-rf-text-3">Total</span>
