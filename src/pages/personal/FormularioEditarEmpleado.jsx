@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,12 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
         seccion: null
     });
 
-    useEffect(() => {
+    // Al cambiar el empleado a editar se recarga el formulario. Se hace en
+    // render (patrón "adjust state during render" de React) y no en un
+    // effect, para no provocar un render extra en cascada.
+    const [usuarioPrevio, setUsuarioPrevio] = useState(null);
+    if (usuario !== usuarioPrevio) {
+        setUsuarioPrevio(usuario);
         if (usuario) {
             setDatos({
                 id_usuarios: usuario.id_usuarios,
@@ -28,7 +33,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                 seccion: usuario.seccion ?? null
             });
         }
-    }, [usuario]);
+    }
 
     const manejarCambio = (e) => {
         const { name, value } = e.target;
@@ -47,7 +52,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
             toast.success("¡Empleado actualizado correctamente! ✅", { id: toastId });
             onCerrar();
             onActualizado?.(); // Recarga la tabla de atrás
-        } catch (error) {
+        } catch {
             toast.error("Error al actualizar el empleado. ❌", { id: toastId });
         }
     };

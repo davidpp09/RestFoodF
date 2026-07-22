@@ -119,9 +119,9 @@ const EntregasPanel = () => {
     }, []);
 
     const {
-        carrito, setCarrito, limpiarCarrito,
+        carrito, limpiarCarrito,
         agregarAlCarrito, cambiarCantidad, eliminarItem, cambiarComentario,
-        total, precioSegunTurno, guardarCarrito,
+        total, precioSegunTurno,
     } = useMesaCart(idOrden, turno);
 
     // Tiempos de la orden para llevar — al enviar se imprimen en la impresora

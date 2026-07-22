@@ -10,7 +10,7 @@ export const useProductos = () => {
         const cargarProductos = async () => {
             try {
                 setProductos(await productoService.obtenerTodos());
-            } catch (error) {
+            } catch {
                 toast.error('Error al cargar el menú');
             } finally {
                 setCargando(false);

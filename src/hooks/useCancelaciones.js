@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { adminService } from '../services/adminService';
 
 const hoy = () => new Date().toISOString().split('T')[0];
@@ -14,18 +14,23 @@ export const useCancelaciones = () => {
     const [desde, setDesde] = useState(hoy());
     const [hasta, setHasta] = useState(hoy());
 
-    const cargar = useCallback(async (d, h) => {
-        try {
-            const data = await adminService.obtenerCancelaciones({ desde: d, hasta: h });
-            setCancelaciones(data);
-        } catch (error) {
-            console.error('Error al cargar cancelaciones:', error);
-        }
-    }, []);
-
     useEffect(() => {
-        cargar(desde, hasta);
-    }, [desde, hasta, cargar]);
+        // Si el usuario cambia el filtro con una petición en vuelo, se
+        // descarta la respuesta vieja para no pisar la nueva
+        let cancelado = false;
+
+        const cargar = async () => {
+            try {
+                const data = await adminService.obtenerCancelaciones({ desde, hasta });
+                if (!cancelado) setCancelaciones(data);
+            } catch (error) {
+                console.error('Error al cargar cancelaciones:', error);
+            }
+        };
+
+        cargar();
+        return () => { cancelado = true; };
+    }, [desde, hasta]);
 
     const aplicarPeriodo = (periodo) => {
         const h = hoy();

@@ -6,7 +6,8 @@ const COLORES = {
     orange:  'text-rf-accent',
 };
 
-const StatCard = ({ color, label, value, icon: Icon, subtitulo, grande = false }) => {
+const StatCard = ({ color, label, value, icon, subtitulo, grande = false }) => {
+    const Icon = icon;
     const icono = COLORES[color] ?? 'text-rf-text-2';
     return (
         <div className={`flex items-center gap-3.5 ${grande ? 'p-4' : 'p-3.5'} rounded-lg bg-rf-surface border border-rf-border shadow-rf-sm`}>
