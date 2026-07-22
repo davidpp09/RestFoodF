@@ -11,7 +11,7 @@ const DialogEliminar = ({ usuario, abierto, onCerrar, onEliminado }) => {
             toast.success("¡Empleado desactivado correctamente! 🗑️", { id: toastId });
             onCerrar();
             onEliminado?.();
-        } catch (error) {
+        } catch {
             toast.error("Error al eliminar el empleado. ❌", { id: toastId });
         }
     };

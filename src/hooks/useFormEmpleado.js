@@ -69,7 +69,7 @@ export const useFormEmpleado = () => {
                 setNuevoUsuario(ESTADO_INICIAL);
                 setErrores({});
                 return true;
-            } catch (error) {
+            } catch {
                 toast.error("Hubo un problema al guardar el empleado. ❌", { id: toastId });
                 return false;
             }

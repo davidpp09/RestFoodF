@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useComandas } from '@/hooks/useComandas';
 import { Loader2, RefreshCw, ClipboardList, Bike, Utensils, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,15 +21,13 @@ const ComandasPanel = () => {
     const { empleados, loading, fecha, setFecha, aplicarPeriodo, recargar } = useComandas();
     const [seleccionado, setSeleccionado] = useState(null);
 
-    // Mantener una selección válida cuando cambian los datos (fecha/recarga)
-    useEffect(() => {
-        if (empleados.length === 0) { setSeleccionado(null); return; }
-        setSeleccionado((prev) =>
-            prev && empleados.some((e) => e.id_usuario === prev) ? prev : empleados[0].id_usuario
-        );
-    }, [empleados]);
+    // La selección efectiva se deriva de los datos: si la elegida ya no
+    // existe (cambió la fecha o se recargó), cae al primer empleado
+    const idActivo = seleccionado && empleados.some((e) => e.id_usuario === seleccionado)
+        ? seleccionado
+        : empleados[0]?.id_usuario ?? null;
 
-    const empleadoActivo = empleados.find((e) => e.id_usuario === seleccionado) ?? null;
+    const empleadoActivo = empleados.find((e) => e.id_usuario === idActivo) ?? null;
 
     return (
         <div className="space-y-6">
@@ -78,7 +76,7 @@ const ComandasPanel = () => {
                     <div className="flex flex-wrap gap-2">
                         {empleados.map((emp) => {
                             const { label, icono: Icono } = metaRol(emp.rol);
-                            const activo = emp.id_usuario === seleccionado;
+                            const activo = emp.id_usuario === idActivo;
                             return (
                                 <button
                                     key={emp.id_usuario}
