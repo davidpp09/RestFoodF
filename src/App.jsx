@@ -30,7 +30,7 @@ export default function App() {
       window.removeEventListener('focus', handleFocus);
       clearInterval(interval);
     };
-  }, []);
+  }, [verifyLogin]);
 
   return (
     <>
