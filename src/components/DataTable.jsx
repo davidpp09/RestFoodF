@@ -5,8 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "
 
 // ✅ AGREGAR onEdit y onDelete como props
 export function DataTable({ columns, data, onEdit, onDelete, onPassword }) {
+    "use no memo"; // useReactTable devuelve funciones que el React Compiler no
+    // puede memoizar sin riesgo de UI desactualizada; se excluye este componente
+    // hasta que TanStack Table sea compatible (previsto para su v9)
     const [columnFilters, setColumnFilters] = React.useState([]);
 
+    // eslint-disable-next-line react-hooks/incompatible-library -- ver "use no memo" arriba
     const table = useReactTable({
         data,
         columns,
