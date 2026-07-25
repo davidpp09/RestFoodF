@@ -16,6 +16,9 @@ import PedidosPanel from './pages/cocina/PedidosPanel';
 import EntregasPanel from './pages/entregas/EntregasPanel';
 import HistorialPanel from './pages/entregas/HistorialPanel';
 import PlatillosDiaPanel from './pages/entregas/PlatillosDiaPanel';
+import InsumosPanel from './pages/inventario/InsumosPanel';
+import ExistenciasPanel from './pages/inventario/ExistenciasPanel';
+import CapturaPanel from './pages/inventario/CapturaPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -52,6 +55,8 @@ export default function App() {
               <DevPanel />
             </ProtectedRoute>
           } />
+          <Route path="existencias" element={<ExistenciasPanel />} />
+          <Route path="insumos" element={<InsumosPanel />} />
         </Route>
 
         <Route path="/mesero" element={
@@ -68,6 +73,7 @@ export default function App() {
           </ProtectedRoute>
         }>
           <Route index element={<PedidosPanel />} />
+          <Route path="inventario" element={<CapturaPanel />} />
         </Route>
 
         <Route path="/entregas" element={
