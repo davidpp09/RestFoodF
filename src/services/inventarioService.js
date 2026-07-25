@@ -38,6 +38,18 @@ export const inventarioService = {
         return response.data;
     },
 
+    // --- Recetas: qué platillo consume qué insumo ---
+    obtenerReceta: async (idInsumo) => {
+        const response = await api.get(`/inventario/insumos/${idInsumo}/receta`);
+        return response.data;
+    },
+    // Reemplaza la receta completa del insumo: los platillos que no vayan en
+    // `lineas` quedan desligados. Mandar [] desliga todos.
+    guardarReceta: async (idInsumo, lineas) => {
+        const response = await api.put(`/inventario/insumos/${idInsumo}/receta`, { lineas });
+        return response.data;
+    },
+
     // --- Conteo físico ---
     // Manda todas las líneas juntas: el backend calcula la varianza contra el
     // kardex y genera un AJUSTE por cada insumo que no cuadró.

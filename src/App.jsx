@@ -19,6 +19,7 @@ import InsumosPanel from './pages/inventario/InsumosPanel';
 import ExistenciasPanel from './pages/inventario/ExistenciasPanel';
 import CapturaPanel from './pages/inventario/CapturaPanel';
 import ExistenciasCocina from './pages/inventario/ExistenciasCocina';
+import RecetasPanel from './pages/inventario/RecetasPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="existencias" element={<ExistenciasPanel />} />
           <Route path="insumos" element={<InsumosPanel />} />
           <Route path="captura" element={<CapturaPanel />} />
+          <Route path="recetas" element={<RecetasPanel />} />
         </Route>
 
         <Route path="/mesero" element={
