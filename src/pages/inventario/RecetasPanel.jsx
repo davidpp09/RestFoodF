@@ -13,6 +13,12 @@ import { productoService } from '@/services/productoService';
  * jalón los platillos que la llevan. Al revés habría que abrir 225 platillos
  * y en cada uno recordar qué insumos existen.
  *
+ * Ojo con los nombres: /productos devuelve el identificador como `id`,
+ * mientras que /inventario/insumos lo devuelve como `id_insumos`. No es un
+ * capricho de esta pantalla — son dos convenciones distintas en la API. Dar
+ * por sentada la del otro lado dejó las casillas sin marcar y la selección
+ * escribiendo en una clave `undefined`.
+ *
  * Guardar reemplaza la receta completa del insumo. Es a propósito: con altas
  * y bajas sueltas, una desmarcada que no se guardara dejaría una relación
  * fantasma descontando inventario sin que nadie lo notara.
@@ -75,7 +81,7 @@ const RecetasPanel = () => {
     const visibles = useMemo(() => {
         const texto = busqueda.trim().toLowerCase();
         return productos
-            .filter(p => !soloMarcados || seleccion[p.id_productos])
+            .filter(p => !soloMarcados || seleccion[p.id])
             .filter(p => !texto || p.nombre.toLowerCase().includes(texto))
             .sort((a, b) => a.nombre.localeCompare(b.nombre));
     }, [productos, busqueda, soloMarcados, seleccion]);
@@ -165,16 +171,16 @@ const RecetasPanel = () => {
 
                     <div className="space-y-1.5">
                         {visibles.map(p => {
-                            const marcado = Boolean(seleccion[p.id_productos]);
+                            const marcado = Boolean(seleccion[p.id]);
                             return (
                                 <div
-                                    key={p.id_productos}
+                                    key={p.id}
                                     className={`flex items-center gap-3 p-3 rounded-md border transition-colors ${
                                         marcado ? 'bg-rf-accent-soft border-rf-accent-border' : 'bg-rf-surface border-rf-border'
                                     }`}
                                 >
                                     <button
-                                        onClick={() => alternar(p.id_productos)}
+                                        onClick={() => alternar(p.id)}
                                         className={`size-10 shrink-0 rounded-md border flex items-center justify-center ${
                                             marcado
                                                 ? 'bg-rf-accent border-rf-accent text-white'
@@ -190,15 +196,15 @@ const RecetasPanel = () => {
                                     {marcado && (
                                         <div className="flex items-center gap-1.5 shrink-0">
                                             <button
-                                                onClick={() => cambiarCantidad(p.id_productos, seleccion[p.id_productos] - 1)}
+                                                onClick={() => cambiarCantidad(p.id, seleccion[p.id] - 1)}
                                                 className="size-10 rounded-md bg-rf-surface-2 border border-rf-border text-xl font-bold"
                                                 aria-label="Menos"
                                             >−</button>
                                             <span className="w-10 text-center font-bold text-lg text-rf-text tabular-nums">
-                                                {seleccion[p.id_productos]}
+                                                {seleccion[p.id]}
                                             </span>
                                             <button
-                                                onClick={() => cambiarCantidad(p.id_productos, seleccion[p.id_productos] + 1)}
+                                                onClick={() => cambiarCantidad(p.id, seleccion[p.id] + 1)}
                                                 className="size-10 rounded-md bg-rf-surface-2 border border-rf-border text-xl font-bold"
                                                 aria-label="Más"
                                             >+</button>
