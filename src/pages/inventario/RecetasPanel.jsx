@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, Search, Save, Check } from 'lucide-react';
+import { Loader2, Search, Save, Check, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useInsumos } from '@/hooks/useInventario';
 import { inventarioService } from '@/services/inventarioService';
@@ -29,20 +29,36 @@ const RecetasPanel = () => {
     const [insumoActivo, setInsumoActivo] = useState(null);
     const [seleccion, setSeleccion] = useState({});   // { id_producto: cantidad }
     const [busqueda, setBusqueda] = useState('');
-    const [soloMarcados, setSoloMarcados] = useState(false);
+    const [filtro, setFiltro] = useState('TODOS');
+    const [relaciones, setRelaciones] = useState([]);
     const [cargandoReceta, setCargandoReceta] = useState(false);
     const [guardando, setGuardando] = useState(false);
+
+    const cargarRelaciones = () => inventarioService.obtenerTodasLasRecetas()
+        .then(setRelaciones)
+        .catch(() => toast.error('No se pudo cargar el panorama de recetas'));
 
     useEffect(() => {
         productoService.obtenerTodos()
             .then(setProductos)
             .catch(() => toast.error('No se pudieron cargar los platillos'));
+        cargarRelaciones();
     }, []);
+
+    // Para cada platillo, en qué insumos está colgado. Es lo que permite ver
+    // que un platillo ya pertenece a otro insumo antes de marcarlo aquí.
+    const insumosPorProducto = useMemo(() => {
+        const mapa = {};
+        for (const r of relaciones) {
+            (mapa[r.id_producto] ??= []).push({ id: r.id_insumo, nombre: r.insumo });
+        }
+        return mapa;
+    }, [relaciones]);
 
     const elegirInsumo = async (insumo) => {
         setInsumoActivo(insumo);
         setBusqueda('');
-        setSoloMarcados(false);
+        setFiltro('TODOS');
         setCargandoReceta(true);
         try {
             const receta = await inventarioService.obtenerReceta(insumo.id_insumos);
@@ -70,6 +86,7 @@ const RecetasPanel = () => {
             const lineas = Object.entries(seleccion)
                 .map(([id_producto, cantidad]) => ({ id_producto: Number(id_producto), cantidad }));
             await inventarioService.guardarReceta(insumoActivo.id_insumos, lineas);
+            await cargarRelaciones();   // el panorama cambió: se recarga para que los filtros no mientan
             toast.success(`Receta guardada: ${lineas.length} platillo(s) con ${insumoActivo.nombre}`);
         } catch (error) {
             toast.error(error.response?.data?.mensaje || 'No se pudo guardar la receta');
@@ -78,15 +95,35 @@ const RecetasPanel = () => {
         }
     };
 
+    /** Los insumos DISTINTOS al activo en los que ya está este platillo. */
+    const otrosInsumosDe = (idProducto) =>
+        (insumosPorProducto[idProducto] ?? []).filter(i => i.id !== insumoActivo?.id_insumos);
+
     const visibles = useMemo(() => {
         const texto = busqueda.trim().toLowerCase();
+        const pasaFiltro = (p) => {
+            const otros = (insumosPorProducto[p.id] ?? []).filter(i => i.id !== insumoActivo?.id_insumos);
+            switch (filtro) {
+                case 'MARCADOS':  return Boolean(seleccion[p.id]);
+                // Repetidos: ya cuelgan de otro insumo. Puede ser correcto (un
+                // gratinado lleva carne Y queso) o un error de captura — por eso
+                // se muestran, no se ocultan.
+                case 'REPETIDOS': return otros.length > 0;
+                // Sin ningún insumo en todo el sistema: o falta darlos de alta,
+                // o se decidió a conciencia no controlarlos.
+                case 'SIN_INSUMO': return (insumosPorProducto[p.id] ?? []).length === 0;
+                default:          return true;
+            }
+        };
         return productos
-            .filter(p => !soloMarcados || seleccion[p.id])
+            .filter(pasaFiltro)
             .filter(p => !texto || p.nombre.toLowerCase().includes(texto))
             .sort((a, b) => a.nombre.localeCompare(b.nombre));
-    }, [productos, busqueda, soloMarcados, seleccion]);
+    }, [productos, busqueda, filtro, seleccion, insumosPorProducto, insumoActivo]);
 
     const marcados = Object.keys(seleccion).length;
+    const totalRepetidos = productos.filter(p => (insumosPorProducto[p.id] ?? []).length > 1).length;
+    const totalSinInsumo = productos.filter(p => (insumosPorProducto[p.id] ?? []).length === 0).length;
 
     if (cargandoInsumos) {
         return (
@@ -143,16 +180,24 @@ const RecetasPanel = () => {
                                            text-rf-text placeholder:text-rf-text-3 focus:outline-none focus:border-rf-accent"
                             />
                         </div>
-                        <button
-                            onClick={() => setSoloMarcados(v => !v)}
-                            className={`h-11 px-4 rounded-md border text-sm font-medium ${
-                                soloMarcados
-                                    ? 'bg-rf-accent-soft border-rf-accent-border text-rf-accent-ink'
-                                    : 'bg-rf-surface border-rf-border text-rf-text-2'
-                            }`}
-                        >
-                            Solo marcados ({marcados})
-                        </button>
+                        {[
+                            { clave: 'TODOS',      texto: `Todos (${productos.length})` },
+                            { clave: 'MARCADOS',   texto: `Marcados (${marcados})` },
+                            { clave: 'REPETIDOS',  texto: `En varios insumos (${totalRepetidos})` },
+                            { clave: 'SIN_INSUMO', texto: `Sin insumo (${totalSinInsumo})` },
+                        ].map(f => (
+                            <button
+                                key={f.clave}
+                                onClick={() => setFiltro(f.clave)}
+                                className={`h-11 px-4 rounded-md border text-sm font-medium whitespace-nowrap ${
+                                    filtro === f.clave
+                                        ? 'bg-rf-accent-soft border-rf-accent-border text-rf-accent-ink'
+                                        : 'bg-rf-surface border-rf-border text-rf-text-2'
+                                }`}
+                            >
+                                {f.texto}
+                            </button>
+                        ))}
                         <button
                             onClick={guardar}
                             disabled={guardando}
@@ -191,7 +236,15 @@ const RecetasPanel = () => {
                                         {marcado && <Check size={20} />}
                                     </button>
 
-                                    <span className="flex-1 min-w-0 text-rf-text truncate">{p.nombre}</span>
+                                    <div className="flex-1 min-w-0">
+                                        <span className="text-rf-text block truncate">{p.nombre}</span>
+                                        {otrosInsumosDe(p.id).length > 0 && (
+                                            <span className="flex items-center gap-1 text-xs text-rf-text-3 mt-0.5">
+                                                <AlertTriangle size={12} className="shrink-0" />
+                                                también en: {otrosInsumosDe(p.id).map(i => i.nombre).join(', ')}
+                                            </span>
+                                        )}
+                                    </div>
 
                                     {marcado && (
                                         <div className="flex items-center gap-1.5 shrink-0">

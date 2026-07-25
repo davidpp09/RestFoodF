@@ -39,6 +39,12 @@ export const inventarioService = {
     },
 
     // --- Recetas: qué platillo consume qué insumo ---
+    // Panorama completo: todas las relaciones. Permite ver qué platillos ya
+    // cuelgan de otro insumo y cuáles no cuelgan de ninguno.
+    obtenerTodasLasRecetas: async () => {
+        const response = await api.get('/inventario/recetas');
+        return response.data;
+    },
     obtenerReceta: async (idInsumo) => {
         const response = await api.get(`/inventario/insumos/${idInsumo}/receta`);
         return response.data;
