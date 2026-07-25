@@ -2,8 +2,15 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { authStorage } from '../lib/authStorage';
 
+// Sin VITE_API_BASE_URL se usa el origen de la propia pagina. Caddy sirve
+// el frontend Y hace de proxy de la API, asi que es el mismo origen — y de
+// paso el protocolo se hereda: si la tablet abre https, la API va por https.
+// Con la URL fija en http:// el navegador bloquearia esas llamadas por
+// contenido mixto y la app cargaria sin poder ni iniciar sesion.
+// La variable sigue existiendo para desarrollo local (vite en :5173 con el
+// backend aparte en :8080).
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_BASE_URL || window.location.origin,
 });
 
 api.interceptors.request.use(

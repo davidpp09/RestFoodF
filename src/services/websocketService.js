@@ -25,7 +25,9 @@ class WebSocketService {
         this.connectionCount++;
         if (this.stompClient?.active) return;
 
-        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+        // Mismo criterio que axios: hereda protocolo y host de la pagina.
+        // SockJS necesita URL absoluta, de ahi window.location.origin.
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
         this.stompClient = new Client({
             webSocketFactory: () => new SockJS(`${baseUrl}/ws-restfood`),
