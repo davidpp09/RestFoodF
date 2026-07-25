@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList, Boxes, PackagePlus } from 'lucide-react';
+import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList, Boxes, PackagePlus, ClipboardCheck } from 'lucide-react';
 
 export const CONFIG_MENU = {
     ADMIN: [
@@ -7,6 +7,7 @@ export const CONFIG_MENU = {
         { icono: Users,           texto: 'Personal',       ruta: '/admin/personal' },
         { icono: TrendingUp,      texto: 'Reportes',       ruta: '/admin/reportes' },
         { icono: Boxes,           texto: 'Existencias',    ruta: '/admin/existencias' },
+        { icono: ClipboardCheck,  texto: 'Capturar',       ruta: '/admin/captura'   },
         { icono: PackagePlus,     texto: 'Insumos',        ruta: '/admin/insumos'   },
     ],
     DEV: [
@@ -16,6 +17,7 @@ export const CONFIG_MENU = {
         { icono: TrendingUp,      texto: 'Reportes',       ruta: '/admin/reportes'  },
         { icono: ChefHat,         texto: 'Platillos',      ruta: '/admin/platillos' },
         { icono: Boxes,           texto: 'Existencias',    ruta: '/admin/existencias' },
+        { icono: ClipboardCheck,  texto: 'Capturar',       ruta: '/admin/captura'   },
         { icono: PackagePlus,     texto: 'Insumos',        ruta: '/admin/insumos'   },
     ],
     MESERO: [
@@ -23,7 +25,7 @@ export const CONFIG_MENU = {
     ],
     COCINA: [
         { icono: Utensils,     texto: 'Pedidos Cocina', ruta: '/cocina-panel'            },
-        { icono: PackagePlus,  texto: 'Inventario',     ruta: '/cocina-panel/inventario' },
+        { icono: Boxes,        texto: 'Inventario',     ruta: '/cocina-panel/inventario' },
     ],
     REPARTIDOR: [
         { icono: Package, texto: 'Área de Entrega',    ruta: '/entregas'           },
