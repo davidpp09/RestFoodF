@@ -12,7 +12,6 @@ import ComandasPanel from './pages/comandas/ComandasPanel';
 import DevPanel from './pages/dev/DevPanel';
 import RestLayout from './components/RestLayout';
 import MeseroPanel from './pages/Mesas/MeseroPanel';
-import PedidosPanel from './pages/cocina/PedidosPanel';
 import EntregasPanel from './pages/entregas/EntregasPanel';
 import HistorialPanel from './pages/entregas/HistorialPanel';
 import PlatillosDiaPanel from './pages/entregas/PlatillosDiaPanel';
@@ -74,8 +73,11 @@ export default function App() {
             <RestLayout />
           </ProtectedRoute>
         }>
-          <Route index element={<PedidosPanel />} />
-          <Route path="inventario" element={<ExistenciasCocina />} />
+          {/* La cocina entra directo al inventario. La pantalla de pedidos
+              (PedidosPanel) quedó desconectada el 2026-07-25: trabajan con la
+              comanda impresa y la bitácora no registraba un solo acceso. El
+              componente sigue en el repo — devolverlo es reponer esta ruta. */}
+          <Route index element={<ExistenciasCocina />} />
         </Route>
 
         <Route path="/entregas" element={

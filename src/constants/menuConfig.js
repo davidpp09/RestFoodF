@@ -23,9 +23,10 @@ export const CONFIG_MENU = {
     MESERO: [
         { icono: Utensils, texto: 'Area de mesas', ruta: '/mesero' },
     ],
+    // Una sola opción, pero el menú se conserva: el botón de cerrar sesión
+    // vive dentro del cajón de navegación.
     COCINA: [
-        { icono: Utensils,     texto: 'Pedidos Cocina', ruta: '/cocina-panel'            },
-        { icono: Boxes,        texto: 'Inventario',     ruta: '/cocina-panel/inventario' },
+        { icono: Boxes, texto: 'Inventario', ruta: '/cocina-panel' },
     ],
     REPARTIDOR: [
         { icono: Package, texto: 'Área de Entrega',    ruta: '/entregas'           },
