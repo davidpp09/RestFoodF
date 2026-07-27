@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, PackagePlus, Trash2, ClipboardCheck, Check } from 'lucide-react';
+import { Loader2, PackagePlus, Trash2, ClipboardCheck, Check, Flag } from 'lucide-react';
 import { toast } from 'sonner';
 import { useExistencias } from '@/hooks/useInventario';
 import { inventarioService } from '@/services/inventarioService';
@@ -15,6 +15,18 @@ import { inventarioService } from '@/services/inventarioService';
  */
 
 const MODOS = {
+    // Solo se usa una vez en la vida de cada insumo: es el punto de arranque
+    // del kardex, y el backend lo protege contra repetirse. Va aparte de
+    // CONTEO a propósito — si el arranque se cargara como conteo físico,
+    // generaría AJUSTE y el reporte de teórico contra real lo leería como
+    // varianza "sin explicar": el primer reporte mostraría un descuadre enorme
+    // que en realidad es solo el inventario inicial.
+    INICIAL: {
+        etiqueta: 'Conteo inicial',
+        icono: Flag,
+        ayuda: 'Solo la primera vez. Cuenta lo que hay hoy: es el punto de partida del kardex. Lo que dejes en cero se queda en cero, sin registrar movimiento.',
+        color: 'text-rf-accent-ink',
+    },
     COMPRA: {
         etiqueta: 'Llegó mercancía',
         icono: PackagePlus,
@@ -150,17 +162,32 @@ const CapturaPanel = () => {
             } else {
                 // Uno por uno a propósito: si falla el tercero, los dos primeros
                 // ya quedaron registrados y no se pierde el trabajo de capturar.
+                // En INICIAL se tolera el rechazo individual: un insumo que ya
+                // tiene su arranque no debe impedir cargar los demás — pasa si
+                // el conteo se hace en dos sentadas o se agrega un insumo nuevo.
+                let guardados = 0;
+                const rechazados = [];
                 for (const item of conCantidad) {
                     const costoCapturado = parseFloat(costos[item.id_insumos]);
-                    await inventarioService.registrarMovimiento({
-                        id_insumo: item.id_insumos,
-                        tipo: modo,
-                        cantidad: cantidades[item.id_insumos],
-                        motivo: motivo.trim() || null,
-                        costo_total: modo === 'COMPRA' && costoCapturado > 0 ? costoCapturado : null,
-                    });
+                    try {
+                        await inventarioService.registrarMovimiento({
+                            id_insumo: item.id_insumos,
+                            tipo: modo,
+                            cantidad: cantidades[item.id_insumos],
+                            motivo: motivo.trim() || null,
+                            costo_total: modo === 'COMPRA' && costoCapturado > 0 ? costoCapturado : null,
+                        });
+                        guardados += 1;
+                    } catch (error) {
+                        if (modo !== 'INICIAL') throw error;
+                        rechazados.push(item.nombre);
+                    }
                 }
-                toast.success(`Guardado: ${conCantidad.length} insumo(s).`);
+                toast.success(`Guardado: ${guardados} insumo(s).`);
+                if (rechazados.length > 0) {
+                    toast.info(`Ya tenían conteo inicial: ${rechazados.join(', ')}. `
+                        + 'Para corregirlos usa Conteo físico.');
+                }
             }
             setCantidades({});
             setCostos({});
@@ -196,7 +223,7 @@ const CapturaPanel = () => {
     return (
         <div className="space-y-4 pb-28">
             {/* Los tres modos siempre visibles: menos pasos que un menú desplegable. */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {Object.entries(MODOS).map(([clave, info]) => {
                     const Icono = info.icono;
                     const activo = modo === clave;
