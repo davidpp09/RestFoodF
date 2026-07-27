@@ -21,6 +21,7 @@ import CapturaPanel from './pages/inventario/CapturaPanel';
 import ExistenciasCocina from './pages/inventario/ExistenciasCocina';
 import RecetasPanel from './pages/inventario/RecetasPanel';
 import VarianzaPanel from './pages/inventario/VarianzaPanel';
+import CostosPanel from './pages/inventario/CostosPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="captura" element={<CapturaPanel />} />
           <Route path="recetas" element={<RecetasPanel />} />
           <Route path="varianza" element={<VarianzaPanel />} />
+          <Route path="costos" element={<CostosPanel />} />
         </Route>
 
         <Route path="/mesero" element={

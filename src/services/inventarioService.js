@@ -27,9 +27,12 @@ export const inventarioService = {
     },
     // La cantidad va SIEMPRE en positivo: el signo lo pone el backend según el
     // tipo. Quien captura dice "se echaron a perder 3", nunca "menos 3".
-    registrarMovimiento: async ({ id_insumo, tipo, cantidad, motivo }) => {
+    registrarMovimiento: async ({ id_insumo, tipo, cantidad, motivo, costo_total }) => {
         const response = await api.post('/inventario/movimientos', {
             id_insumo, tipo, cantidad, motivo: motivo || null,
+            // Solo COMPRA lo manda: lo pagado EN TOTAL por esta entrada, como
+            // viene en la nota. Opcional — una compra sin nota no se pierde.
+            costo_total: costo_total ?? null,
         });
         return response.data;
     },
@@ -67,6 +70,10 @@ export const inventarioService = {
     // --- Teórico contra real (Fase 2) ---
     // Sin fechas, el backend toma el mes en curso. Las fechas van como
     // YYYY-MM-DD, que es lo que producen los <input type="date">.
+    obtenerFoodCost: async () => {
+        const response = await api.get('/inventario/reportes/food-cost');
+        return response.data;
+    },
     obtenerTeoricoReal: async (desde, hasta) => {
         const params = {};
         if (desde) params.desde = desde;

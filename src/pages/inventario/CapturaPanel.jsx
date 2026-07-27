@@ -36,8 +36,9 @@ const MODOS = {
 };
 
 /** Un renglón: nombre grande y dos botones que se puedan picar sin apuntar. */
-const RenglonInsumo = ({ item, valor, onCambiar, modo }) => (
-    <div className="flex items-center gap-3 p-4 bg-rf-surface rounded-lg border border-rf-border">
+const RenglonInsumo = ({ item, valor, onCambiar, modo, costo, onCosto }) => (
+    <div className="p-4 bg-rf-surface rounded-lg border border-rf-border space-y-3">
+    <div className="flex items-center gap-3">
         <div className="flex-1 min-w-0">
             <p className="font-semibold text-rf-text text-lg truncate">{item.nombre}</p>
             <p className="text-sm text-rf-text-3">
@@ -82,18 +83,43 @@ const RenglonInsumo = ({ item, valor, onCambiar, modo }) => (
             </button>
         </div>
     </div>
+
+        {/* El costo solo existe en COMPRA y solo cuando ya hay cantidad: es lo
+            pagado EN TOTAL por esta entrada, como viene en la nota. Opcional a
+            propósito — sin la nota a la mano, la compra se captura igual y el
+            costo promedio simplemente la ignora. */}
+        {modo === 'COMPRA' && valor > 0 && (
+            <label className="flex items-center gap-2 text-sm text-rf-text-2">
+                <span className="shrink-0">¿Cuánto se pagó en total? $</span>
+                <input
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="0.01"
+                    value={costo ?? ''}
+                    placeholder="opcional"
+                    onChange={(e) => onCosto(e.target.value)}
+                    className="w-32 h-11 px-2 text-right font-bold rounded-lg bg-rf-bg
+                               border border-rf-border text-rf-text focus:outline-none focus:border-rf-accent"
+                    aria-label={`Costo total de ${item.nombre}`}
+                />
+            </label>
+        )}
+    </div>
 );
 
 const CapturaPanel = () => {
     const { existencias, loading, recargar } = useExistencias();
     const [modo, setModo] = useState('COMPRA');
     const [cantidades, setCantidades] = useState({});
+    const [costos, setCostos] = useState({});
     const [motivo, setMotivo] = useState('');
     const [guardando, setGuardando] = useState(false);
 
     const cambiarModo = (nuevo) => {
         setModo(nuevo);
         setCantidades({});
+        setCostos({});
         setMotivo('');
     };
 
@@ -125,16 +151,19 @@ const CapturaPanel = () => {
                 // Uno por uno a propósito: si falla el tercero, los dos primeros
                 // ya quedaron registrados y no se pierde el trabajo de capturar.
                 for (const item of conCantidad) {
+                    const costoCapturado = parseFloat(costos[item.id_insumos]);
                     await inventarioService.registrarMovimiento({
                         id_insumo: item.id_insumos,
                         tipo: modo,
                         cantidad: cantidades[item.id_insumos],
                         motivo: motivo.trim() || null,
+                        costo_total: modo === 'COMPRA' && costoCapturado > 0 ? costoCapturado : null,
                     });
                 }
                 toast.success(`Guardado: ${conCantidad.length} insumo(s).`);
             }
             setCantidades({});
+            setCostos({});
             setMotivo('');
             recargar();
         } catch (error) {
@@ -214,6 +243,8 @@ const CapturaPanel = () => {
                         valor={cantidades[item.id_insumos] ?? 0}
                         onCambiar={(v) => fijar(item.id_insumos, v)}
                         modo={modo}
+                        costo={costos[item.id_insumos]}
+                        onCosto={(v) => setCostos(prev => ({ ...prev, [item.id_insumos]: v }))}
                     />
                 ))}
             </div>

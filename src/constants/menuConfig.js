@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList, Boxes, PackagePlus, ClipboardCheck, BookOpen, Scale } from 'lucide-react';
+import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList, Boxes, PackagePlus, ClipboardCheck, BookOpen, Scale, DollarSign } from 'lucide-react';
 
 export const CONFIG_MENU = {
     ADMIN: [
@@ -11,6 +11,7 @@ export const CONFIG_MENU = {
         { icono: PackagePlus,     texto: 'Insumos',        ruta: '/admin/insumos'   },
         { icono: BookOpen,        texto: 'Recetas',        ruta: '/admin/recetas'   },
         { icono: Scale,           texto: 'Teórico vs real', ruta: '/admin/varianza'  },
+        { icono: DollarSign,      texto: 'Costos',         ruta: '/admin/costos'    },
     ],
     DEV: [
         { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'           },
@@ -23,6 +24,7 @@ export const CONFIG_MENU = {
         { icono: PackagePlus,     texto: 'Insumos',        ruta: '/admin/insumos'   },
         { icono: BookOpen,        texto: 'Recetas',        ruta: '/admin/recetas'   },
         { icono: Scale,           texto: 'Teórico vs real', ruta: '/admin/varianza'  },
+        { icono: DollarSign,      texto: 'Costos',         ruta: '/admin/costos'    },
     ],
     MESERO: [
         { icono: Utensils, texto: 'Area de mesas', ruta: '/mesero' },
