@@ -20,6 +20,7 @@ import ExistenciasPanel from './pages/inventario/ExistenciasPanel';
 import CapturaPanel from './pages/inventario/CapturaPanel';
 import ExistenciasCocina from './pages/inventario/ExistenciasCocina';
 import RecetasPanel from './pages/inventario/RecetasPanel';
+import VarianzaPanel from './pages/inventario/VarianzaPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="insumos" element={<InsumosPanel />} />
           <Route path="captura" element={<CapturaPanel />} />
           <Route path="recetas" element={<RecetasPanel />} />
+          <Route path="varianza" element={<VarianzaPanel />} />
         </Route>
 
         <Route path="/mesero" element={

@@ -63,4 +63,15 @@ export const inventarioService = {
         const response = await api.post('/inventario/conteos', { notas, lineas });
         return response.data;
     },
+
+    // --- Teórico contra real (Fase 2) ---
+    // Sin fechas, el backend toma el mes en curso. Las fechas van como
+    // YYYY-MM-DD, que es lo que producen los <input type="date">.
+    obtenerTeoricoReal: async (desde, hasta) => {
+        const params = {};
+        if (desde) params.desde = desde;
+        if (hasta) params.hasta = hasta;
+        const response = await api.get('/inventario/reportes/teorico-real', { params });
+        return response.data;
+    },
 };

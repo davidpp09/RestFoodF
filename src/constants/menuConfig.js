@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList, Boxes, PackagePlus, ClipboardCheck, BookOpen } from 'lucide-react';
+import { LayoutDashboard, Users, TrendingUp, Package, Utensils, History, ChefHat, ClipboardList, Boxes, PackagePlus, ClipboardCheck, BookOpen, Scale } from 'lucide-react';
 
 export const CONFIG_MENU = {
     ADMIN: [
@@ -10,6 +10,7 @@ export const CONFIG_MENU = {
         { icono: ClipboardCheck,  texto: 'Capturar',       ruta: '/admin/captura'   },
         { icono: PackagePlus,     texto: 'Insumos',        ruta: '/admin/insumos'   },
         { icono: BookOpen,        texto: 'Recetas',        ruta: '/admin/recetas'   },
+        { icono: Scale,           texto: 'Teórico vs real', ruta: '/admin/varianza'  },
     ],
     DEV: [
         { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'           },
@@ -21,6 +22,7 @@ export const CONFIG_MENU = {
         { icono: ClipboardCheck,  texto: 'Capturar',       ruta: '/admin/captura'   },
         { icono: PackagePlus,     texto: 'Insumos',        ruta: '/admin/insumos'   },
         { icono: BookOpen,        texto: 'Recetas',        ruta: '/admin/recetas'   },
+        { icono: Scale,           texto: 'Teórico vs real', ruta: '/admin/varianza'  },
     ],
     MESERO: [
         { icono: Utensils, texto: 'Area de mesas', ruta: '/mesero' },
