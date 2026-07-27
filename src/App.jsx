@@ -12,10 +12,16 @@ import ComandasPanel from './pages/comandas/ComandasPanel';
 import DevPanel from './pages/dev/DevPanel';
 import RestLayout from './components/RestLayout';
 import MeseroPanel from './pages/Mesas/MeseroPanel';
-import PedidosPanel from './pages/cocina/PedidosPanel';
 import EntregasPanel from './pages/entregas/EntregasPanel';
 import HistorialPanel from './pages/entregas/HistorialPanel';
 import PlatillosDiaPanel from './pages/entregas/PlatillosDiaPanel';
+import InsumosPanel from './pages/inventario/InsumosPanel';
+import ExistenciasPanel from './pages/inventario/ExistenciasPanel';
+import CapturaPanel from './pages/inventario/CapturaPanel';
+import ExistenciasCocina from './pages/inventario/ExistenciasCocina';
+import RecetasPanel from './pages/inventario/RecetasPanel';
+import VarianzaPanel from './pages/inventario/VarianzaPanel';
+import CostosPanel from './pages/inventario/CostosPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -52,6 +58,12 @@ export default function App() {
               <DevPanel />
             </ProtectedRoute>
           } />
+          <Route path="existencias" element={<ExistenciasPanel />} />
+          <Route path="insumos" element={<InsumosPanel />} />
+          <Route path="captura" element={<CapturaPanel />} />
+          <Route path="recetas" element={<RecetasPanel />} />
+          <Route path="varianza" element={<VarianzaPanel />} />
+          <Route path="costos" element={<CostosPanel />} />
         </Route>
 
         <Route path="/mesero" element={
@@ -67,7 +79,11 @@ export default function App() {
             <RestLayout />
           </ProtectedRoute>
         }>
-          <Route index element={<PedidosPanel />} />
+          {/* La cocina entra directo al inventario. La pantalla de pedidos
+              (PedidosPanel) quedó desconectada el 2026-07-25: trabajan con la
+              comanda impresa y la bitácora no registraba un solo acceso. El
+              componente sigue en el repo — devolverlo es reponer esta ruta. */}
+          <Route index element={<ExistenciasCocina />} />
         </Route>
 
         <Route path="/entregas" element={

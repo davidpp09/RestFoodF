@@ -1,3 +1,14 @@
+// DESCONECTADA el 2026-07-25.
+//
+// La cocina trabaja con la comanda impresa, no con esta pantalla: la bitácora
+// de accesos no registraba una sola petición a `/cocina`. Su lugar en el menú
+// lo ocupa ahora la vista de inventario.
+//
+// El componente se conserva a propósito. Si algún día se quiere de vuelta,
+// basta con reponer la ruta en App.jsx y su entrada en menuConfig.js — no hay
+// que reescribir nada. El backend (`GET /cocina`, `PATCH /cocina/{id}/servido`)
+// sigue existiendo intacto.
+
 import React, { useEffect, useState } from 'react';
 import { cocinaService } from '../../services/cocinaService';
 import websocketService from '../../services/websocketService';
