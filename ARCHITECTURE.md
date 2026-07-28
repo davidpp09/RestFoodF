@@ -35,10 +35,22 @@ Cada capa tiene un solo trabajo:
 ## Deploy
 
 ```bash
-npm run build     # genera dist/, Caddy lo sirve directo — no hay que reiniciar nada
+./deploy/deploy-frontend.sh     # publica en producción
+./deploy/rollback-frontend.sh   # vuelve a la release anterior
 ```
 
-La tablet cachea fuerte: después de un build, pull-to-refresh en Fully Kiosk para ver el cambio.
+`npm run build` **solo compila**: escribe en el `dist/` del repo, que no lo sirve
+nadie. Publicar es otra cosa — el script copia el build a una release con fecha y
+sha en `~/deploys/restfood-frontend/releases/` y mueve el symlink `current`, que
+es lo que Caddy sirve. Mover un symlink es atómico y no hay que recargar Caddy.
+
+Hasta el 2026-07-28 Caddy servía el `dist/` del repo directo, así que compilar y
+publicar eran el mismo acto: probar un build tiraba a producción lo que hubiera en
+el árbol de trabajo, y no había versión anterior a la que volver porque el build
+la había sobrescrito.
+
+La tablet cachea fuerte: después de un deploy, pull-to-refresh en Fully Kiosk para
+ver el cambio (el `index.html` se sirve con `no-cache`, así que basta una recarga).
 
 ## Notas
 

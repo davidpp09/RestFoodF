@@ -11,8 +11,17 @@ Guía para Claude Code al trabajar en este repo. Contexto general en `README.md`
 ```bash
 npm run dev       # desarrollo
 npm run lint      # linter — SIEMPRE antes de abrir PR
-npm run build     # build de producción (dist/)
+npm run build     # compila a dist/ — NO publica nada, es carpeta de trabajo
 ```
+
+## Deploy
+```bash
+./deploy/deploy-frontend.sh     # main + CI verde -> release versionada + symlink current
+./deploy/rollback-frontend.sh   # vuelve a la release anterior
+```
+Caddy sirve `~/deploys/restfood-frontend/current`, no el `dist/` del repo. Antes
+de 2026-07-28 sí servía el `dist/`, y por eso un `npm run build` de prueba
+publicaba en producción.
 
 ## Flujo de trabajo (obligatorio)
 1. Nunca commitear directo a `main`.
