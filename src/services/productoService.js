@@ -27,4 +27,15 @@ export const productoService = {
     desactivarDia: async (idCategoria) => {
         await api.put(`/productos/desactivar-dia/${idCategoria}`);
     },
+    // Alta de un platillo del día. No se manda la categoría: la pone el backend,
+    // para que desde aquí no se pueda crear nada en el resto de la carta.
+    // Nace apagado; se pone en el menú de hoy con el toggle.
+    crearDia: async ({ nombre, precio }) => {
+        const response = await api.post('/productos/dia', { nombre, precio });
+        return response.data;
+    },
+    // Archivar: borrado suave, el historial de ventas se conserva.
+    archivarDia: async (id) => {
+        await api.delete(`/productos/dia/${id}`);
+    },
 };

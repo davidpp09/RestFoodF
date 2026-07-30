@@ -12,6 +12,9 @@ export const CONFIG_MENU = {
         { icono: BookOpen,        texto: 'Recetas',        ruta: '/admin/recetas'   },
         { icono: Scale,           texto: 'Teórico vs real', ruta: '/admin/varianza'  },
         { icono: DollarSign,      texto: 'Costos',         ruta: '/admin/costos'    },
+        // La ruta ya aceptaba a DEV y ADMIN (App.jsx, SUPER_ROLES); solo faltaba
+        // la entrada en el menú para llegar sin escribir la URL a mano.
+        { icono: Utensils,        texto: 'Platillos del Día', ruta: '/entregas/dia' },
     ],
     DEV: [
         { icono: LayoutDashboard, texto: 'Panel de Mesas', ruta: '/admin'           },
@@ -25,6 +28,7 @@ export const CONFIG_MENU = {
         { icono: BookOpen,        texto: 'Recetas',        ruta: '/admin/recetas'   },
         { icono: Scale,           texto: 'Teórico vs real', ruta: '/admin/varianza'  },
         { icono: DollarSign,      texto: 'Costos',         ruta: '/admin/costos'    },
+        { icono: Utensils,        texto: 'Platillos del Día', ruta: '/entregas/dia' },
     ],
     MESERO: [
         { icono: Utensils, texto: 'Area de mesas', ruta: '/mesero' },
