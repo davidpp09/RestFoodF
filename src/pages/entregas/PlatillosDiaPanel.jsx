@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X, FileText, Download, ExternalLink } from 'lucide-react';
+import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X, FileText, Download, ExternalLink, Plus, Archive } from 'lucide-react';
 import { productoService } from '@/services/productoService';
 import { categoriaService } from '@/services/categoriaService';
 import { menuDiaService } from '@/services/menuDiaService';
@@ -46,6 +46,10 @@ const PlatillosDiaPanel = () => {
     const [precioTemp,     setPrecioTemp]     = useState('');
     const [generandoPdf,   setGenerandoPdf]   = useState(false);
     const [urlPdf,         setUrlPdf]         = useState(null);
+    const [dialogNuevo,    setDialogNuevo]    = useState(false);
+    const [nuevoNombre,    setNuevoNombre]    = useState('');
+    const [nuevoPrecio,    setNuevoPrecio]    = useState('');
+    const [creando,        setCreando]        = useState(false);
 
     const cargar = async () => {
         try {
@@ -101,6 +105,48 @@ const PlatillosDiaPanel = () => {
             toast.success('Precio actualizado');
         } catch {
             toast.error('Error al actualizar precio');
+        }
+    };
+
+    const handleCrear = async () => {
+        const nombre = nuevoNombre.trim();
+        const precio = Number(nuevoPrecio);
+
+        if (nombre.length < 3) {
+            toast.error('El nombre debe tener al menos 3 caracteres');
+            return;
+        }
+        if (nombre.length > 60) {
+            toast.error('Máximo 60 caracteres: más largo no cabe en el renglón del menú');
+            return;
+        }
+        if (!nuevoPrecio || isNaN(precio) || precio <= 0) {
+            toast.error('Precio inválido');
+            return;
+        }
+
+        setCreando(true);
+        try {
+            const creado = await productoService.crearDia({ nombre, precio });
+            setProductos(prev => [...prev, creado]);
+            setNuevoNombre('');
+            setNuevoPrecio('');
+            setDialogNuevo(false);
+            toast.success(`"${creado.nombre}" agregado. Actívalo para ponerlo en el menú de hoy.`);
+        } catch (error) {
+            toast.error(error?.response?.data?.mensaje ?? 'No se pudo agregar el platillo');
+        } finally {
+            setCreando(false);
+        }
+    };
+
+    const handleArchivar = async (producto) => {
+        try {
+            await productoService.archivarDia(producto.id);
+            setProductos(prev => prev.filter(p => p.id !== producto.id));
+            toast.success(`"${producto.nombre}" archivado`);
+        } catch (error) {
+            toast.error(error?.response?.data?.mensaje ?? 'No se pudo archivar');
         }
     };
 
@@ -169,6 +215,14 @@ const PlatillosDiaPanel = () => {
 
                 <div className="flex items-center gap-2 flex-wrap">
 
+                <button
+                    onClick={() => setDialogNuevo(true)}
+                    className="inline-flex items-center gap-2 bg-rf-green-soft hover:bg-rf-green-soft/80 border border-rf-green/40 text-rf-green-ink font-bold px-4 py-2.5 rounded-md transition-colors text-sm"
+                >
+                    <Plus size={15} />
+                    Nuevo platillo
+                </button>
+
                 {activos > 0 && (
                     <button
                         onClick={handleVerMenu}
@@ -215,6 +269,79 @@ const PlatillosDiaPanel = () => {
                 )}
                 </div>
             </div>
+
+            {/* Alta de un platillo del día */}
+            <Dialog open={dialogNuevo} onOpenChange={setDialogNuevo}>
+                <DialogContent className="bg-rf-surface border-rf-border text-rf-text max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="text-rf-text flex items-center gap-2">
+                            <Plus size={18} className="text-rf-green-ink" />
+                            Nuevo platillo del día
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-rf-text-3 uppercase tracking-widest mb-1.5">
+                                Nombre
+                            </label>
+                            <input
+                                type="text"
+                                value={nuevoNombre}
+                                maxLength={60}
+                                onChange={e => setNuevoNombre(e.target.value)}
+                                onKeyDown={e => { if (e.key === 'Enter') handleCrear(); }}
+                                placeholder="Pollo en pipián"
+                                className="w-full bg-rf-bg border border-rf-border-strong focus:border-rf-accent rounded-md px-3 py-2.5 text-rf-text outline-none"
+                                autoFocus
+                            />
+                            <p className="text-xs text-rf-text-3 mt-1">
+                                {nuevoNombre.trim().length}/60 — así se va a ver impreso:{' '}
+                                <span className="font-mono text-rf-text-2">
+                                    {nuevoNombre.trim().toUpperCase() || 'NOMBRE DEL PLATILLO'}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-rf-text-3 uppercase tracking-widest mb-1.5">
+                                Precio
+                            </label>
+                            <input
+                                type="text"
+                                inputMode="decimal"
+                                value={nuevoPrecio}
+                                onChange={e => setNuevoPrecio(e.target.value.replace(/[^0-9.]/g, ''))}
+                                onKeyDown={e => { if (e.key === 'Enter') handleCrear(); }}
+                                placeholder="105"
+                                className="w-full bg-rf-bg border border-rf-border-strong focus:border-rf-accent rounded-md px-3 py-2.5 text-rf-text outline-none"
+                            />
+                        </div>
+
+                        <p className="text-xs text-rf-text-3">
+                            Se agrega apagado. Para que salga en el menú de hoy hay que activarlo
+                            con el switch.
+                        </p>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2">
+                        <button
+                            onClick={() => setDialogNuevo(false)}
+                            className="px-4 py-2.5 rounded-md border border-rf-border-strong text-rf-text-2 hover:text-rf-text hover:bg-rf-surface-2 transition-colors text-sm font-bold"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={handleCrear}
+                            disabled={creando}
+                            className="inline-flex items-center gap-2 bg-rf-green hover:bg-rf-green/90 text-white font-bold px-4 py-2.5 rounded-md transition-colors text-sm disabled:opacity-50"
+                        >
+                            <Plus size={15} />
+                            {creando ? 'Agregando...' : 'Agregar'}
+                        </button>
+                    </div>
+                </DialogContent>
+            </Dialog>
 
             {/* Vista previa del menú en PDF. Se revisa antes de mandarlo a los
                 clientes: es más barato cachar una errata aquí que en WhatsApp. */}
@@ -346,6 +473,43 @@ const PlatillosDiaPanel = () => {
                                         </span>
                                         <Pencil size={11} className="text-rf-text-3 group-hover:text-rf-text-2 transition-colors" />
                                     </button>
+                                )}
+
+                                {/* Archivar. Solo para los apagados: si está en el menú de hoy,
+                                    primero se apaga — así no desaparece de golpe algo que las
+                                    meseras están vendiendo en este momento. */}
+                                {!p.disponibilidad && editandoPrecio !== p.id && (
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <button
+                                                className="shrink-0 w-7 h-7 rounded-lg bg-rf-surface-2 hover:bg-rf-red-soft border border-rf-border-strong hover:border-rf-red/40 flex items-center justify-center transition-colors group/arch"
+                                                title="Archivar platillo"
+                                            >
+                                                <Archive size={12} className="text-rf-text-3 group-hover/arch:text-rf-red-ink transition-colors" />
+                                            </button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle className="text-rf-text">¿Archivar platillo?</AlertDialogTitle>
+                                                <AlertDialogDescription className="text-rf-text-2">
+                                                    <span className="text-rf-text font-semibold">{p.nombre}</span> sale
+                                                    de la lista. Las ventas viejas se conservan, y si algún día
+                                                    vuelve a darse de alta con el mismo nombre se reutiliza este registro.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel className="border-rf-border-strong text-rf-text-2 hover:text-rf-text bg-transparent hover:bg-rf-surface-2">
+                                                    Cancelar
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={() => handleArchivar(p)}
+                                                    className="bg-rf-red hover:bg-rf-red/90 text-white border-transparent"
+                                                >
+                                                    Sí, archivar
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 )}
                             </div>
                         );
