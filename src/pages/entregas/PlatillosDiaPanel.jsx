@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X, FileText, Download, ExternalLink, Plus, Archive } from 'lucide-react';
+import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X, FileText, Download, Plus, Archive } from 'lucide-react';
 import { productoService } from '@/services/productoService';
 import { categoriaService } from '@/services/categoriaService';
 import { menuDiaService } from '@/services/menuDiaService';
@@ -45,7 +45,8 @@ const PlatillosDiaPanel = () => {
     const [editandoPrecio, setEditandoPrecio] = useState(null);
     const [precioTemp,     setPrecioTemp]     = useState('');
     const [generandoPdf,   setGenerandoPdf]   = useState(false);
-    const [urlPdf,         setUrlPdf]         = useState(null);
+    const [urlImagen,      setUrlImagen]      = useState(null);
+    const [descargando,    setDescargando]    = useState(false);
     const [dialogNuevo,    setDialogNuevo]    = useState(false);
     const [nuevoNombre,    setNuevoNombre]    = useState('');
     const [nuevoPrecio,    setNuevoPrecio]    = useState('');
@@ -71,8 +72,8 @@ const PlatillosDiaPanel = () => {
 
     // El blob queda en memoria hasta que se libera a mano.
     useEffect(() => {
-        return () => { if (urlPdf) URL.revokeObjectURL(urlPdf); };
-    }, [urlPdf]);
+        return () => { if (urlImagen) URL.revokeObjectURL(urlImagen); };
+    }, [urlImagen]);
 
     const productosDia = productos.filter(p => categoriaId && p.categoria.id === categoriaId);
     const activos      = productosDia.filter(p => p.disponibilidad).length;
@@ -153,9 +154,9 @@ const PlatillosDiaPanel = () => {
     const handleVerMenu = async () => {
         setGenerandoPdf(true);
         try {
-            const blob = await menuDiaService.obtenerPdf();
-            if (urlPdf) URL.revokeObjectURL(urlPdf);
-            setUrlPdf(URL.createObjectURL(blob));
+            const blob = await menuDiaService.obtenerImagen();
+            if (urlImagen) URL.revokeObjectURL(urlImagen);
+            setUrlImagen(URL.createObjectURL(blob));
         } catch (error) {
             toast.error(await mensajeDeError(error) ?? 'No se pudo generar el menú');
         } finally {
@@ -163,11 +164,23 @@ const PlatillosDiaPanel = () => {
         }
     };
 
-    const handleDescargar = () => {
-        const enlace = document.createElement('a');
-        enlace.href = urlPdf;
-        enlace.download = `menu-del-dia-${new Date().toISOString().slice(0, 10)}.pdf`;
-        enlace.click();
+    // Se navega a la URL en vez de simular un clic en un <a download>.
+    //
+    // En modo kiosko la tablet no permite ventanas nuevas, y una descarga desde
+    // un blob: en el WebView de Android no se dispara. Un cambio de location a
+    // una URL normal que responde con Content-Disposition: attachment sí lo toma
+    // el gestor de descargas, y la página no se pierde: el navegador se queda
+    // donde está y baja el archivo aparte.
+    const handleDescargar = async () => {
+        setDescargando(true);
+        try {
+            const url = await menuDiaService.obtenerEnlaceDeDescarga();
+            window.location.href = url;
+        } catch (error) {
+            toast.error(await mensajeDeError(error) ?? 'No se pudo preparar la descarga');
+        } finally {
+            setDescargando(false);
+        }
     };
 
     const handleCerrarDia = async () => {
@@ -345,7 +358,7 @@ const PlatillosDiaPanel = () => {
 
             {/* Vista previa del menú en PDF. Se revisa antes de mandarlo a los
                 clientes: es más barato cachar una errata aquí que en WhatsApp. */}
-            <Dialog open={!!urlPdf} onOpenChange={abierto => { if (!abierto) setUrlPdf(null); }}>
+            <Dialog open={!!urlImagen} onOpenChange={abierto => { if (!abierto) setUrlImagen(null); }}>
                 <DialogContent className="bg-rf-surface border-rf-border text-rf-text max-w-4xl">
                     <DialogHeader>
                         <DialogTitle className="text-rf-text flex items-center gap-2">
@@ -354,34 +367,28 @@ const PlatillosDiaPanel = () => {
                         </DialogTitle>
                     </DialogHeader>
 
-                    <iframe
-                        src={urlPdf ?? ''}
-                        title="Vista previa del menú del día"
-                        className="w-full h-[60vh] rounded-md border border-rf-border bg-white"
+                    {/* Imagen y no <iframe> con el PDF: el WebView de Android no
+                        trae visor de PDF y el recuadro salía en blanco, sin error
+                        en ninguna parte. Lo que se descarga sigue siendo el PDF. */}
+                    <img
+                        src={urlImagen ?? ''}
+                        alt="Vista previa del menú del día"
+                        className="w-full max-h-[60vh] object-contain rounded-md border border-rf-border bg-white"
                     />
 
                     <p className="text-xs text-rf-text-3">
-                        Si la vista previa sale en blanco (pasa en las tablets Android, que no
-                        traen visor de PDF), usa <span className="text-rf-text-2 font-semibold">Abrir</span> o
-                        <span className="text-rf-text-2 font-semibold"> Descargar</span>.
+                        Al descargar se guarda el <span className="text-rf-text-2 font-semibold">PDF</span> en
+                        la tablet, listo para adjuntarlo en WhatsApp.
                     </p>
 
                     <div className="flex items-center justify-end gap-2 flex-wrap">
-                        <a
-                            href={urlPdf ?? ''}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-2 bg-rf-surface-2 hover:bg-rf-border border border-rf-border-strong text-rf-text-2 hover:text-rf-text font-bold px-4 py-2.5 rounded-md transition-colors text-sm"
-                        >
-                            <ExternalLink size={15} />
-                            Abrir
-                        </a>
                         <button
                             onClick={handleDescargar}
-                            className="inline-flex items-center gap-2 bg-rf-green hover:bg-rf-green/90 text-white font-bold px-4 py-2.5 rounded-md transition-colors text-sm"
+                            disabled={descargando}
+                            className="inline-flex items-center gap-2 bg-rf-green hover:bg-rf-green/90 disabled:opacity-60 text-white font-bold px-4 py-2.5 rounded-md transition-colors text-sm"
                         >
                             <Download size={15} />
-                            Descargar
+                            {descargando ? 'Preparando...' : 'Descargar'}
                         </button>
                     </div>
                 </DialogContent>
