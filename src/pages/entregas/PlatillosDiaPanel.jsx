@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X, FileText, Download, Plus, Archive } from 'lucide-react';
+import { Sun, Power, UtensilsCrossed, AlertCircle, Pencil, Check, X, FileText, Download, Plus, Archive, Search } from 'lucide-react';
 import { productoService } from '@/services/productoService';
 import { categoriaService } from '@/services/categoriaService';
 import { menuDiaService } from '@/services/menuDiaService';
@@ -44,6 +44,7 @@ const PlatillosDiaPanel = () => {
     const [cerrando,       setCerrando]       = useState(false);
     const [editandoPrecio, setEditandoPrecio] = useState(null);
     const [precioTemp,     setPrecioTemp]     = useState('');
+    const [busqueda,       setBusqueda]       = useState('');
     const [generandoPdf,   setGenerandoPdf]   = useState(false);
     const [urlImagen,      setUrlImagen]      = useState(null);
     const [descargando,    setDescargando]    = useState(false);
@@ -77,6 +78,14 @@ const PlatillosDiaPanel = () => {
 
     const productosDia = productos.filter(p => categoriaId && p.categoria.id === categoriaId);
     const activos      = productosDia.filter(p => p.disponibilidad).length;
+
+    // La búsqueda usa `norm`, que quita acentos: escribiendo "higado" aparece
+    // "Hígado encebollado". En una tablet, tener que acertar el acento para
+    // encontrar un platillo es una forma tonta de perder tiempo en plena hora
+    // de comida.
+    const visibles = busqueda.trim()
+        ? productosDia.filter(p => norm(p.nombre).includes(norm(busqueda)))
+        : productosDia;
     const porcentaje   = (activos / maxActivos) * 100;
 
     const handleToggle = async (producto) => {
@@ -408,6 +417,33 @@ const PlatillosDiaPanel = () => {
                 </span>
             </div>
 
+            {/* Buscador. Solo aparece cuando hay lista que filtrar: con 4 platillos
+                estorba más que ayuda, y aquí la lista puede pasar de 100. */}
+            {productosDia.length > 0 && (
+                <div className="relative">
+                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-rf-text-3" />
+                    <input
+                        type="text"
+                        value={busqueda}
+                        onChange={e => setBusqueda(e.target.value)}
+                        placeholder="Buscar platillo..."
+                        className="w-full h-11 pl-10 pr-10 rounded-md bg-rf-surface border border-rf-border
+                                   text-rf-text placeholder:text-rf-text-3 focus:outline-none focus:border-rf-accent"
+                    />
+                    {/* Botón de limpiar: en una tablet, borrar letra por letra con
+                        el teclado en pantalla es peor que un toque. */}
+                    {busqueda && (
+                        <button
+                            onClick={() => setBusqueda('')}
+                            aria-label="Limpiar búsqueda"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-md hover:bg-rf-surface-2 flex items-center justify-center transition-colors"
+                        >
+                            <X size={15} className="text-rf-text-3" />
+                        </button>
+                    )}
+                </div>
+            )}
+
             {/* Lista de platillos */}
             {productosDia.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-rf-text-3 bg-rf-surface border border-rf-border rounded-lg">
@@ -415,9 +451,20 @@ const PlatillosDiaPanel = () => {
                     <p className="font-semibold">No hay platillos en la categoría</p>
                     <p className="text-xs mt-1">Agrega platillos desde el panel de administración</p>
                 </div>
+            ) : visibles.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-rf-text-3 bg-rf-surface border border-rf-border rounded-lg">
+                    <Search size={36} className="mb-3 opacity-30" />
+                    <p className="font-semibold">Ningún platillo coincide con "{busqueda}"</p>
+                    <p className="text-xs mt-1">
+                        Revisa cómo está escrito, o
+                        <button onClick={() => setBusqueda('')} className="ml-1 text-rf-accent-ink font-semibold underline">
+                            ver los {productosDia.length} platillos
+                        </button>
+                    </p>
+                </div>
             ) : (
                 <div className="flex flex-col gap-2">
-                    {productosDia.map(p => {
+                    {visibles.map(p => {
                         const bloqueado = !p.disponibilidad && activos >= maxActivos;
                         return (
                             <div
