@@ -18,7 +18,7 @@ import { useMesaCart } from '@/hooks/useMesaCart';
 import { useTiempos } from '@/hooks/useTiempos';
 import { ordenService } from '@/services/ordenService';
 import { TEMAS_MESA } from '@/components/mesaMesero/constants';
-import { normalizarTexto } from '@/lib/utils';
+import { filtrarMenu, pestanasDeMenu } from '@/components/mesaMesero/menuFiltro';
 import MesaMenu from '@/components/mesaMesero/MesaMenu';
 import MesaOrden from '@/components/mesaMesero/MesaOrden';
 
@@ -87,7 +87,9 @@ const EntregasPanel = () => {
 
     const tema = TEMAS_MESA[turno];
     const categorias = useMemo(() => [...new Set(productos.map(p => p.categoria.nombre))], [productos]);
+    const pestanas = useMemo(() => pestanasDeMenu(categorias), [categorias]);
 
+    // Arranca en la primera categoría real, no en "Todos" (mismo criterio que el carrito de mesas)
     useEffect(() => {
         if (categorias.length > 0 && !categoriaActiva) setCategoriaActiva(categorias[0]);
     }, [categorias, categoriaActiva]);
@@ -260,19 +262,8 @@ const EntregasPanel = () => {
                         <div className="flex flex-col landscape:grid landscape:grid-cols-[1.5fr_1fr] gap-4 landscape:gap-6 pt-4 flex-1 min-h-0">
                             <div className={`min-h-0 flex-1 ${vista === 'menu' ? 'flex flex-col' : 'hidden'} landscape:flex landscape:flex-col`}>
                                 <MesaMenu
-                                    productosFiltrados={productos
-                                        .filter(p => p.disponibilidad && precioSegunTurno(p) > 0)
-                                        .filter(p => busqueda.trim()
-                                            ? normalizarTexto(p.nombre).includes(normalizarTexto(busqueda))
-                                            : p.categoria.nombre === categoriaActiva)
-                                        .sort((a, b) => {
-                                            if (!busqueda.trim()) return 0;
-                                            const query = normalizarTexto(busqueda);
-                                            const aEmpieza = normalizarTexto(a.nombre).startsWith(query);
-                                            const bEmpieza = normalizarTexto(b.nombre).startsWith(query);
-                                            return aEmpieza === bEmpieza ? 0 : aEmpieza ? -1 : 1;
-                                        })}
-                                    categorias={categorias}
+                                    productosFiltrados={filtrarMenu({ productos, categoriaActiva, busqueda, precioSegunTurno })}
+                                    pestanas={pestanas}
                                     categoriaActiva={categoriaActiva}
                                     setCategoriaActiva={setCategoriaActiva}
                                     busqueda={busqueda}
