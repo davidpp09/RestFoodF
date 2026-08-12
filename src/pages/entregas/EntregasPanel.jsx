@@ -18,7 +18,7 @@ import { useMesaCart } from '@/hooks/useMesaCart';
 import { useTiempos } from '@/hooks/useTiempos';
 import { ordenService } from '@/services/ordenService';
 import { TEMAS_MESA } from '@/components/mesaMesero/constants';
-import { filtrarMenu, pestanasDeMenu } from '@/components/mesaMesero/menuFiltro';
+import { filtrarMenu, pestanasDeMenu, CATEGORIA_TODOS } from '@/components/mesaMesero/menuFiltro';
 import MesaMenu from '@/components/mesaMesero/MesaMenu';
 import MesaOrden from '@/components/mesaMesero/MesaOrden';
 
@@ -79,7 +79,8 @@ const EntregasPanel = () => {
     const [idOrden, setIdOrden] = useState(null);
     const [numeroComanda, setNumeroComanda] = useState(null);
     const [cargando, setCargando] = useState(false);
-    const [categoriaActiva, setCategoriaActiva] = useState('');
+    // Abre en "Todos", mismo criterio que el carrito de mesas.
+    const [categoriaActiva, setCategoriaActiva] = useState(CATEGORIA_TODOS);
     const [busqueda, setBusqueda] = useState('');
     // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
     const [vista, setVista] = useState('menu');
@@ -88,11 +89,6 @@ const EntregasPanel = () => {
     const tema = TEMAS_MESA[turno];
     const categorias = useMemo(() => [...new Set(productos.map(p => p.categoria.nombre))], [productos]);
     const pestanas = useMemo(() => pestanasDeMenu(categorias), [categorias]);
-
-    // Arranca en la primera categoría real, no en "Todos" (mismo criterio que el carrito de mesas)
-    useEffect(() => {
-        if (categorias.length > 0 && !categoriaActiva) setCategoriaActiva(categorias[0]);
-    }, [categorias, categoriaActiva]);
 
     // Restaurar la orden pendiente tras una recarga: si sigue viva en el servidor
     // (PREPARANDO y sin platillos enviados) se reabre el dialog donde se quedó
