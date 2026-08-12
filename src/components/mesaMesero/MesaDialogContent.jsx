@@ -8,7 +8,7 @@ import MesaDialogHeader from './MesaDialogHeader';
 import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
 import { TEMAS_MESA } from './constants';
-import { filtrarMenu, pestanasDeMenu } from './menuFiltro';
+import { filtrarMenu, pestanasDeMenu, CATEGORIA_TODOS } from './menuFiltro';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -31,7 +31,8 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     );
     const pestanas = React.useMemo(() => pestanasDeMenu(categorias), [categorias]);
 
-    const [categoriaActiva, setCategoriaActiva] = React.useState("");
+    // Abre en "Todos": el mesero ve la carta completa sin elegir pestaña.
+    const [categoriaActiva, setCategoriaActiva] = React.useState(CATEGORIA_TODOS);
     const [busqueda, setBusqueda] = React.useState("");
     // Vista activa en orientación vertical: 'menu' | 'orden' (en horizontal se muestran ambas)
     const [vista, setVista] = React.useState("menu");
@@ -44,14 +45,6 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
     const [enviando, setEnviando] = React.useState(false);
 
     const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-
-    // La mesa abre en la primera categoría real, no en "Todos": es el flujo que
-    // las tablets ya tienen aprendido. "Todos" está a un toque de distancia.
-    React.useEffect(() => {
-        if (categorias.length > 0 && !categoriaActiva) {
-            setCategoriaActiva(categorias[0]);
-        }
-    }, [categorias, categoriaActiva]);
 
     const productosFiltrados = filtrarMenu({ productos, categoriaActiva, busqueda, precioSegunTurno });
 
