@@ -4,11 +4,11 @@ import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ordenService } from '@/services/ordenService';
 import { useTiempos } from '@/hooks/useTiempos';
-import { normalizarTexto } from '@/lib/utils';
 import MesaDialogHeader from './MesaDialogHeader';
 import MesaMenu from './MesaMenu';
 import MesaOrden from './MesaOrden';
 import { TEMAS_MESA } from './constants';
+import { filtrarMenu, pestanasDeMenu } from './menuFiltro';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -29,6 +29,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
         () => [...new Set(productos.map(p => p.categoria.nombre))],
         [productos]
     );
+    const pestanas = React.useMemo(() => pestanasDeMenu(categorias), [categorias]);
 
     const [categoriaActiva, setCategoriaActiva] = React.useState("");
     const [busqueda, setBusqueda] = React.useState("");
@@ -44,24 +45,15 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
 
     const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
+    // La mesa abre en la primera categoría real, no en "Todos": es el flujo que
+    // las tablets ya tienen aprendido. "Todos" está a un toque de distancia.
     React.useEffect(() => {
         if (categorias.length > 0 && !categoriaActiva) {
             setCategoriaActiva(categorias[0]);
         }
     }, [categorias, categoriaActiva]);
 
-    const productosFiltrados = productos
-        .filter(p => p.disponibilidad && precioSegunTurno(p) > 0)
-        .filter(p => busqueda.trim()
-            ? normalizarTexto(p.nombre).includes(normalizarTexto(busqueda))
-            : p.categoria.nombre === categoriaActiva)
-        .sort((a, b) => {
-            if (!busqueda.trim()) return 0;
-            const query = normalizarTexto(busqueda);
-            const aEmpieza = normalizarTexto(a.nombre).startsWith(query);
-            const bEmpieza = normalizarTexto(b.nombre).startsWith(query);
-            return aEmpieza === bEmpieza ? 0 : aEmpieza ? -1 : 1;
-        });
+    const productosFiltrados = filtrarMenu({ productos, categoriaActiva, busqueda, precioSegunTurno });
 
     const construirPayload = () => ({
         id_usuario: getUsuarioId(),
@@ -152,7 +144,7 @@ const MesaDialogContent = ({ mesa, productos, turno, carrito, setCarrito, idOrde
                 <div className={`min-h-0 flex-1 ${vista === "menu" ? "flex flex-col" : "hidden"} landscape:flex landscape:flex-col`}>
                     <MesaMenu
                         productosFiltrados={productosFiltrados}
-                        categorias={categorias}
+                        pestanas={pestanas}
                         categoriaActiva={categoriaActiva}
                         setCategoriaActiva={setCategoriaActiva}
                         busqueda={busqueda}

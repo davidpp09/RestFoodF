@@ -53,11 +53,9 @@ export default function App() {
           <Route path="personal" element={<PersonalPanel />} />
           <Route path="reportes" element={<ReportesPanel />} />
           <Route path="comandas" element={<ComandasPanel />} />
-          <Route path="platillos" element={
-            <ProtectedRoute roleRequired={[ROLES.DEV]}>
-              <DevPanel />
-            </ProtectedRoute>
-          } />
+          {/* Era exclusiva de DEV. Desde el 2026-08-11 el ADMIN también administra
+              la carta: es el dueño y es quien cambia precios en la vida real. */}
+          <Route path="platillos" element={<DevPanel />} />
           <Route path="existencias" element={<ExistenciasPanel />} />
           <Route path="insumos" element={<InsumosPanel />} />
           <Route path="captura" element={<CapturaPanel />} />

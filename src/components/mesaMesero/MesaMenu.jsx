@@ -1,9 +1,10 @@
 import { Plus, UtensilsCrossed, Search, X } from 'lucide-react';
 import { CATEGORIA_ICON } from './constants';
+import { CATEGORIA_TODOS } from './menuFiltro';
 
 const MesaMenu = ({
     productosFiltrados,
-    categorias,
+    pestanas,
     categoriaActiva,
     setCategoriaActiva,
     busqueda,
@@ -40,7 +41,7 @@ const MesaMenu = ({
             Vertical: fila con scroll horizontal; horizontal: wrap */}
         {!busqueda && (
             <div className="flex gap-2 overflow-x-auto pb-1 -mb-1 landscape:flex-wrap landscape:overflow-x-visible landscape:pb-0 landscape:mb-0">
-                {categorias.map((cat) => (
+                {pestanas.map((cat) => (
                     <button
                         key={cat}
                         onClick={() => setCategoriaActiva(cat)}
@@ -69,7 +70,11 @@ const MesaMenu = ({
                 <div className="col-span-2 landscape:col-span-3 flex flex-col items-center justify-center py-12 text-rf-text-3">
                     <UtensilsCrossed size={32} className="mb-2 opacity-30" />
                     <p className="text-sm">
-                        {busqueda ? "Sin resultados" : "Sin productos en esta categoría"}
+                        {busqueda
+                            ? "Sin resultados"
+                            : categoriaActiva === CATEGORIA_TODOS
+                                ? "No hay platillos disponibles"
+                                : "Sin productos en esta categoría"}
                     </p>
                 </div>
             ) : (
