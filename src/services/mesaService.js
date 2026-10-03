@@ -30,6 +30,12 @@ export const mesaService = {
         return response.data;
     },
 
+    // Rango completo, p. ej. 51-65. Todo o nada: si alguna existe no crea ninguna.
+    crearLote: async (desde, hasta, idUsuarioAsignado) => {
+        const response = await api.post(`/mesas/lote`, { desde, hasta, id_usuario_asignado: idUsuarioAsignado ?? null });
+        return response.data;
+    },
+
     renombrar: async (idMesa, numero) => {
         const response = await api.put(`/mesas/${idMesa}`, { numero });
         return response.data;
