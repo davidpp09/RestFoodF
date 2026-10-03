@@ -1,27 +1,14 @@
 import React from 'react';
 import { useMesas } from '@/hooks/useMesas';
 import { useProductos } from '@/hooks/useProductos';
-import { useAuth } from '@/hooks/useAuth';
 import MesaMesero from '@/components/mesaMesero/MesaMesero';
 import { ordenService } from '@/services/ordenService';
 import { toast } from 'sonner';
 import ImpresionTickets from '@/components/ImpresionTickets';
 import { useTickets } from '@/hooks/useTickets';
 
-// Rango de mesas (por id/número) que atiende cada sección. Reparto desigual:
-// Valeria (1) → 15 mesas, Magui (2) → 15 mesas, Mareli (3) → 20 mesas.
-const SECCION_RANGOS = {
-    1: { inicio: 1,  fin: 15 },
-    2: { inicio: 16, fin: 30 },
-    3: { inicio: 31, fin: 50 },
-};
-
 const MeseroPanel = () => {
-    const { getSeccion } = useAuth();
-    const seccion = getSeccion() ?? 1;
-    const { inicio: mesaInicio, fin: mesaFin } = SECCION_RANGOS[seccion] ?? SECCION_RANGOS[1];
-
-    const { mesas, cargando: cargandoMesas, error: errorMesas, actualizarMesa } = useMesas(mesaInicio, mesaFin);
+    const { mesas, cargando: cargandoMesas, error: errorMesas, actualizarMesa } = useMesas();
     const { productos, cargando: cargandoProductos }          = useProductos();
     
     // Obtenemos el estado y funciones del ticket desde el hook
@@ -81,6 +68,15 @@ const MeseroPanel = () => {
 
     if (errorMesas) {
         return <div className="text-rf-red-ink p-6">Error al cargar las mesas. Verifica la conexión con el servidor.</div>;
+    }
+
+    if (mesas.length === 0) {
+        return (
+            <div className="p-8 text-center rounded-lg border border-dashed border-rf-border-strong bg-rf-surface">
+                <p className="text-lg font-semibold text-rf-text">Todavía no tienes mesas asignadas</p>
+                <p className="text-rf-text-2 mt-1">Pídele al encargado que te las asigne en Personal.</p>
+            </div>
+        );
     }
 
     return (

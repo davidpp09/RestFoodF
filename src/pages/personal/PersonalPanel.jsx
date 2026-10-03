@@ -1,35 +1,38 @@
 import { useState } from "react";
 import { usePersonal } from "@/hooks/usePersonal";
-import { columns } from "./columns";
-import { DataTable } from "@/components/DataTable";
-import { Loader2 } from "lucide-react";
+import { Loader2, Users, LayoutGrid } from "lucide-react";
+import ListaEquipo from "./ListaEquipo";
+import MapaMesas from "./MapaMesas";
+import FichaEmpleado from "./FichaEmpleado";
 import FormularioNuevoEmpleado from "./FormularioNuevoEmpleado";
 import FormularioEditarEmpleado from "./FormularioEditarEmpleado";
 import DialogEliminar from "./DialogEliminar";
 import DialogCambiarContrasena from "./DialogCambiarContrasena";
+import DialogCubrirTurno from "./DialogCubrirTurno";
 
+const PESTANAS = [
+    { id: "equipo", etiqueta: "Equipo", icono: Users },
+    { id: "mesas", etiqueta: "Mesas", icono: LayoutGrid },
+];
+
+/**
+ * Personal: el equipo y el reparto de mesas.
+ *
+ * Solo hay un diálogo abierto a la vez (`vista`). Las acciones de la ficha
+ * (editar, contraseña, baja, cubrir turno) cierran la ficha y al terminar
+ * regresan a ella, para no apilar diálogos modales en la tablet.
+ */
 const PersonalPanel = () => {
-    const { usuarios, loading, recargar } = usePersonal();
+    const personal = usePersonal();
+    const { usuarios, mesas, meseras, mesasPorUsuario, mesasSinAsignar, loading, recargar } = personal;
 
-    const [editarAbierto, setEditarAbierto] = useState(false);
-    const [eliminarAbierto, setEliminarAbierto] = useState(false);
-    const [contrasenaAbierto, setContrasenaAbierto] = useState(false);
-    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+    const [pestana, setPestana] = useState("equipo");
+    const [vista, setVista] = useState(null); // { tipo: 'ficha'|'editar'|'contrasena'|'baja'|'cubrir', id }
 
-    const manejarEditar = (usuario) => {
-        setUsuarioSeleccionado(usuario);
-        setEditarAbierto(true);
-    };
-
-    const manejarEliminar = (usuario) => {
-        setUsuarioSeleccionado(usuario);
-        setEliminarAbierto(true);
-    };
-
-    const manejarContrasena = (usuario) => {
-        setUsuarioSeleccionado(usuario);
-        setContrasenaAbierto(true);
-    };
+    // Siempre el usuario fresco de la lista, no una copia vieja
+    const usuario = vista ? usuarios.find(u => u.id_usuarios === vista.id) : null;
+    const abrir = (tipo, id = vista?.id) => setVista({ tipo, id });
+    const volverAFicha = () => setVista(v => (v ? { tipo: "ficha", id: v.id } : null));
 
     if (loading) {
         return (
@@ -41,44 +44,93 @@ const PersonalPanel = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-rf-text">Gestión de Personal </h1>
-                    <p className="text-rf-text-2">Administra los usuarios y roles de tu restaurante</p>
+                    <h1 className="text-2xl font-bold text-rf-text">Personal</h1>
+                    <p className="text-rf-text-2">El equipo del restaurante y quién atiende cada mesa</p>
                 </div>
-                <FormularioNuevoEmpleado onEmpleadoCreado={recargar} />
-            </div>
-
-            <div className="bg-rf-surface rounded-lg border border-rf-border shadow-rf-sm overflow-hidden">
-                <DataTable
-                    columns={columns}
-                    data={usuarios}
-                    onEdit={manejarEditar}
-                    onDelete={manejarEliminar}
-                    onPassword={manejarContrasena}
+                <FormularioNuevoEmpleado
+                    onEmpleadoCreado={async (nuevo) => {
+                        await recargar();
+                        // A una mesera nueva lo siguiente es darle mesas: se abre su ficha
+                        if (nuevo?.rol === "MESERO") setVista({ tipo: "ficha", id: nuevo.id_usuarios });
+                    }}
                 />
             </div>
 
+            <div className="inline-flex p-1 rounded-lg bg-rf-surface-2 border border-rf-border">
+                {PESTANAS.map(({ id, etiqueta, icono }) => {
+                    const Icono = icono;
+                    return (
+                    <button
+                        key={id}
+                        type="button"
+                        onClick={() => setPestana(id)}
+                        className={`inline-flex items-center gap-2 h-9 px-4 rounded-md text-sm font-semibold transition-colors ${
+                            pestana === id ? "bg-rf-surface text-rf-text shadow-rf-sm" : "text-rf-text-2 hover:text-rf-text"
+                        }`}
+                    >
+                        <Icono size={16} /> {etiqueta}
+                        {id === "mesas" && mesasSinAsignar.length > 0 && (
+                            <span className="size-2 rounded-full bg-rf-red" title="Hay mesas sin asignar" />
+                        )}
+                    </button>
+                    );
+                })}
+            </div>
+
+            {pestana === "equipo" ? (
+                <ListaEquipo usuarios={usuarios} meseras={meseras} mesasPorUsuario={mesasPorUsuario} onAbrir={(u) => abrir("ficha", u.id_usuarios)} />
+            ) : (
+                <MapaMesas mesas={mesas} meseras={meseras} mesasPorUsuario={mesasPorUsuario} mesasSinAsignar={mesasSinAsignar} recargar={recargar} />
+            )}
+
+            <FichaEmpleado
+                key={usuario?.id_usuarios}
+                usuario={usuario}
+                abierto={vista?.tipo === "ficha" && Boolean(usuario)}
+                onCerrar={() => setVista(null)}
+                mesas={mesas}
+                meseras={meseras}
+                recargar={recargar}
+                onEditar={() => abrir("editar")}
+                onContrasena={() => abrir("contrasena")}
+                onBaja={() => abrir("baja")}
+                onCubrir={() => abrir("cubrir")}
+            />
+
             <FormularioEditarEmpleado
-                usuario={usuarioSeleccionado}
-                abierto={editarAbierto}
-                onCerrar={() => setEditarAbierto(false)}
+                usuario={usuario}
+                abierto={vista?.tipo === "editar"}
+                onCerrar={volverAFicha}
                 onActualizado={recargar}
             />
 
+            <DialogCambiarContrasena
+                usuario={usuario}
+                abierto={vista?.tipo === "contrasena"}
+                onCerrar={volverAFicha}
+            />
+
             <DialogEliminar
-                usuario={usuarioSeleccionado}
-                abierto={eliminarAbierto}
-                onCerrar={() => setEliminarAbierto(false)}
+                usuario={usuario}
+                mesasAsignadas={usuario ? (mesasPorUsuario[usuario.id_usuarios]?.length ?? 0) : 0}
+                abierto={vista?.tipo === "baja"}
+                onCerrar={volverAFicha}
                 onEliminado={recargar}
             />
 
-            <DialogCambiarContrasena
-                usuario={usuarioSeleccionado}
-                abierto={contrasenaAbierto}
-                onCerrar={() => setContrasenaAbierto(false)}
-            />
+            {vista?.tipo === "cubrir" && (
+                <DialogCubrirTurno
+                    abierto
+                    onCerrar={volverAFicha}
+                    meseras={meseras}
+                    mesasPorUsuario={mesasPorUsuario}
+                    deInicial={vista.id}
+                    onHecho={recargar}
+                />
+            )}
         </div>
     );
 };

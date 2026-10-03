@@ -14,8 +14,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
         id_usuarios: "",
         nombre: "",
         email: "",
-        rol: "",
-        seccion: null
+        rol: ""
     });
 
     // Al cambiar el empleado a editar se recarga el formulario. Se hace en
@@ -29,8 +28,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                 id_usuarios: usuario.id_usuarios,
                 nombre: usuario.nombre,
                 email: usuario.email,
-                rol: usuario.rol,
-                seccion: usuario.seccion ?? null
+                rol: usuario.rol
             });
         }
     }
@@ -41,10 +39,6 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
     };
 
     const manejarGuardado = async () => {
-        if (datos.rol === 'MESERO' && !datos.seccion) {
-            toast.error("Un mesero necesita una sección de mesas asignada.");
-            return;
-        }
         const toastId = toast.loading("Actualizando empleado...");
 
         try {
@@ -52,8 +46,8 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
             toast.success("¡Empleado actualizado correctamente! ✅", { id: toastId });
             onCerrar();
             onActualizado?.(); // Recarga la tabla de atrás
-        } catch {
-            toast.error("Error al actualizar el empleado. ❌", { id: toastId });
+        } catch (error) {
+            toast.error(error.response?.data?.mensaje || "Error al actualizar el empleado. ❌", { id: toastId });
         }
     };
 
@@ -96,7 +90,7 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                         <Label>Puesto / Rol</Label>
                         <Select
                             value={datos.rol}
-                            onValueChange={(rol) => setDatos(prev => ({ ...prev, rol, seccion: rol === 'MESERO' ? prev.seccion : null }))}
+                            onValueChange={(rol) => setDatos(prev => ({ ...prev, rol }))}
                         >
                             <SelectTrigger className="bg-rf-bg border-rf-border-strong">
                                 <SelectValue placeholder="Selecciona un rol" />
@@ -109,24 +103,10 @@ const FormularioEditarEmpleado = ({ usuario, abierto, onCerrar, onActualizado })
                         </Select>
                     </div>
 
-                    {datos.rol === 'MESERO' && (
-                        <div className="grid gap-2">
-                            <Label>Sección de mesas</Label>
-                            <Select
-                                value={datos.seccion?.toString() ?? ""}
-                                onValueChange={(v) => setDatos(prev => ({ ...prev, seccion: Number(v) }))}
-                            >
-                                <SelectTrigger className="bg-rf-bg border-rf-border-strong">
-                                    <SelectValue placeholder="Selecciona la sección" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-rf-surface border-rf-border text-rf-text">
-                                    <SelectItem value="1">Sección 1 — Mesas 1 al 10</SelectItem>
-                                    <SelectItem value="2">Sección 2 — Mesas 11 al 20</SelectItem>
-                                    <SelectItem value="3">Sección 3 — Mesas 21 al 30</SelectItem>
-                                    <SelectItem value="4">Sección 4 — Mesas 31 al 40</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                    {usuario?.rol === 'MESERO' && datos.rol !== 'MESERO' && (
+                        <p className="text-xs text-rf-red-ink">
+                            Al dejar de ser mesera, sus mesas quedan sin asignar.
+                        </p>
                     )}
                 </div>
 

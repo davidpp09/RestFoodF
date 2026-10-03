@@ -2,17 +2,17 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { usuarioService } from "@/services/usuarioService";
 import { toast } from "sonner";
 
-const DialogEliminar = ({ usuario, abierto, onCerrar, onEliminado }) => {
+const DialogEliminar = ({ usuario, mesasAsignadas = 0, abierto, onCerrar, onEliminado }) => {
     const manejarEliminar = async () => {
-        const toastId = toast.loading("Eliminando empleado...");
+        const toastId = toast.loading("Dando de baja...");
 
         try {
             await usuarioService.eliminarUsuario(usuario.id_usuarios);
-            toast.success("¡Empleado desactivado correctamente! 🗑️", { id: toastId });
+            toast.success(`${usuario.nombre} quedó dado de baja`, { id: toastId });
             onCerrar();
             onEliminado?.();
         } catch {
-            toast.error("Error al eliminar el empleado. ❌", { id: toastId });
+            toast.error("No se pudo dar de baja. ❌", { id: toastId });
         }
     };
 
@@ -20,10 +20,16 @@ const DialogEliminar = ({ usuario, abierto, onCerrar, onEliminado }) => {
         <AlertDialog open={abierto} onOpenChange={onCerrar}>
             <AlertDialogContent className="bg-rf-surface border-rf-border text-rf-text">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>¿Estás seguro? 🗑️</AlertDialogTitle>
+                    <AlertDialogTitle>¿Dar de baja a {usuario?.nombre}?</AlertDialogTitle>
                     <AlertDialogDescription className="text-rf-text-2">
-                        Vas a desactivar a <span className="font-bold text-rf-text">{usuario?.nombre}</span>.
-                        El usuario quedará inactivo pero podrás reactivarlo después.
+                        Ya no podrá entrar al sistema. Su historial de ventas se conserva y
+                        puedes reactivarlo después desde "Ver dados de baja".
+                        {mesasAsignadas > 0 && (
+                            <span className="block mt-2 font-semibold text-rf-red-ink">
+                                Sus {mesasAsignadas} mesas quedarán sin asignar. Si alguien la va a cubrir,
+                                usa primero "Cubrir su turno".
+                            </span>
+                        )}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -34,7 +40,7 @@ const DialogEliminar = ({ usuario, abierto, onCerrar, onEliminado }) => {
                         onClick={manejarEliminar}
                         className="bg-rf-red hover:bg-rf-red/90"
                     >
-                        Desactivar
+                        Dar de baja
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

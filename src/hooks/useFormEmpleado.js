@@ -20,8 +20,7 @@ const ESTADO_INICIAL = {
     nombre: "",
     email: "",
     contrasena: "",
-    rol: "",
-    seccion: null
+    rol: ""
 };
 
 export const useFormEmpleado = () => {
@@ -35,13 +34,8 @@ export const useFormEmpleado = () => {
     };
 
     const actualizarRol = (valor) => {
-        setNuevoUsuario(prev => ({ ...prev, rol: valor, seccion: null }));
+        setNuevoUsuario(prev => ({ ...prev, rol: valor }));
         if (errores.rol) setErrores(prev => ({ ...prev, rol: null }));
-    };
-
-    const actualizarSeccion = (valor) => {
-        setNuevoUsuario(prev => ({ ...prev, seccion: valor }));
-        if (errores.seccion) setErrores(prev => ({ ...prev, seccion: null }));
     };
 
     const validar = () => {
@@ -50,9 +44,6 @@ export const useFormEmpleado = () => {
             const error = VALIDACIONES[campo](nuevoUsuario[campo]);
             if (error) nuevosErrores[campo] = error;
         });
-        if (nuevoUsuario.rol === 'MESERO' && !nuevoUsuario.seccion) {
-            nuevosErrores.seccion = "Debes asignar una sección al mesero";
-        }
         return nuevosErrores;
     };
 
@@ -64,20 +55,20 @@ export const useFormEmpleado = () => {
             const toastId = toast.loading("Guardando empleado...");
 
             try {
-                await usuarioService.crearUsuario(nuevoUsuario);
+                const creado = await usuarioService.crearUsuario(nuevoUsuario);
                 toast.success("¡Empleado registrado correctamente! 🎉", { id: toastId });
                 setNuevoUsuario(ESTADO_INICIAL);
                 setErrores({});
-                return true;
-            } catch {
-                toast.error("Hubo un problema al guardar el empleado. ❌", { id: toastId });
-                return false;
+                return creado;
+            } catch (error) {
+                toast.error(error.response?.data?.mensaje || "Hubo un problema al guardar el empleado. ❌", { id: toastId });
+                return null;
             }
         } else {
             toast.warning("Por favor, revisa los campos marcados en rojo.");
-            return false;
+            return null;
         }
     };
 
-    return { nuevoUsuario, manejarCambio, actualizarRol, actualizarSeccion, guardar, errores };
+    return { nuevoUsuario, manejarCambio, actualizarRol, guardar, errores };
 };
