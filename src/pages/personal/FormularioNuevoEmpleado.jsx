@@ -38,14 +38,14 @@ const Campo = ({ label, id, error, type, ...props }) => {
 
 const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
     const [dialogAbierto, setDialogAbierto] = useState(false);
-    const { nuevoUsuario, manejarCambio, actualizarRol, actualizarSeccion, guardar, errores } = useFormEmpleado();
+    const { nuevoUsuario, manejarCambio, actualizarRol, guardar, errores } = useFormEmpleado();
 
     const manejarGuardado = async () => {
-        const exito = await guardar();
-        
-        if (exito) {
+        const creado = await guardar();
+
+        if (creado) {
             setDialogAbierto(false);
-            onEmpleadoCreado?.();
+            onEmpleadoCreado?.(creado);
         }
     };
 
@@ -85,21 +85,9 @@ const FormularioNuevoEmpleado = ({ onEmpleadoCreado }) => {
                     </div>
 
                     {nuevoUsuario.rol === 'MESERO' && (
-                        <div className="grid gap-2">
-                            <Label className={errores.seccion && "text-rf-red"}>Sección de mesas</Label>
-                            <Select value={nuevoUsuario.seccion?.toString() ?? ""} onValueChange={(v) => actualizarSeccion(Number(v))}>
-                                <SelectTrigger className={`bg-rf-bg ${errores.seccion ? "border-rf-red focus:ring-rf-red" : "border-rf-border-strong"}`}>
-                                    <SelectValue placeholder="Selecciona la sección" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-rf-surface border-rf-border text-rf-text">
-                                    <SelectItem value="1">Sección 1 — Mesas 1 al 10</SelectItem>
-                                    <SelectItem value="2">Sección 2 — Mesas 11 al 20</SelectItem>
-                                    <SelectItem value="3">Sección 3 — Mesas 21 al 30</SelectItem>
-                                    <SelectItem value="4">Sección 4 — Mesas 31 al 40</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            {errores.seccion && <span className="text-xs text-rf-red font-medium">{errores.seccion}</span>}
-                        </div>
+                        <p className="text-xs text-rf-text-3">
+                            Al guardar se abre su ficha para asignarle mesas.
+                        </p>
                     )}
                 </div>
 
