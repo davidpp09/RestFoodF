@@ -6,6 +6,12 @@ export const mesaService = {
         return response.data;
     },
 
+    // Vista de sala del ADMIN: todas las mesas activas con su cuenta abierta.
+    sala: async () => {
+        const response = await api.get(`/mesas`);
+        return response.data;
+    },
+
     // Las mesas de la mesera que inició sesión (ADMIN/DEV: todas las activas)
     misMesas: async () => {
         const response = await api.get(`/mesas/mias`);
