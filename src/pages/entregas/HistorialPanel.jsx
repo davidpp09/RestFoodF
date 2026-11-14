@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { RefreshCw, Package, CheckCircle2, Clock, Bike } from 'lucide-react';
+import { RefreshCw, Package, CheckCircle2, Clock, Bike, Printer } from 'lucide-react';
 import { ordenService } from '@/services/ordenService';
 
 const ESTATUS_CONFIG = {
@@ -25,6 +25,22 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
             toast.error('Error al marcar la orden como entregada');
         } finally {
             setEntregando(false);
+        }
+    };
+
+    // Reimprime el ticket de cliente en la impresora de su zona (la misma
+    // a la que sale al entregar). El backend solo deja reimprimir las propias.
+    const [reimprimiendo, setReimprimiendo] = useState(false);
+    const handleReimprimir = async () => {
+        if (reimprimiendo) return;
+        setReimprimiendo(true);
+        try {
+            await ordenService.reimprimirTicket(entrega.id_orden);
+            toast.success(`Ticket de la comanda #${entrega.numero_comanda ?? entrega.id_orden} enviado a la impresora`);
+        } catch {
+            toast.error('No se pudo reimprimir el ticket');
+        } finally {
+            setReimprimiendo(false);
         }
     };
 
@@ -71,9 +87,20 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
                 <span className="text-lg font-bold font-mono text-rf-text">${Number(entrega.total).toFixed(0)}</span>
             </div>
 
-            {/* Botón entregar — visible si aún no está entregada */}
-            {entrega.estatus !== 'PAGADA' && (
-                <div className="px-4 pb-4 pt-2">
+            <div className="px-4 pb-4 pt-2 space-y-2">
+                {/* Reimprimir — siempre visible: también sirve con la entrega ya hecha */}
+                <button
+                    onClick={handleReimprimir}
+                    disabled={reimprimiendo}
+                    className="w-full py-2.5 rounded-md border border-rf-border-strong bg-rf-surface hover:bg-rf-surface-2 disabled:opacity-50 disabled:cursor-not-allowed text-rf-text-2 font-bold text-sm transition-colors flex items-center justify-center gap-2"
+                >
+                    {reimprimiendo
+                        ? <><RefreshCw size={14} className="animate-spin" /> Enviando...</>
+                        : <><Printer size={14} /> Reimprimir ticket</>}
+                </button>
+
+                {/* Botón entregar — visible si aún no está entregada */}
+                {entrega.estatus !== 'PAGADA' && (
                     <button
                         onClick={handleEntregar}
                         disabled={entregando}
@@ -83,8 +110,8 @@ const TarjetaEntrega = ({ entrega, onEntregar }) => {
                             ? <><RefreshCw size={14} className="animate-spin" /> Procesando...</>
                             : <><Bike size={14} /> Marcar como Entregada</>}
                     </button>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };
