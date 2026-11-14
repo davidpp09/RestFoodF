@@ -49,3 +49,71 @@ export const useExistencias = () => {
 
     return { existencias, bajoMinimo, loading, recargar: cargar };
 };
+
+/**
+ * El kardex de cada insumo, por páginas.
+ *
+ * El historial crece unos 30 movimientos al día por insumo, así que ya no se
+ * pide completo: se trae la primera página al abrir el renglón y las demás con
+ * "Ver más", que se van sumando debajo.
+ *
+ * Guarda el estado por insumo (`kardex[id]`) para que al cerrar y volver a abrir
+ * un renglón no se pida otra vez. `reiniciar` lo borra todo: se llama cuando se
+ * actualizan las existencias, porque un historial viejo con un stock nuevo
+ * dejaría de cuadrar.
+ *
+ * Estado de cada insumo:
+ *   { movimientos, pagina, total, ultima, cargando, error }
+ */
+export const useKardex = (tamano = 20) => {
+    const [kardex, setKardex] = useState({});
+
+    const cargarPagina = useCallback(async (idInsumo, pagina) => {
+        setKardex(prev => ({
+            ...prev,
+            [idInsumo]: { movimientos: [], ...prev[idInsumo], cargando: true, error: null },
+        }));
+        try {
+            const datos = await inventarioService.obtenerMovimientos(idInsumo, { pagina, tamano });
+            setKardex(prev => {
+                const anteriores = pagina === 0 ? [] : (prev[idInsumo]?.movimientos ?? []);
+                return {
+                    ...prev,
+                    [idInsumo]: {
+                        movimientos: [...anteriores, ...datos.contenido],
+                        pagina: datos.pagina,
+                        total: datos.totalElementos,
+                        ultima: datos.ultima,
+                        cargando: false,
+                        error: null,
+                    },
+                };
+            });
+        } catch (error) {
+            const mensaje = error.response?.data?.mensaje || 'No se pudo cargar el historial';
+            setKardex(prev => ({
+                ...prev,
+                [idInsumo]: { movimientos: [], ...prev[idInsumo], cargando: false, error: mensaje },
+            }));
+        }
+    }, [tamano]);
+
+    /** Primera página, solo si todavía no se tiene (o si la vez anterior falló). */
+    const abrir = useCallback((idInsumo) => {
+        const actual = kardex[idInsumo];
+        if (!actual || (actual.error && actual.movimientos.length === 0)) {
+            cargarPagina(idInsumo, 0);
+        }
+    }, [kardex, cargarPagina]);
+
+    /** La página siguiente; si la anterior falló, reintenta esa misma. */
+    const cargarMas = useCallback((idInsumo) => {
+        const actual = kardex[idInsumo];
+        if (!actual || actual.cargando || actual.ultima) return;
+        cargarPagina(idInsumo, actual.pagina === undefined ? 0 : actual.pagina + 1);
+    }, [kardex, cargarPagina]);
+
+    const reiniciar = useCallback(() => setKardex({}), []);
+
+    return { kardex, abrir, cargarMas, reiniciar };
+};

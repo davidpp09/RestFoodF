@@ -36,8 +36,13 @@ export const inventarioService = {
         });
         return response.data;
     },
-    obtenerKardex: async (idInsumo) => {
-        const response = await api.get(`/inventario/insumos/${idInsumo}/kardex`);
+    // El kardex por páginas, lo más nuevo primero. Devuelve
+    // { contenido, pagina, tamano, totalElementos, totalPaginas, ultima }.
+    // `pagina` empieza en 0. El backend recorta `tamano` a 100 como máximo.
+    obtenerMovimientos: async (idInsumo, { pagina = 0, tamano = 20 } = {}) => {
+        const response = await api.get(`/inventario/insumos/${idInsumo}/movimientos`, {
+            params: { page: pagina, size: tamano },
+        });
         return response.data;
     },
 
