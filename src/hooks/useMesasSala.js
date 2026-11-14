@@ -1,7 +1,7 @@
 // src/hooks/useMesasSala.js
 import { useState, useEffect, useMemo } from 'react';
 import websocketService from '../services/websocketService';
-import api from '../api/axiosConfig';
+import { mesaService } from '../services/mesaService';
 import { authStorage } from '../lib/authStorage';
 import { toast } from 'sonner';
 
@@ -12,13 +12,16 @@ export const useMesasSala = () => {
     // Carga inicial desde API
     useEffect(() => {
         const cargarData = async () => {
+            // Pasa por mesaService como el resto de la app (pages → hooks → services):
+            // antes era el único hook que llamaba a la API directo.
             try {
-                const response = await api.get('/mesas');
-                if (response.data) {
-                    setMesas(response.data);
+                const datos = await mesaService.sala();
+                if (datos) {
+                    setMesas(datos);
                 }
             } catch (error) {
-                console.error("Error cargando mesas admin:", error);
+                // Antes solo iba a la consola y la sala se quedaba vacía sin explicación.
+                toast.error(error.response?.data?.mensaje || 'No se pudieron cargar las mesas');
             }
         };
         cargarData();
