@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Loader2, AlertTriangle, History, RefreshCw } from 'lucide-react';
-import { toast } from 'sonner';
-import { useExistencias } from '@/hooks/useInventario';
-import { inventarioService } from '@/services/inventarioService';
+import { useExistencias, useKardex } from '@/hooks/useInventario';
 
 /**
  * Qué hay ahora mismo, y cómo se llegó a eso.
@@ -20,7 +18,35 @@ const ETIQUETA_TIPO = {
     AJUSTE: 'Ajuste por conteo',
 };
 
-const Kardex = ({ movimientos }) => {
+const Cargando = ({ texto }) => (
+    <div className="p-4 flex items-center gap-2 text-rf-text-3 text-sm">
+        <Loader2 className="animate-spin" size={16} /> {texto}
+    </div>
+);
+
+/**
+ * El historial de un insumo. Llega por páginas: muestra lo que ya se trajo y,
+ * si hay más, un botón para pedir la siguiente. Botón y no scroll infinito a
+ * propósito: esta lista vive dentro de otra, y en la tablet un scroll que
+ * dispara cargas solo es difícil de controlar con el dedo.
+ */
+const Kardex = ({ estado, onVerMas }) => {
+    if (!estado || (estado.cargando && estado.movimientos.length === 0)) {
+        return <Cargando texto="Cargando historial..." />;
+    }
+    const { movimientos, total, ultima, cargando, error } = estado;
+
+    if (error && movimientos.length === 0) {
+        return (
+            <div className="p-4 flex items-center justify-between gap-3 text-sm">
+                <p className="text-rf-red">{error}</p>
+                <button onClick={onVerMas}
+                        className="px-4 h-11 rounded-md border border-rf-border text-rf-text-2 hover:text-rf-text active:scale-95">
+                    Reintentar
+                </button>
+            </div>
+        );
+    }
     if (movimientos.length === 0) {
         return <p className="text-sm text-rf-text-3 p-4">Sin movimientos todavía.</p>;
     }
@@ -43,26 +69,48 @@ const Kardex = ({ movimientos }) => {
                     </div>
                 </div>
             ))}
+            <div className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+                <span className="text-rf-text-3">
+                    {movimientos.length} de {total} movimientos
+                </span>
+                {error && <span className="text-rf-red flex-1 text-right">{error}</span>}
+                {!ultima && (
+                    <button onClick={onVerMas} disabled={cargando}
+                            className="flex items-center gap-2 px-4 h-11 rounded-md bg-rf-surface border border-rf-border
+                                       text-rf-text-2 hover:text-rf-text active:scale-95 transition-all disabled:opacity-60">
+                        {cargando && <Loader2 className="animate-spin" size={16} />}
+                        {error ? 'Reintentar' : 'Ver más'}
+                    </button>
+                )}
+            </div>
         </div>
     );
 };
 
 const ExistenciasPanel = () => {
     const { existencias, bajoMinimo, loading, recargar } = useExistencias();
+    const { kardex, abrir, cargarMas, reiniciar } = useKardex();
     const [abierto, setAbierto] = useState(null);
-    const [kardex, setKardex] = useState({});
 
-    const alternar = async (id) => {
+    const alternar = (id) => {
         if (abierto === id) { setAbierto(null); return; }
         setAbierto(id);
-        if (!kardex[id]) {
-            try {
-                const movimientos = await inventarioService.obtenerKardex(id);
-                setKardex(prev => ({ ...prev, [id]: movimientos }));
-            } catch (error) {
-                toast.error(error.response?.data?.mensaje || 'No se pudo cargar el historial');
-            }
-        }
+        abrir(id);
+    };
+
+    // Al actualizar, el historial que ya se había traído se descarta: si no,
+    // el stock nuevo convive con un kardex viejo y los números no cuadran.
+    const actualizar = () => {
+        reiniciar();
+        setAbierto(null);
+        recargar();
+    };
+
+    const verMas = (id) => {
+        const estado = kardex[id];
+        // Si la primera página falló, "Reintentar" vuelve a abrir desde cero.
+        if (estado?.error && estado.movimientos.length === 0) abrir(id);
+        else cargarMas(id);
     };
 
     if (loading) {
@@ -82,7 +130,7 @@ const ExistenciasPanel = () => {
                     <p className="text-rf-text-2">Lo que hay ahora, según el kardex</p>
                 </div>
                 <button
-                    onClick={recargar}
+                    onClick={actualizar}
                     className="flex items-center gap-2 px-4 h-11 rounded-md bg-rf-surface border border-rf-border
                                text-rf-text-2 hover:text-rf-text active:scale-95 transition-all"
                 >
@@ -138,11 +186,8 @@ const ExistenciasPanel = () => {
 
                             {abierto === item.id_insumos && (
                                 <div className="border-t border-rf-border bg-rf-bg">
-                                    {kardex[item.id_insumos]
-                                        ? <Kardex movimientos={kardex[item.id_insumos]} />
-                                        : <div className="p-4 flex items-center gap-2 text-rf-text-3 text-sm">
-                                              <Loader2 className="animate-spin" size={16} /> Cargando historial...
-                                          </div>}
+                                    <Kardex estado={kardex[item.id_insumos]}
+                                            onVerMas={() => verMas(item.id_insumos)} />
                                 </div>
                             )}
                         </div>
