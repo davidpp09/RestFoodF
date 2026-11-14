@@ -11,6 +11,7 @@ const MENU_SUPER = [
     { icono: Users,           texto: 'Personal',          ruta: '/admin/personal'    },
     { icono: TrendingUp,      texto: 'Reportes',          ruta: '/admin/reportes'    },
     { icono: ChefHat,         texto: 'Platillos',         ruta: '/admin/platillos'   },
+    { icono: BookOpen,        texto: 'Menú y precios',    ruta: '/admin/menu-precios' },
     { icono: Boxes,           texto: 'Existencias',       ruta: '/admin/existencias' },
     { icono: ClipboardCheck,  texto: 'Capturar',          ruta: '/admin/captura'     },
     { icono: PackagePlus,     texto: 'Insumos',           ruta: '/admin/insumos'     },

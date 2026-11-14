@@ -22,6 +22,7 @@ import ExistenciasCocina from './pages/inventario/ExistenciasCocina';
 import RecetasPanel from './pages/inventario/RecetasPanel';
 import VarianzaPanel from './pages/inventario/VarianzaPanel';
 import CostosPanel from './pages/inventario/CostosPanel';
+import MenuPreciosPanel from './pages/menu/MenuPreciosPanel';
 
 export default function App() {
   const { verifyLogin } = useAuth();
@@ -56,6 +57,7 @@ export default function App() {
           {/* Era exclusiva de DEV. Desde el 2026-08-11 el ADMIN también administra
               la carta: es el dueño y es quien cambia precios en la vida real. */}
           <Route path="platillos" element={<DevPanel />} />
+          <Route path="menu-precios" element={<MenuPreciosPanel />} />
           <Route path="existencias" element={<ExistenciasPanel />} />
           <Route path="insumos" element={<InsumosPanel />} />
           <Route path="captura" element={<CapturaPanel />} />
